@@ -4,3 +4,4 @@ export * from "./banner";
 export * from "./form";
 export * from "./show";
 export * from "./menu";
+export * from "./data-table";

@@ -42,7 +42,7 @@ export default function SidebarMenu() {
   return (
     <aside
       role="sidebar-menus"
-      className="bg-transparent h-[calc(100vh-78px)] border rounded-md py-3 px-2  max-w-xs"
+      className="bg-transparent h-full border-r  py-3 px-2"
     >
       <div>
         <Button
