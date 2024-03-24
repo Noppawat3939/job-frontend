@@ -16,6 +16,8 @@ export default function Navbar() {
             {"Jobify"}
           </Link>
         </span>
+      </div>
+      <div className="flex items-baseline space-x-4">
         <Select.Select>
           <Select.SelectTrigger className="w-[160px]">
             <Select.SelectValue placeholder="Job seeker" />
@@ -32,8 +34,6 @@ export default function Navbar() {
             ))}
           </Select.SelectContent>
         </Select.Select>
-      </div>
-      <div className="flex space-x-5">
         <Button size="sm">Post your job</Button>
         <Button size="sm" variant="outline">
           Sign in
