@@ -1,4 +1,4 @@
-import { Button, Select } from "@/components";
+import { Button, SelectItem } from "@/components";
 
 import Link from "next/link";
 
@@ -10,7 +10,7 @@ export default function Navbar() {
       <div className="flex items-center space-x-10">
         <span
           aria-label="logo"
-          className="text-4xl max-md:text-3xl font-semibold text-sky-500"
+          className="text-4xl max-md:text-3xl font-semibold bg-gradient-to-t from-sky-500 via-sky-400 to-sky-300 inline-block text-transparent bg-clip-text"
         >
           <Link href="/" shallow>
             {"Jobify"}
@@ -18,22 +18,15 @@ export default function Navbar() {
         </span>
       </div>
       <div className="flex items-baseline space-x-4">
-        <Select.Select>
-          <Select.SelectTrigger className="w-[160px]">
-            <Select.SelectValue placeholder="Job seeker" />
-          </Select.SelectTrigger>
-          <Select.SelectContent>
-            {ROLES.map((role) => (
-              <Select.SelectItem
-                key={role}
-                role="role"
-                value={role.toLowerCase().replaceAll(" ", "_")}
-              >
-                {role}
-              </Select.SelectItem>
-            ))}
-          </Select.SelectContent>
-        </Select.Select>
+        <SelectItem
+          className="w-[150px]"
+          placeholder={ROLES.at(0)}
+          items={ROLES.map((role) => ({
+            label: role,
+            value: role.replaceAll(" ", "_").toLowerCase(),
+          }))}
+        />
+
         <Button size="sm">Post your job</Button>
         <Button size="sm" variant="outline">
           Sign in

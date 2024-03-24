@@ -1,3 +1,9 @@
+import { SidebarMenu } from "@/components";
+
 export default function AdminPage() {
-  return <div>AdminPage</div>;
+  return (
+    <div>
+      <SidebarMenu />
+    </div>
+  );
 }
