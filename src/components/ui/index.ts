@@ -7,3 +7,4 @@ export { Button } from "./button";
 export { Input } from "./input";
 export { Separator } from "./separator";
 export { Dialog } from "./dialog";
+export { Badge } from "./badge";
