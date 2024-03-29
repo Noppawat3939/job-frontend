@@ -11,6 +11,7 @@ const ROLES = ["Job Seeker", "Employer"];
 
 export default function Navbar() {
   const router = useRouter();
+
   const pathname = usePathname();
 
   const isSigninPath = eq(pathname, "/signin");
@@ -21,8 +22,19 @@ export default function Navbar() {
   );
 
   const handleSelectRole = useCallback(
-    (role: typeof selectedRole) => setSelectedRole(role),
-    []
+    (role: typeof selectedRole) => {
+      const [, searchParams] = location.search.split("?");
+      setSelectedRole(role);
+
+      if (searchParams && (isSigninPath || isSignupPath)) {
+        const href = `${location.origin}${location.pathname}?selected=${
+          eq(role, "employer") ? "jobseeker" : "employer"
+        }`;
+
+        router.push(href);
+      }
+    },
+    [isSigninPath, isSignupPath, router]
   );
 
   const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";

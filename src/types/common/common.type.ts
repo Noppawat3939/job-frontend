@@ -6,3 +6,5 @@ export type ServiceResponse<D extends unknown> = {
 } & D;
 
 export type Role = (typeof ROLE)[number];
+
+export type RolesParams = "jobseeker" | "employer";
