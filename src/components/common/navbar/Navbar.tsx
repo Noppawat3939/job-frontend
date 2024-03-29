@@ -1,13 +1,21 @@
 "use client";
 
 import { Button, SelectItem } from "@/components";
+import { eq, noSpace } from "@/lib";
 
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 const ROLES = ["Job Seeker", "Employer"];
 
 export default function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const isSigninPath = eq(pathname, "/signin");
+  const isSignupPath = eq(pathname, "/signup");
+
   const [selectedRole, setSelectedRole] = useState<"job_seeker" | "employer">(
     "job_seeker"
   );
@@ -16,6 +24,8 @@ export default function Navbar() {
     (role: typeof selectedRole) => setSelectedRole(role),
     []
   );
+
+  const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";
 
   return (
     <nav className="px-4 py-5 flex items-center justify-between">
@@ -36,15 +46,22 @@ export default function Navbar() {
           placeholder={ROLES.at(0)}
           items={ROLES.map((role) => ({
             label: role,
-            value: role.replaceAll(" ", "_").toLowerCase(),
+            value: noSpace(role.toLowerCase()),
           }))}
         />
 
         <Button size="sm">{`${
           selectedRole === "employer" ? "Post" : "Find"
         } your job`}</Button>
-        <Button size="sm" variant="outline">
-          {"Sign in"}
+        <Button className="w-[80px]" size="sm" variant="outline" asChild>
+          <Link
+            href={`/${noSpace(
+              signinAndSignup.toLowerCase()
+            )}?selected=${noSpace(selectedRole, "_")}`}
+            shallow={false}
+          >
+            {signinAndSignup}
+          </Link>
         </Button>
       </div>
     </nav>
