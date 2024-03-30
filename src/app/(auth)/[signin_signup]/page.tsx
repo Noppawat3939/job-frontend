@@ -4,72 +4,129 @@ import type { RolesParams } from "@/types";
 import JobSeekerImage from "@/assets/signin_signup_jobseeker.jpg";
 import EmployerImage from "@/assets/signin-signup_employer.jpg";
 import Image from "next/image";
-import { eq } from "@/lib";
-import { Button, Card, Input, Label, Tabs } from "@/components";
-import { Eye, EyeOff } from "lucide-react";
-import { useToggle } from "@/hooks";
+import { eq, noSpace } from "@/lib";
+import { GeneralForm, Tabs } from "@/components";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 
 type SignInSignUpPageProps = {
   params: { signin_signup: string };
   searchParams: { selected: RolesParams };
 };
 
+const TABS = ["Sign in", "Sign up"] as const;
+
 export default function SignInSignUpPage({
   searchParams,
+  params,
 }: SignInSignUpPageProps) {
   const { selected } = searchParams;
+  const router = useRouter();
 
-  const {
-    state: { active: showPassword },
-    handle: { toggle: onToggleShowPassword },
-  } = useToggle();
+  const handleChangeTab = useCallback(
+    (pathname: string) => {
+      const url = `${location.origin}/${pathname}${location.search}`;
+
+      router.push(url);
+    },
+    [router]
+  );
 
   return (
     <section className="max-md:px-4">
-      <div className="flex items-center w-fit border-2 mx-auto max-md:flex-col">
+      <div className="flex w-fit mx-auto max-md:flex-col">
         <Image
-          width={500}
-          className="object-contain"
+          className="object-contain mb-auto w-[600px] max-md:w-[480px] max-sm:w-[360px]"
           src={eq(selected, "jobseeker") ? JobSeekerImage : EmployerImage}
           alt="signin-signup"
         />
-        <Tabs.Tabs defaultValue="signin" className="w-[500px]">
+        <Tabs.Tabs
+          onValueChange={handleChangeTab}
+          defaultValue={params.signin_signup}
+          className="w-[500px] border rounded-md shadow-sm p-3 max-md:w-[95%] max-sm:w-full"
+        >
           <Tabs.TabsList>
-            <Tabs.TabsTrigger value="signin">{"Sign in"}</Tabs.TabsTrigger>
-            <Tabs.TabsTrigger value="signup">{"Sign up"}</Tabs.TabsTrigger>
+            {TABS.map((tab) => (
+              <Tabs.TabsTrigger
+                key={`tab-${tab}`}
+                value={noSpace(tab.toLowerCase())}
+              >
+                {tab}
+              </Tabs.TabsTrigger>
+            ))}
           </Tabs.TabsList>
-          <Tabs.TabsContent value="signin">
-            <Card.Card>
-              <Card.CardHeader>
-                <Card.CardTitle>Sign in</Card.CardTitle>
-              </Card.CardHeader>
-              <Card.CardContent>
-                <div className="space-y-1">
-                  <Label htmlFor="email">{"Email"}</Label>
-                  <Input name="email" placeholder="Enter your name" />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="password">{"Password"}</Label>
-                  <Input
-                    name="password"
-                    type="password"
-                    placeholder="*********"
-                  />
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={onToggleShowPassword}
-                  >
-                    {showPassword ? (
-                      <Eye className="w-5 h-5" />
-                    ) : (
-                      <EyeOff className="w-5 h-5" />
-                    )}
-                  </Button>
-                </div>
-              </Card.CardContent>
-            </Card.Card>
-          </Tabs.TabsContent>
+          <GeneralForm
+            value={"signin"}
+            title={TABS[0]}
+            inputs={[
+              {
+                key: "email",
+                props: {
+                  name: "email",
+                  label: "Email",
+                  placeholder: "Please enter your email",
+                },
+              },
+              {
+                key: "password",
+                props: {
+                  label: "Password",
+                  placeholder: "********",
+                  type: "password",
+                },
+              },
+            ]}
+            buttonProps={{ submit: { text: TABS[0] } }}
+          />
+          <GeneralForm
+            value={"signup"}
+            title={TABS[1]}
+            inputs={[
+              {
+                key: "email",
+                props: {
+                  name: "email",
+                  label: "Email",
+                  placeholder: "Please enter your email",
+                },
+              },
+              {
+                key: "firstname",
+                props: {
+                  name: "firstname",
+                  label: "First name",
+                  placeholder: "Please enter your first name",
+                },
+              },
+              {
+                key: "lastname",
+                props: {
+                  name: "lastname",
+                  label: "lastname",
+                  placeholder: "Please enter your lastname",
+                },
+              },
+              {
+                key: "password",
+                props: {
+                  name: "password",
+                  label: "Password",
+                  type: "password",
+                  placeholder: "Please enter your password",
+                },
+              },
+              {
+                key: "confirmPassword",
+                props: {
+                  name: "confirmPassword",
+                  label: "Confirm Password",
+                  type: "password",
+                  placeholder: "Confirm your password",
+                },
+              },
+            ]}
+            buttonProps={{ submit: { text: TABS[1] } }}
+          />
         </Tabs.Tabs>
       </div>
     </section>

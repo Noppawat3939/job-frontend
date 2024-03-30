@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, SelectItem } from "@/components";
+import { Button, SelectItem, Show } from "@/components";
 import { eq, noSpace } from "@/lib";
 
 import Link from "next/link";
@@ -28,7 +28,7 @@ export default function Navbar() {
 
       if (searchParams && (isSigninPath || isSignupPath)) {
         const href = `${location.origin}${location.pathname}?selected=${
-          eq(role, "employer") ? "jobseeker" : "employer"
+          eq(role, "employer") ? "employer" : "jobseeker"
         }`;
 
         router.push(href);
@@ -56,25 +56,28 @@ export default function Navbar() {
           onChange={(role) => handleSelectRole(role as typeof selectedRole)}
           className="w-[150px]"
           placeholder={ROLES.at(0)}
-          items={ROLES.map((role) => ({
+          items={ROLES?.map((role) => ({
             label: role,
             value: noSpace(role.toLowerCase()),
           }))}
         />
 
         <Button size="sm">{`${
-          selectedRole === "employer" ? "Post" : "Find"
+          eq(selectedRole, "employer") ? "Post" : "Find"
         } your job`}</Button>
-        <Button className="w-[80px]" size="sm" variant="outline" asChild>
-          <Link
-            href={`/${noSpace(
-              signinAndSignup.toLowerCase()
-            )}?selected=${noSpace(selectedRole, "_")}`}
-            shallow={false}
-          >
-            {signinAndSignup}
-          </Link>
-        </Button>
+
+        <Show when={!isSigninPath && !isSignupPath}>
+          <Button className="w-[80px]" size="sm" variant="outline" asChild>
+            <Link
+              href={`/${noSpace(
+                signinAndSignup.toLowerCase()
+              )}?selected=${noSpace(selectedRole, "_")}`}
+              shallow={false}
+            >
+              {signinAndSignup}
+            </Link>
+          </Button>
+        </Show>
       </div>
     </nav>
   );
