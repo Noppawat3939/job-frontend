@@ -14,6 +14,7 @@ export default function Navbar() {
 
   const pathname = usePathname();
 
+  const isMainPath = eq(pathname, "/");
   const isSigninPath = eq(pathname, "/signin");
   const isSignupPath = eq(pathname, "/signup");
 
@@ -40,7 +41,11 @@ export default function Navbar() {
   const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";
 
   return (
-    <nav className="px-4 py-5 flex items-center justify-between">
+    <nav
+      className={`${
+        isMainPath && "sticky top-0"
+      } backdrop-blur-md border-b border-white px-4 py-5 flex items-center justify-between`}
+    >
       <div className="flex items-center space-x-10">
         <span
           aria-label="logo"

@@ -19,7 +19,10 @@ export default function SignInWithSignUpLayout({
   if (!allowed) return goToHome();
 
   return (
-    <main role="auth-signin-signup-layout" className="h-[calc(100vh-80px)]">
+    <main
+      role="auth-signin-signup-layout"
+      className=" bg-white h-[calc(100vh-80px)]"
+    >
       {children}
     </main>
   );

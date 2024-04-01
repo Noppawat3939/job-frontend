@@ -958,6 +958,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.28.9":
+  version: 5.28.9
+  resolution: "@tanstack/query-core@npm:5.28.9"
+  checksum: 10c0/bba29392deb8eb1c58012cf298452a6ea2c03e1cf0ff17e09b39093777adcf6670c31a039d4c8ffc4a16a1f512af984cceed6351d30f377342963ce4c4b92a2b
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.28.9":
+  version: 5.28.9
+  resolution: "@tanstack/react-query@npm:5.28.9"
+  dependencies:
+    "@tanstack/query-core": "npm:5.28.9"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 10c0/2f6dcc691074f99cbd52a80f26bbc1dcad536700fda09d156ac430b917f054d1d206459be0deb6baa8933075ffcf6457925db6b76bf8634bee48805fde8d3037
+  languageName: node
+  linkType: hard
+
 "@types/json5@npm:^0.0.29":
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
@@ -3134,6 +3152,7 @@ __metadata:
     "@radix-ui/react-separator": "npm:^1.0.3"
     "@radix-ui/react-slot": "npm:^1.0.2"
     "@radix-ui/react-tabs": "npm:^1.0.4"
+    "@tanstack/react-query": "npm:^5.28.9"
     "@types/node": "npm:^20"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
