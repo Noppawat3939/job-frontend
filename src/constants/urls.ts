@@ -8,4 +8,10 @@ export const URL = {
     FORGOT_PASSWORD: "/api/auth/forgotpassword",
     FORGOT_PASSWORD_COMPANY: "/api/auth/forgotpassword/company",
   },
+  PUBLIC: {
+    GET_INDUSTRUES: "/api/public/industry",
+    GET_PROVINCES: "/api/public/province",
+    GET_JOBS: "/api/public/job/list",
+    GET_JOB: "/api/public/job/:id",
+  },
 } as const;

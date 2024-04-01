@@ -5,7 +5,7 @@ export const queryClientConfig = {
     mutations: { retryDelay: 3000 },
     queries: {
       refetchOnWindowFocus: false,
-      staleTime: 5000,
+      staleTime: 60 * 1000,
       refetchOnReconnect: false,
       retryOnMount: false,
       refetchInterval: false,

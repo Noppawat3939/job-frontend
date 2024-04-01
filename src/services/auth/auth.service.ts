@@ -3,21 +3,37 @@ import serivce from "../api";
 
 const { AUTH } = URL;
 
-export const signupWithAdmin = async () =>
-  await serivce.post(AUTH.SIGNUP_ADMIN);
+export const signupWithAdmin = async () => {
+  const { data } = await serivce.post(AUTH.SIGNUP_ADMIN);
+  return data;
+};
 
-export const signupWithUser = async () => await serivce.post(AUTH.SIGNUP_USER);
+export const signupWithUser = async () => {
+  const { data } = await serivce.post(AUTH.SIGNUP_USER);
+  return data;
+};
 
-export const signupWithCompany = async () =>
-  await serivce.post(AUTH.SIGNUP_COMPANY);
+export const signupWithCompany = async () => {
+  const { data } = await serivce.post(AUTH.SIGNUP_COMPANY);
+  return data;
+};
 
-export const signin = async () => await serivce.post(AUTH.SIGNIN);
+export const signin = async () => {
+  const { data } = await serivce.post(AUTH.SIGNIN);
+  return data;
+};
 
-export const signinWithCompany = async () =>
-  await serivce.post(AUTH.SIGNIN_COMPANY);
+export const signinWithCompany = async () => {
+  const { data } = await serivce.post(AUTH.SIGNIN_COMPANY);
+  return data;
+};
 
-export const forgotPassword = async () =>
-  await serivce.patch(AUTH.FORGOT_PASSWORD);
+export const forgotPassword = async () => {
+  const { data } = await serivce.patch(AUTH.FORGOT_PASSWORD);
+  return data;
+};
 
-export const forgotPasswordWithCompany = async () =>
-  await serivce.patch(AUTH.FORGOT_PASSWORD_COMPANY);
+export const forgotPasswordWithCompany = async () => {
+  const { data } = await serivce.patch(AUTH.FORGOT_PASSWORD_COMPANY);
+  return data;
+};
