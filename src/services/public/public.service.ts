@@ -20,6 +20,8 @@ type PbJobsResponse = ServiceResponse<{
   total: number;
 }>;
 
+type PbJobResponse = ServiceResponse<{ data: Job }>;
+
 const apikeyHeaders: AxiosRequestConfig<unknown> = {
   headers: { ["api-key"]: String(process.env.NEXT_PUBLIC_API_KEY) },
 };
@@ -43,6 +45,9 @@ export const getPublicJobs = async () => {
 };
 
 export const getPublicJob = async (id: string | number) => {
-  const { data } = await serivce.get(PUBLIC.GET_JOB.replace(":id", String(id)));
+  const { data } = await serivce.get<PbJobResponse>(
+    PUBLIC.GET_JOB.replace(":id", String(id)),
+    apikeyHeaders
+  );
   return data;
 };

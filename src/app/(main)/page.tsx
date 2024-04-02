@@ -9,7 +9,7 @@ export default function MainPage() {
   const [searchKeyword, setSearchKeyword] = useState("");
 
   const goToFindJobs = () =>
-    router.push(`/find${searchKeyword ? `?search=${searchKeyword}` : ""}`);
+    router.push(`/job${searchKeyword ? `?search=${searchKeyword}` : ""}`);
 
   return (
     <div>

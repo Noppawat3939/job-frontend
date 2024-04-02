@@ -1,5 +1,6 @@
+import { type MouseEventHandler } from "react";
 import { Badge, Card } from "@/components";
-import { eq, formatDate, mappingWorkStyle, priceUnit } from "@/lib";
+import { formatDate, mappingWorkStyle, priceUnit } from "@/lib";
 import { Job } from "@/types";
 import { Banknote, MapPin } from "lucide-react";
 
@@ -11,7 +12,7 @@ type JobPreviewProps = Omit<
   | "jobDescriptions"
   | "benefits"
   | "qualifications"
->;
+> & { onClick?: MouseEventHandler<HTMLDivElement> };
 
 export default function JobPreview({
   position,
@@ -21,11 +22,15 @@ export default function JobPreview({
   location,
   createdAt,
   urgent,
+  onClick,
 }: JobPreviewProps) {
   const displaySalary = salary?.at(0) === 0 ? salary?.at(1) : salary?.join("-");
 
   return (
-    <Card.Card className="cursor-pointer transition-all duration-200 hover:bg-slate-50 border-0">
+    <Card.Card
+      onClick={onClick}
+      className="cursor-pointer transition-all duration-200 hover:bg-slate-50 border-0"
+    >
       <Card.CardHeader>
         <span className="flex items-center justify-between">
           <Card.CardTitle aria-label="position" className="flex items-center">

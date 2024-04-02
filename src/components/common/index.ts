@@ -6,3 +6,4 @@ export * from "./show";
 export * from "./menu";
 export * from "./data-table";
 export * from "./cards";
+export * from "./section";
