@@ -9,6 +9,7 @@ export type Job = {
   createdAt: string;
   updatedAt: string;
   urgent?: boolean;
+  fulltime?: boolean;
   location: string;
   salary?: number[];
   style: WorkingStyle;

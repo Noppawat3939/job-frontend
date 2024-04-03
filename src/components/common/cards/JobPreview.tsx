@@ -1,6 +1,6 @@
 import { type MouseEventHandler } from "react";
 import { Badge, Card } from "@/components";
-import { formatDate, mappingWorkStyle, priceUnit } from "@/lib";
+import { formatDate, formatPrice, mappingWorkStyle } from "@/lib";
 import { Job } from "@/types";
 import { Banknote, MapPin } from "lucide-react";
 
@@ -24,8 +24,6 @@ export default function JobPreview({
   urgent,
   onClick,
 }: JobPreviewProps) {
-  const displaySalary = salary?.at(0) === 0 ? salary?.at(1) : salary?.join("-");
-
   return (
     <Card.Card
       onClick={onClick}
@@ -65,7 +63,7 @@ export default function JobPreview({
               className=" border-yellow-400 bg-orange-50 text-yellow-500 "
             >
               <Banknote className="w-4 h-4 mr-1" />
-              {priceUnit(String(displaySalary), "/ Month")}
+              {salary ? `${formatPrice(salary)}` : ""}
             </Badge>
             <Badge
               variant="outline"

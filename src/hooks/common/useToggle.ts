@@ -10,5 +10,10 @@ export default function useToggle() {
     []
   );
 
-  return { state: { active }, handle: { toggle: onToggle } };
+  const setToggle = (newActive: boolean) => setActive(newActive);
+
+  return {
+    state: { active },
+    handle: { toggle: onToggle, setToggle },
+  };
 }

@@ -1,1 +1,2 @@
-export { default as JobSection } from "./JobSection";
+export { default as JobDetailSectionProps } from "./JobDetailSection";
+export { default as JobHightlightSection } from "./JobHightlightSection";
