@@ -35,11 +35,7 @@ const LOCALSTORAGE_KEY = "mark_job";
 export default function ViewJobPage({ params }: ViewJobPageProps) {
   const _id = useId();
 
-  const {
-    data: job,
-    isLoading,
-    isFetched,
-  } = useQuery({
+  const { data: job, isLoading } = useQuery({
     queryKey: ["job", params.view],
     queryFn: () => publicService.getPublicJob(params.view),
     select: ({ data }) => data,

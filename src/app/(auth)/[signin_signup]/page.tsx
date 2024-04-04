@@ -21,6 +21,7 @@ export default function SignInSignUpPage({
   params,
 }: SignInSignUpPageProps) {
   const { selected } = searchParams;
+
   const router = useRouter();
 
   const handleChangeTab = useCallback(
