@@ -8,6 +8,9 @@ import { eq, noSpace } from "@/lib";
 import { GeneralForm, Tabs } from "@/components";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SigninUserSchema, signinUserSchema } from "@/schemas";
 
 type SignInSignUpPageProps = {
   params: { signin_signup: string };
@@ -24,6 +27,12 @@ export default function SignInSignUpPage({
 
   const router = useRouter();
 
+  const signinUserForm = useForm<SigninUserSchema>({
+    resolver: zodResolver(signinUserSchema),
+    defaultValues: { email: "", password: "" },
+    reValidateMode: "onSubmit",
+  });
+
   const handleChangeTab = useCallback(
     (pathname: string) => {
       const url = `${location.origin}/${pathname}${location.search}`;
@@ -32,6 +41,10 @@ export default function SignInSignUpPage({
     },
     [router]
   );
+
+  const onSubmit = (values) => {
+    console.log(values);
+  };
 
   return (
     <section className="max-md:px-4">
@@ -56,7 +69,8 @@ export default function SignInSignUpPage({
               </Tabs.TabsTrigger>
             ))}
           </Tabs.TabsList>
-          <GeneralForm
+          <GeneralForm<SignInSignUpPageProps>
+            form={signinUserForm}
             value={"signin"}
             title={TABS[0]}
             inputs={[
@@ -71,6 +85,7 @@ export default function SignInSignUpPage({
               {
                 key: "password",
                 props: {
+                  name: "password",
                   label: "Password",
                   placeholder: "********",
                   type: "password",

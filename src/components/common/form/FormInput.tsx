@@ -15,6 +15,7 @@ export default function FormInput({
   value,
   onChange,
   className,
+  name,
   ...rest
 }: FormInputProps) {
   const { state, handle } = useToggle();
