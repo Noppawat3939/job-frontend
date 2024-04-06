@@ -25,7 +25,12 @@ export default function FormInput({
   return (
     <div {...rest} className={cn("space-y-1", className)}>
       <Show when={label !== undefined}>
-        <Label htmlFor={noSpace(String(label)?.toLowerCase())}>{label}</Label>
+        <Label
+          htmlFor={noSpace(String(label)?.toLowerCase())}
+          className="capitalize"
+        >
+          {label}
+        </Label>
       </Show>
       <span className="flex items-center">
         <Input

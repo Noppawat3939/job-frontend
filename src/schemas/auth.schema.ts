@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   companyNameSchema,
+  confirmPasswordSchema,
   emailSchema,
   firstNameSchema,
   industryCompanySchema,
@@ -8,6 +9,7 @@ import {
   newPasswordSchema,
   passwordSchema,
 } from "./schemas";
+import { eq } from "@/lib";
 
 export const signinUserSchema = z.object({
   email: emailSchema.common,
@@ -20,19 +22,31 @@ export const signinCompanySchema = signinUserSchema.merge(
   })
 );
 
-export const signupUserSchema = z.object({
-  email: emailSchema.create,
-  password: passwordSchema.create,
-  firstName: firstNameSchema.create,
-  lastName: lastNameSchema.create,
-});
+export const signupUserSchema = z
+  .object({
+    firstName: firstNameSchema.create,
+    lastName: lastNameSchema.create,
+    email: emailSchema.create,
+    password: passwordSchema.create,
+    confirmPassword: confirmPasswordSchema.create,
+  })
+  .refine((field) => eq(field.password, field.confirmPassword), {
+    message: "Password and confirm password not match",
+    path: ["confirmPassword"],
+  });
 
-export const signupCompanySchema = z.object({
-  email: emailSchema.create,
-  password: passwordSchema.create,
-  companyName: companyNameSchema.create,
-  industry: industryCompanySchema.create,
-});
+export const signupCompanySchema = z
+  .object({
+    email: emailSchema.create,
+    password: passwordSchema.create,
+    companyName: companyNameSchema.create,
+    industry: industryCompanySchema.create,
+    confirmPassword: confirmPasswordSchema.create,
+  })
+  .refine((field) => eq(field.password, field.confirmPassword), {
+    message: "Password and confirm password not match",
+    path: ["confirmPassword"],
+  });
 
 export const forgotPasswordUserSchema = z.object({
   newPassword: newPasswordSchema.create,

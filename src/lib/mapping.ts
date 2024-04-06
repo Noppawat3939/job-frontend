@@ -6,3 +6,15 @@ export const mappingWorkStyle = {
   hybrid: "hybrid",
   remote: "remote",
 } as Record<WorkingStyle, string>;
+
+export const mappingFormFields = {
+  firstName: "firstname",
+  lastName: "lastname",
+  email: "email",
+  password: "password",
+  newPassword: "new password",
+  confirmPassword: "confirm password",
+  companyName: "company name",
+  industry: "industry",
+  salary: "salary",
+};

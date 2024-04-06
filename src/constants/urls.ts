@@ -3,7 +3,7 @@ export const URL = {
     SIGNUP_ADMIN: "/api/auth/signup/admin",
     SIGNUP_COMPANY: "/api/auth/signup/company",
     SIGNUP_USER: "/api/auth/signup/user",
-    SIGNIN: '"/api/auth/signin"',
+    SIGNIN: "/api/auth/signin",
     SIGNIN_COMPANY: "/api/auth/signin/company",
     FORGOT_PASSWORD: "/api/auth/forgotpassword",
     FORGOT_PASSWORD_COMPANY: "/api/auth/forgotpassword/company",
@@ -13,5 +13,8 @@ export const URL = {
     GET_PROVINCES: "/api/public/province",
     GET_JOBS: "/api/public/job/list",
     GET_JOB: "/api/public/job/:id",
+  },
+  USER: {
+    GET_ME: "/api/user/me",
   },
 } as const;

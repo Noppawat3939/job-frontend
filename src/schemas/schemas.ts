@@ -9,9 +9,10 @@ const minLenMessage = (field: string, min?: number) =>
 
 export const emailSchema = {
   create: z
-    .string({ required_error: requiredMessage("Email") })
-    .email({ message: "Email is invalid format" }),
-  common: z.string({ required_error: requiredMessage("Email") }),
+    .string()
+    .email({ message: "Email is invalid format" })
+    .min(1, { message: requiredMessage("Email") }),
+  common: z.string().min(1, { message: requiredMessage("Email") }),
 };
 
 export const passwordSchema = {
@@ -23,7 +24,15 @@ export const passwordSchema = {
     .max(PASSWORD.MAX, {
       message: `Password must be maximun ${PASSWORD.MAX} charactors`,
     }),
-  common: z.string({ required_error: requiredMessage("Password") }),
+  common: z
+    .string({ required_error: requiredMessage("Password") })
+    .min(1, { message: requiredMessage("Password") }),
+};
+
+export const confirmPasswordSchema = {
+  create: z
+    .string({ required_error: requiredMessage("Confirm password") })
+    .min(1, { message: requiredMessage("Confirm password") }),
 };
 
 export const newPasswordSchema = {
@@ -57,7 +66,9 @@ export const companyNameSchema = {
     .min(COMMON_FIELDS.MIN, {
       message: minLenMessage("Company"),
     }),
-  common: z.string({ required_error: requiredMessage("Company name") }),
+  common: z
+    .string({ required_error: requiredMessage("Company name") })
+    .min(1, { message: requiredMessage("Company name") }),
 };
 
 export const industryCompanySchema = {
