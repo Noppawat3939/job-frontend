@@ -7,3 +7,4 @@ export * from "./menu";
 export * from "./data-table";
 export * from "./cards";
 export * from "./section";
+export * from "./alert";

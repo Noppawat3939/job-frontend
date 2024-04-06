@@ -5,9 +5,9 @@ import JobSeekerImage from "@/assets/signin_signup_jobseeker.jpg";
 import EmployerImage from "@/assets/signin-signup_employer.jpg";
 import Image from "next/image";
 import { eq, mappingFormFields } from "@/lib";
-import { Button, Form, FormInput } from "@/components";
+import { Alert, Button, Form, FormInput } from "@/components";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -30,6 +30,7 @@ import { useMutation } from "@tanstack/react-query";
 import { authService } from "@/services";
 import { setCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
+import { AxiosError } from "axios";
 
 type SignInSignUpPageProps = {
   params: { signin_signup: string };
@@ -99,7 +100,13 @@ export default function SignInSignUpPage({
     };
   };
 
-  const { mutate, isPending } = useMutation({
+  const [alertSigninWithSignup, setAlertSigninWithSignup] = useState({
+    open: false,
+    title: "",
+    description: "",
+  });
+
+  const { mutate, isPending, context } = useMutation({
     //@ts-ignore
     mutationFn: mappingSigninWithSignup().service,
     onSuccess: (res) => {
@@ -110,7 +117,14 @@ export default function SignInSignUpPage({
       }
     },
     onError: (e) => {
-      console.log(e);
+      const err = e as AxiosError;
+      const errMessage = (err.response?.data as { message: string }).message;
+
+      setAlertSigninWithSignup({
+        open: true,
+        title: "Can't signup",
+        description: errMessage,
+      });
     },
   });
 
@@ -233,6 +247,14 @@ export default function SignInSignUpPage({
           </Form>
         </section>
       </div>
+
+      <Alert
+        open={alertSigninWithSignup.open}
+        description={alertSigninWithSignup.description}
+        onOpenChange={(open) =>
+          setAlertSigninWithSignup({ title: "", description: "", open })
+        }
+      />
     </section>
   );
 }

@@ -11,18 +11,23 @@ import { URL } from "@/constants";
 
 const { AUTH } = URL;
 
+type SignupResponse = { success: boolean; message: string };
+
 export const signupWithAdmin = async (body: SignupUserSchema) => {
   const { data } = await serivce.post(AUTH.SIGNUP_ADMIN, body);
   return data;
 };
 
 export const signupWithUser = async (body: SignupUserSchema) => {
-  const { data } = await serivce.post(AUTH.SIGNUP_USER, body);
+  const { data } = await serivce.post<SignupResponse>(AUTH.SIGNUP_USER, body);
   return data;
 };
 
 export const signupWithCompany = async (body: SignupCompanySchema) => {
-  const { data } = await serivce.post(AUTH.SIGNUP_COMPANY, body);
+  const { data } = await serivce.post<SignupResponse>(
+    AUTH.SIGNUP_COMPANY,
+    body
+  );
   return data;
 };
 

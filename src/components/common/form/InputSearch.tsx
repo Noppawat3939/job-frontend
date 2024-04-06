@@ -3,8 +3,7 @@ import {
   type MouseEventHandler,
   Fragment,
 } from "react";
-import { Button, Input, Show } from "@/components";
-import { Loader, Search } from "lucide-react";
+import { Button, Input } from "@/components";
 
 type InputSearchProps = {
   value?: string;
@@ -33,13 +32,11 @@ export default function InputSearch({
       />
       <Button
         role="search-btn"
-        disabled={loading || disabled}
+        loading={loading}
+        disabled={disabled}
         onClick={onSearch}
         className="text-lg rounded-lg"
       >
-        <Show when={loading} otherwise={<Search className="w-4 h-4 mr-2" />}>
-          <Loader className="animate-spin mr-2 w-4 h-4" />
-        </Show>
         {"Search"}
       </Button>
     </Fragment>
