@@ -47,15 +47,13 @@ const SIGNIN_COMPANY = { companyName: "", ...SIGNIN_USER };
 const SIGNUP_USER = {
   firstName: "",
   lastName: "",
-  email: "",
-  password: "",
+  ...SIGNIN_USER,
   confirmPassword: "",
 };
 const SIGNUP_COMPANY = {
   companyName: "",
   industry: "",
-  email: "",
-  password: "",
+  ...SIGNIN_USER,
   confirmPassword: "",
 };
 
