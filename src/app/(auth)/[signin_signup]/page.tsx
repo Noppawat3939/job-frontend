@@ -104,9 +104,24 @@ export default function SignInSignUpPage({
     description: "",
   });
 
-  const { mutate, isPending, context } = useMutation({
+  const mapping = mappingSigninWithSignup();
+
+  const form = useForm<SigninWithSignupSchemas>({
+    resolver: zodResolver(mapping.schema),
+    defaultValues: mapping.model,
+    reValidateMode: "onSubmit",
+  });
+
+  const resetForm = () => {
+    if (form.formState.errors) {
+      form.clearErrors();
+    }
+    form.reset();
+  };
+
+  const { mutate, isPending } = useMutation({
     //@ts-ignore
-    mutationFn: mappingSigninWithSignup().service,
+    mutationFn: mapping.service,
     onSuccess: (res) => {
       if (isSignin) {
         handleSigninSuccess(res.data);
@@ -135,19 +150,14 @@ export default function SignInSignUpPage({
 
   const handleSignupSuccess = (data: unknown) => {
     //TODO: doing...
-  };
 
-  const form = useForm<SigninWithSignupSchemas>({
-    resolver: zodResolver(mappingSigninWithSignup().schema),
-    defaultValues: mappingSigninWithSignup().model,
-    reValidateMode: "onSubmit",
-  });
+    resetForm();
+  };
 
   const router = useRouter();
 
   useEffect(() => {
-    form.reset();
-    form.clearErrors();
+    resetForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, params.signin_signup]);
 
@@ -199,12 +209,12 @@ export default function SignInSignUpPage({
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex-col flex">
                 <div className="flex flex-col space-y-2">
-                  {Object.keys(mappingSigninWithSignup().model).map((field) => {
+                  {Object.keys(mapping.model).map((field) => {
                     return (
                       <FormField
                         key={field}
                         control={form.control}
-                        name={field as keyof typeof SIGNIN_USER}
+                        name={field as keyof typeof mapping.model}
                         render={(formProps) => (
                           <FormItem>
                             <FormControl>
