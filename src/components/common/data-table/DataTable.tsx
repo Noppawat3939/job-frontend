@@ -1,7 +1,8 @@
 "use client";
 
-import { Show, Table } from "@/components";
+import { Show, Spinner, Table } from "@/components";
 import { isNumber, toPx } from "@/lib";
+import { Loader } from "lucide-react";
 import { Fragment } from "react";
 
 type TData = (Record<string, any> & { key: string })[];
@@ -25,7 +26,7 @@ export type DataTableProps = {
 
 export default function DataTable({
   name,
-  data: dataSources,
+  data: dataSources = [],
   columns,
   loading,
 }: Readonly<DataTableProps>) {
@@ -41,7 +42,9 @@ export default function DataTable({
         </Table.TableRow>
       </Table.TableHeader>
       {loading ? (
-        <Table.TableCaption>{"Loading"}</Table.TableCaption>
+        <Table.TableCaption>
+          <Spinner />
+        </Table.TableCaption>
       ) : (
         <Table.TableBody>
           {dataSources?.map((data, idx) => {

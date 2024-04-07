@@ -1,12 +1,29 @@
 "use client";
 
-import { type DataTableProps, DataTable, Badge } from "@/components";
-import type { UserStatus } from "@/types/user";
+import { type DataTableProps, DataTable, Badge, Alert } from "@/components";
+import type { User, UserStatus } from "@/types/user";
 import { QUERY_KEY } from "@/constants";
 import { userService } from "@/services/user";
 import { useQueries } from "@tanstack/react-query";
+import { useState } from "react";
+
+const initial = {
+  alertProps: { open: false, title: "", description: "", onOk: () => null },
+};
 
 export default function AdminPage() {
+  const [alertApproveUser, setAlertApproveUser] = useState(initial.alertProps);
+
+  const handleOpenAlertApprove = (status: UserStatus) => {
+    //TODO: handle here...
+    setAlertApproveUser({
+      ...alertApproveUser,
+      open: true,
+      title: "Are you want to approve?",
+      description: "user mock",
+    });
+  };
+
   const columns = [
     {
       key: "id",
@@ -45,8 +62,10 @@ export default function AdminPage() {
       width: "12%",
       render: (value: string) => {
         const status = value as UserStatus;
+
         return (
           <Badge
+            onClick={() => handleOpenAlertApprove(status)}
             className={
               status === "approved"
                 ? `bg-teal-500 text-white hover:bg-teal-600`
@@ -90,15 +109,22 @@ export default function AdminPage() {
       : "rejected",
   }));
 
-  const isFetchingUsers = data.at(0)?.isFetching;
+  const loading = data.at(0)?.isFetching;
 
   return (
     <div className="border h-full max-w-7xl mx-auto">
       <DataTable
-        loading={isFetchingUsers}
+        loading={loading}
         name="accounts"
-        data={(users || []) as DataTableProps["data"]}
+        data={users as DataTableProps["data"]}
         columns={columns}
+      />
+      <Alert
+        onOpenChange={() => setAlertApproveUser(initial.alertProps)}
+        open={alertApproveUser.open}
+        title={alertApproveUser.title}
+        description={alertApproveUser.description}
+        onOk={alertApproveUser.onOk}
       />
     </div>
   );
