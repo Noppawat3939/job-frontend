@@ -26,11 +26,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { authService } from "@/services";
 import { setCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import { AxiosError } from "axios";
+import { userService } from "@/services/user";
 
 type SignInSignUpPageProps = {
   params: { signin_signup: string };
@@ -103,6 +104,7 @@ export default function SignInSignUpPage({
     title: "",
     description: "",
   });
+  const [signinSuccess, setSigninSuccess] = useState(false);
 
   const mapping = mappingSigninWithSignup();
 
@@ -141,11 +143,20 @@ export default function SignInSignUpPage({
     },
   });
 
+  const { data } = useQuery({
+    queryKey: ["user"],
+    queryFn: userService.fetchUser,
+    enabled: signinSuccess,
+  });
+
+  console.log(data);
+
   const handleSigninSuccess = (token: string) => {
     const { exp } = jwtDecode(token) as DecodedToken;
     const expires = new Date(Number(exp) * 1000);
 
     setCookie("token", token, { expires });
+    setSigninSuccess(true);
   };
 
   const handleSignupSuccess = (data: unknown) => {
@@ -248,7 +259,13 @@ export default function SignInSignUpPage({
                   type="submit"
                   className="w-[60%] mt-[50px] mx-auto"
                 >
-                  {isSignin ? "Signin" : "Signup"}
+                  {isPending && isSignin
+                    ? "Sign in..."
+                    : !isPending && isSignin
+                    ? "Sign in"
+                    : isPending && !isSignin
+                    ? "Sign up..."
+                    : "Sign up"}
                 </Button>
               </div>
             </form>

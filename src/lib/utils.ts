@@ -43,7 +43,8 @@ export const formatPrice = (value: number[]) => {
 export const formatDate = (date?: string | Date | number, format?: string) =>
   dayjs(date).locale("th").format(format);
 
-export const isUndifined = <T>(value: T) => typeof value === "undefined";
+export const isUndifined = <T>(value: T) => eq(value, undefined);
+export const isNull = <T>(value: T) => eq(value, null);
 
 export const diffTime = (
   targetTime: TDate | undefined,

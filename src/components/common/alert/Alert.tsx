@@ -47,13 +47,13 @@ export default function Alert({
           {!hideCancel && (
             <Button
               variant="secondary"
-              onClick={() => onCancel || onOpenChange?.(!open)}
+              onClick={(e) => onCancel?.(e) || onOpenChange?.(!open)}
             >
-              {cancelText || "cancel"}
+              {cancelText || "Cancel"}
             </Button>
           )}
-          <Button onClick={() => onOk || onOpenChange?.(!open)}>
-            {okText || "ok"}
+          <Button onClick={(e) => onOk?.(e) || onOpenChange?.(!open)}>
+            {okText || "OK"}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
