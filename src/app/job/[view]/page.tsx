@@ -154,10 +154,10 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
       role="job-container"
       className="flex space-x-2 px-[3%] max-md:px-[2%]"
     >
-      <div className="flex-[0.2] bg-blue-200 max-md:hidden">
+      <div className="flex-[0.2] bg-sky-100 border border-sky-400 max-md:hidden">
         {"suggest other jobs"}
       </div>
-      <ContentLayout className="flex-[0.8] max-md:flex-1 max-md:px-2">
+      <ContentLayout className="flex-[0.8] max-md:flex-1 max-md:px-2 overflow-y-auto p-[20px]">
         <div className="flex justify-between">
           <h2 className="text-4xl font-medium max-md:text-3xl">
             {job?.position}
@@ -189,7 +189,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
           ))}
         </div>
 
-        <div className="flex flex-col space-y-10">
+        <div className="flex flex-col space-y-10 max-w-2xl">
           {jobDetailSections.map((section) => (
             <JobDetailSectionProps
               key={section.key}

@@ -5,7 +5,14 @@ export type User = {
   email: string;
   firstName?: string;
   lastName?: string;
+  companyProfile?: string;
+  companyName?: string;
+  industry?: string;
+  companyHistory?: string;
   role: Role;
+  active?: boolean;
   createdAt: string;
   updatedAt: string;
 };
+
+export type UserStatus = "approved" | "rejected" | "un-approve";

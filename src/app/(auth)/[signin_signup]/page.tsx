@@ -26,7 +26,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { authService } from "@/services";
 import { setCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
@@ -56,6 +56,14 @@ const SIGNUP_COMPANY = {
   industry: "",
   ...SIGNIN_USER,
   confirmPassword: "",
+};
+
+const initial = {
+  alertProps: {
+    open: false,
+    title: "",
+    description: "",
+  },
 };
 
 export default function SignInSignUpPage({
@@ -99,12 +107,9 @@ export default function SignInSignUpPage({
     };
   };
 
-  const [alertSigninWithSignup, setAlertSigninWithSignup] = useState({
-    open: false,
-    title: "",
-    description: "",
-  });
-  const [signinSuccess, setSigninSuccess] = useState(false);
+  const [alertSigninWithSignup, setAlertSigninWithSignup] = useState(
+    initial.alertProps
+  );
 
   const mapping = mappingSigninWithSignup();
 
@@ -137,26 +142,28 @@ export default function SignInSignUpPage({
 
       setAlertSigninWithSignup({
         open: true,
-        title: "Can't signup",
+        title: "Can not signup",
         description: errMessage,
       });
     },
   });
 
-  const { data } = useQuery({
-    queryKey: ["user"],
-    queryFn: userService.fetchUser,
-    enabled: signinSuccess,
-  });
-
-  console.log(data);
-
-  const handleSigninSuccess = (token: string) => {
-    const { exp } = jwtDecode(token) as DecodedToken;
+  const handleSigninSuccess = async (token: string) => {
+    const { exp, role } = jwtDecode(token) as DecodedToken;
     const expires = new Date(Number(exp) * 1000);
 
     setCookie("token", token, { expires });
-    setSigninSuccess(true);
+
+    try {
+      const { data } = await userService.fetchUser(token);
+      if (data) {
+        if (["admin", "super_admin"].includes(role)) {
+          return router.push("/home/admin");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSignupSuccess = (data: unknown) => {
@@ -181,9 +188,7 @@ export default function SignInSignUpPage({
     [router]
   );
 
-  const onSubmit = (values: SigninWithSignupSchemas) => {
-    mutate(values);
-  };
+  const onSubmit = (values: SigninWithSignupSchemas) => mutate(values);
 
   return (
     <section className="max-md:px-4">
@@ -275,10 +280,10 @@ export default function SignInSignUpPage({
 
       <Alert
         open={alertSigninWithSignup.open}
+        title={alertSigninWithSignup.title}
         description={alertSigninWithSignup.description}
-        onOpenChange={(open) =>
-          setAlertSigninWithSignup({ title: "", description: "", open })
-        }
+        hideCancel
+        onOpenChange={() => setAlertSigninWithSignup(initial.alertProps)}
       />
     </section>
   );

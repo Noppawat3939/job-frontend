@@ -6,7 +6,7 @@ import { eq, goToHome, isUndifined, noSpace } from "@/lib";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Fragment, useCallback, useState, useTransition } from "react";
+import { Fragment, useCallback, useMemo, useState, useTransition } from "react";
 import { deleteCookie } from "cookies-next";
 import { QueryCache } from "@tanstack/react-query";
 
@@ -58,6 +58,19 @@ export default function Navbar({ user }: NavbarProps) {
     });
   };
 
+  const displayLoginnedMenus = useMemo(() => {
+    if (!user) return;
+
+    if (user?.role === "user")
+      return [
+        { key: "findJob", href: "/job", label: "Find jobs" },
+        { key: "myJobs", label: "My jobs", href: "/my-jobs" },
+      ];
+
+    if (["super_admin", "admin"].includes(user.role))
+      return [{ key: "homeAdmin", label: "Home", href: "/home/admin" }];
+  }, [user]);
+
   const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";
 
   return (
@@ -80,12 +93,17 @@ export default function Navbar({ user }: NavbarProps) {
         <div className="flex items-baseline space-x-4">
           <Show when={!isUndifined(user)}>
             <div datatype="loginned-menus">
-              <Button size="sm" variant="ghost" className="font-normal">
-                <Link href={"/job"}>{"Find jobs"}</Link>
-              </Button>
-              <Button size="sm" variant="ghost" className="font-normal">
-                <Link href={"/my-jobs"}>{"My jobs"}</Link>
-              </Button>
+              {displayLoginnedMenus?.map((menu) => (
+                <Button
+                  asChild
+                  key={menu.key}
+                  size="sm"
+                  variant="ghost"
+                  className="font-normal"
+                >
+                  <Link href={menu.href}>{menu.label}</Link>
+                </Button>
+              ))}
             </div>
           </Show>
 
@@ -108,34 +126,34 @@ export default function Navbar({ user }: NavbarProps) {
             </Fragment>
           </Show>
 
-          <Show when={!isSigninPath && !isSignupPath}>
-            {user ? (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setOpenSignoutModal(true)}
+          <Show when={!isUndifined(user)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setOpenSignoutModal(true)}
+            >
+              {"Sign out"}
+            </Button>
+          </Show>
+
+          <Show when={!isSigninPath && !isSignupPath && !user}>
+            <Button className="w-[80px]" size="sm" variant="outline" asChild>
+              <Link
+                href={`/${noSpace(
+                  signinAndSignup.toLowerCase()
+                )}?selected=${noSpace(selectedRole, "_")}`}
+                shallow={false}
               >
-                {"Sign out"}
-              </Button>
-            ) : (
-              <Button className="w-[80px]" size="sm" variant="outline" asChild>
-                <Link
-                  href={`/${noSpace(
-                    signinAndSignup.toLowerCase()
-                  )}?selected=${noSpace(selectedRole, "_")}`}
-                  shallow={false}
-                >
-                  {signinAndSignup}
-                </Link>
-              </Button>
-            )}
+                {signinAndSignup}
+              </Link>
+            </Button>
           </Show>
         </div>
       </nav>
 
       <Alert
         onOpenChange={setOpenSignoutModal}
-        title={"Are you sure signout?"}
+        title={"Are you sure want to sign out?"}
         open={openSignoutModal}
         okText="Confirm"
         onOk={handleSignout}

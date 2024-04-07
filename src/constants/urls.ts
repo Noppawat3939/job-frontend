@@ -16,5 +16,6 @@ export const URL = {
   },
   USER: {
     GET_ME: "/api/user/me",
+    GET_USERS: "/api/user/all",
   },
 } as const;

@@ -7,6 +7,7 @@ import { URL } from "@/constants";
 const { USER } = URL;
 
 type MeResponse = ServiceResponse<{ data: User }>;
+type UsersResponse = ServiceResponse<{ data: User[]; total: number }>;
 
 const headersWithToken = {
   ...(getCookie("token") && {
@@ -14,6 +15,19 @@ const headersWithToken = {
   }),
 };
 
-export const fetchUser = async () => {
-  return await service.get<MeResponse>(USER.GET_ME, headersWithToken);
+export const fetchUser = async (token?: string) => {
+  const { data } = await service.get<MeResponse>(
+    USER.GET_ME,
+    token ? { headers: { Authorization: `Bearer ${token}` } } : headersWithToken
+  );
+
+  return data;
+};
+
+export const fetchUsers = async () => {
+  const { data } = await service.get<UsersResponse>(
+    USER.GET_USERS,
+    headersWithToken
+  );
+  return data;
 };
