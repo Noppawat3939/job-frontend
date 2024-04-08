@@ -1,4 +1,4 @@
-import { type MouseEventHandler } from "react";
+import { ReactNode, type MouseEventHandler } from "react";
 import { Button } from "@/components";
 import {
   AlertDialog,
@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { AlertCircleIcon, X } from "lucide-react";
 
 type AlertProps = {
   open: boolean;
@@ -19,6 +20,8 @@ type AlertProps = {
   okText?: string;
   cancelText?: string;
   hideCancel?: boolean;
+  leftIcon?: ReactNode;
+  closeable?: boolean;
 };
 
 export default function Alert({
@@ -31,13 +34,24 @@ export default function Alert({
   cancelText,
   onCancel,
   hideCancel,
+  leftIcon,
+  closeable = true,
 }: AlertProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
+        {closeable && (
+          <X
+            onClick={() => onOpenChange(!open)}
+            className="w-4 h-4 absolute top-3 right-3 cursor-pointer hover:opacity-60"
+          />
+        )}
         <AlertDialogHeader>
           {title && (
-            <AlertDialogTitle className="font-medium">{title}</AlertDialogTitle>
+            <AlertDialogTitle className="font-medium flex items-center">
+              {leftIcon && leftIcon}
+              {title}
+            </AlertDialogTitle>
           )}
           {description && (
             <AlertDialogDescription>{description}</AlertDialogDescription>
@@ -45,10 +59,7 @@ export default function Alert({
         </AlertDialogHeader>
         <AlertDialogFooter>
           {!hideCancel && (
-            <Button
-              variant="secondary"
-              onClick={(e) => onCancel?.(e) || onOpenChange?.(!open)}
-            >
+            <Button variant="secondary" onClick={(e) => onCancel?.(e)}>
               {cancelText || "Cancel"}
             </Button>
           )}

@@ -1,18 +1,10 @@
 "use client";
 
-import {
-  type LucideIcon,
-  Home,
-  Users,
-  BriefcaseBusiness,
-  ChevronRight,
-  User,
-  LogOut,
-} from "lucide-react";
+import { type LucideIcon, ChevronRight } from "lucide-react";
+import type { User } from "@/types/user";
 import { Avatar, Button, Command, Show } from "@/components";
 import { useRouter } from "next/navigation";
-import type { Role } from "@/types";
-import { eq } from "@/lib";
+import { useMemo } from "react";
 
 type Menu = {
   heading?: string;
@@ -26,49 +18,29 @@ type Menu = {
   }[];
 }[];
 
-type SidebarMenuProps = { role?: Role };
+type SidebarMenuProps = { menus: Menu; user?: User };
 
-export default function SidebarMenu({ role }: SidebarMenuProps) {
+export default function SidebarMenu({ menus, user }: SidebarMenuProps) {
   const { push } = useRouter();
 
-  const menus: Menu = [
-    {
-      items: [
-        {
-          label: "Home",
-          value: "home",
-          leftIcon: Home,
-          path: `/home/${role}`,
-          active: true,
-        },
-        {
-          label: "Accouts",
-          value: "accounts",
-          leftIcon: Users,
-          hide: eq(role, "employer"),
-          path: `/account/${role}`,
-        },
-        {
-          label: "Jobs",
-          value: "jobs",
-          leftIcon: BriefcaseBusiness,
-          path: `/job/${role}`,
-        },
-      ],
-    },
-    {
-      heading: "Setting",
-      items: [{ label: "Profile", value: "profile", leftIcon: User }],
-    },
-    {
-      items: [{ label: "Sign out", value: "signout", leftIcon: LogOut }],
-    },
-  ];
+  const displayName = useMemo(() => {
+    if (user?.firstName && user.lastName)
+      return {
+        name: `${user.firstName} ${user.lastName}`,
+        fallbackImage: `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`,
+      };
+    if (user?.firstName && !user.lastName)
+      return {
+        name: `${user.firstName}`,
+        fallbackImage: `${user.firstName.charAt(0)}`,
+      };
+    return { name: "", fallbackImage: "" };
+  }, [user]);
 
   return (
     <aside
       role="sidebar-menus"
-      className="bg-transparent h-full border-r  py-3 px-2"
+      className="bg-transparent h-full border-r py-3 px-2"
     >
       <div>
         <Button
@@ -77,11 +49,12 @@ export default function SidebarMenu({ role }: SidebarMenuProps) {
         >
           <Avatar.Avatar className="w-7 h-7 mr-2">
             <Avatar.AvatarFallback className="bg-sky-400 text-white">
-              {"SA"}
+              {displayName.fallbackImage.toUpperCase()}
             </Avatar.AvatarFallback>
           </Avatar.Avatar>
+
           <span className="flex items-center w-full justify-between">
-            {"Super Admin"}
+            {displayName.name}
             <ChevronRight className="w-4 h-4 text-slate-500" />
           </span>
         </Button>
@@ -100,7 +73,9 @@ export default function SidebarMenu({ role }: SidebarMenuProps) {
                     defaultValue={item.value}
                     onClick={() => (item.path ? push(item.path) : null)}
                     className={`${
-                      item.active ? "text-slate-500" : "text-slate-400"
+                      item.active
+                        ? "text-slate-500 font-medium"
+                        : "text-slate-400 opacity-70"
                     } flex items-center text-sm my-2 w-full p-2 cursor-pointer hover:bg-slate-50 hover:text-slate-500 transition-all duration-200`}
                   >
                     {item.leftIcon && (

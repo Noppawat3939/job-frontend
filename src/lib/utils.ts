@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { redirect } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import dayjs, { OpUnitType, QUnitType } from "dayjs";
-import { TDate } from "@/types";
+import { Role, TDate } from "@/types";
 
 require("dayjs/locale/th");
 
@@ -52,3 +52,9 @@ export const diffTime = (
   curTime?: TDate,
   qo?: QUnitType | OpUnitType
 ) => dayjs(curTime).diff(dayjs(targetTime), qo);
+
+export const mappingRolePath = {
+  admin: "admin",
+  super_admin: "admin",
+  employer: "employer",
+} as Record<Role, Role>;

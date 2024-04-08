@@ -159,6 +159,8 @@ export default function SignInSignUpPage({
       if (data) {
         if (["admin", "super_admin"].includes(role)) {
           return router.push("/home/admin");
+        } else if (["user"].includes(role)) {
+          return router.push("/job");
         }
       }
     } catch (error) {

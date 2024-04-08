@@ -1,18 +1,28 @@
-import { type PropsWithChildren } from "react";
+import { useEffect, type PropsWithChildren } from "react";
 import { Navbar } from "..";
 import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
 import { userService } from "@/services/user";
 import { isUndifined } from "@/lib";
 import { QUERY_KEY } from "@/constants";
+import { userStore } from "@/store";
 
 export default function MainLayout({ children }: Readonly<PropsWithChildren>) {
-  const { data: user } = useQuery({
+  const { user, setUser } = userStore();
+
+  const { data } = useQuery({
     queryKey: [QUERY_KEY.GET_ME, getCookie("token")],
     queryFn: () => userService.fetchUser(),
     enabled: !isUndifined(getCookie("token")),
     select: ({ data }) => data,
   });
+
+  useEffect(() => {
+    if (data && !user) {
+      setUser(data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, user]);
 
   return (
     <main

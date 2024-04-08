@@ -9,15 +9,20 @@ import { usePathname, useRouter } from "next/navigation";
 import { Fragment, useCallback, useMemo, useState, useTransition } from "react";
 import { deleteCookie } from "cookies-next";
 import { QueryCache } from "@tanstack/react-query";
+import { userStore } from "@/store";
+import { LogOut } from "lucide-react";
 
 const ROLES = ["Job Seeker", "Employer"];
 
 type NavbarProps = { user?: User };
 
 export default function Navbar({ user }: NavbarProps) {
-  const router = useRouter();
-
   const queryCache = new QueryCache();
+  const { removeUser } = userStore((store) => ({
+    removeUser: store.removeUser,
+  }));
+
+  const router = useRouter();
 
   const pathname = usePathname();
 
@@ -25,7 +30,7 @@ export default function Navbar({ user }: NavbarProps) {
   const isSigninPath = eq(pathname, "/signin");
   const isSignupPath = eq(pathname, "/signup");
 
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const [selectedRole, setSelectedRole] = useState<"job_seeker" | "employer">(
     "job_seeker"
@@ -50,6 +55,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   const handleSignout = () => {
     deleteCookie("token");
+    removeUser();
     queryCache.clear();
 
     startTransition(() => {
@@ -64,11 +70,13 @@ export default function Navbar({ user }: NavbarProps) {
     if (user?.role === "user")
       return [
         { key: "findJob", href: "/job", label: "Find jobs" },
-        { key: "myJobs", label: "My jobs", href: "/my-jobs" },
+        { key: "myJobs", label: "My jobs", href: "/my-jobs?tab=favorite" },
       ];
 
     if (["super_admin", "admin"].includes(user.role))
-      return [{ key: "homeAdmin", label: "Home", href: "/home/admin" }];
+      return [
+        { key: "homeAdmin", label: "Home", href: "/home/admin?tab=accounts" },
+      ];
   }, [user]);
 
   const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";
@@ -153,7 +161,10 @@ export default function Navbar({ user }: NavbarProps) {
 
       <Alert
         onOpenChange={setOpenSignoutModal}
+        onCancel={() => setOpenSignoutModal(false)}
         title={"Are you sure want to sign out?"}
+        closeable={false}
+        leftIcon={<LogOut className="mr-2 text-sky-400" />}
         open={openSignoutModal}
         okText="Confirm"
         onOk={handleSignout}
