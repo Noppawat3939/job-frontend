@@ -5,7 +5,7 @@ import { type PropsWithChildren } from "react";
 import { SidebarMenu } from "@/components";
 import { useParams, useSearchParams } from "next/navigation";
 import { eq, goToHome } from "@/lib";
-import { BriefcaseBusiness, Home, LogOut, User, Users } from "lucide-react";
+import { BriefcaseBusiness, LogOut, User, Users } from "lucide-react";
 import { userStore } from "@/store";
 
 export default function BackofficeLayout({

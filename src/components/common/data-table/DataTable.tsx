@@ -2,8 +2,6 @@
 
 import { Show, Spinner, Table } from "@/components";
 import { isNumber, toPx } from "@/lib";
-import { Loader } from "lucide-react";
-import { Fragment } from "react";
 
 type TData = (Record<string, any> & { key: string })[];
 
