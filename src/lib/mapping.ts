@@ -1,4 +1,4 @@
-import { WorkingStyle } from "@/types";
+import { Role, WorkingStyle } from "@/types";
 
 export const mappingWorkStyle = {
   on_site: "onsite",
@@ -18,3 +18,9 @@ export const mappingFormFields = {
   industry: "industry",
   salary: "salary",
 };
+
+export const mappingRolePath = {
+  admin: "admin",
+  super_admin: "admin",
+  employer: "employer",
+} as Record<Role, Role>;

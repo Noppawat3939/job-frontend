@@ -2,7 +2,7 @@
 
 import { type PropsWithChildren } from "react";
 import { SidebarMenu } from "@/components";
-import { eq, mappingRolePath } from "@/lib";
+import { eq } from "@/lib";
 import { userStore } from "@/store";
 import { Heart, History } from "lucide-react";
 import { useSearchParams } from "next/navigation";
