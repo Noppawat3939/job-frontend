@@ -17,5 +17,8 @@ export const URL = {
   USER: {
     GET_ME: "/api/user/me",
     GET_USERS: "/api/user/all",
+    APPROVE: "/api/user/approve/:id",
+    REJECT: "/api/user/reject/:id",
+    UN_APPROVE: "/api/user/un-approve/:id",
   },
 } as const;

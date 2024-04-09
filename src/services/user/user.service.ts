@@ -31,3 +31,30 @@ export const fetchUsers = async () => {
   );
   return data;
 };
+
+export const approveUser = async (id: number) => {
+  const { data } = await service.patch(
+    USER.APPROVE.replace(":id", String(id)),
+    undefined,
+    headersWithToken
+  );
+  return data;
+};
+
+export const rejectUser = async (id: number) => {
+  const { data } = await service.patch(
+    USER.REJECT.replace(":id", String(id)),
+    undefined,
+    headersWithToken
+  );
+  return data;
+};
+
+export const unApproveUser = async (id: number) => {
+  const { data } = await service.patch(
+    USER.UN_APPROVE.replace(":id", String(id)),
+    undefined,
+    headersWithToken
+  );
+  return data;
+};

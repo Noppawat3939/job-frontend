@@ -8,7 +8,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { AlertCircleIcon, X } from "lucide-react";
+import { X } from "lucide-react";
+import { type ButtonProps } from "@/components/ui/button";
 
 type AlertProps = {
   open: boolean;
@@ -22,6 +23,8 @@ type AlertProps = {
   hideCancel?: boolean;
   leftIcon?: ReactNode;
   closeable?: boolean;
+  okButtonProps?: ButtonProps;
+  cancelButtonProps?: ButtonProps;
 };
 
 export default function Alert({
@@ -36,6 +39,8 @@ export default function Alert({
   hideCancel,
   leftIcon,
   closeable = true,
+  okButtonProps,
+  cancelButtonProps,
 }: AlertProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -59,11 +64,18 @@ export default function Alert({
         </AlertDialogHeader>
         <AlertDialogFooter>
           {!hideCancel && (
-            <Button variant="secondary" onClick={(e) => onCancel?.(e)}>
+            <Button
+              {...cancelButtonProps}
+              variant={cancelButtonProps?.variant || "secondary"}
+              onClick={(e) => onCancel?.(e)}
+            >
               {cancelText || "Cancel"}
             </Button>
           )}
-          <Button onClick={(e) => onOk?.(e) || onOpenChange?.(!open)}>
+          <Button
+            {...okButtonProps}
+            onClick={(e) => onOk?.(e) || onOpenChange?.(!open)}
+          >
             {okText || "OK"}
           </Button>
         </AlertDialogFooter>

@@ -6,3 +6,9 @@ export const WORK_STYLES = [
   "remote",
   "on_site",
 ] as const;
+
+export const USER_STATUS = {
+  APPROVE: "approve",
+  REJECT: "reject",
+  UN_APPROVE: "un-approve",
+} as const;

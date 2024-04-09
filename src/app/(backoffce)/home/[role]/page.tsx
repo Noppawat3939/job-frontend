@@ -2,10 +2,14 @@
 
 import { type DataTableProps, DataTable, Badge, Alert } from "@/components";
 import type { User, UserStatus } from "@/types/user";
-import { QUERY_KEY } from "@/constants";
+import { QUERY_KEY, USER_STATUS } from "@/constants";
 import { userService } from "@/services/user";
 import { useQueries } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useState, useTransition } from "react";
+import { getCookie } from "cookies-next";
+import { eq, isNull, isUndifined } from "@/lib";
+import { userStore } from "@/store";
+import { useApproveUserHandler } from "@/hooks";
 
 type RowData = Pick<
   User,
@@ -15,37 +19,88 @@ type RowData = Pick<
   approve: UserStatus;
 };
 
+type AdminPageProps = {
+  searchParams: { tab: "jobs" | "accounts" };
+};
+
 const initial = {
   alertProps: {
     open: false,
     title: "",
     description: "",
-    onOk: () => null,
+    onOk: () => {},
+    onCancel: () => {},
     okText: "",
     cancelText: "",
   },
 };
 
-export default function AdminPage() {
+const QUERY_INDEX = {
+  FETCH_USERS: 0,
+} as const;
+
+export default function AdminPage({ searchParams }: AdminPageProps) {
+  const { user } = userStore();
+
   const [alertApproveUser, setAlertApproveUser] = useState(initial.alertProps);
 
-  const handleOpenAlertApprove = (data: RowData) => {
-    let alertState = {} as typeof alertApproveUser;
+  const [pending, startTransition] = useTransition();
 
-    if (data.approve === "approved") {
+  const alertError = useCallback(
+    () =>
+      setAlertApproveUser({
+        ...alertApproveUser,
+        title: "Can not approve user",
+        description: "Please try again",
+        onOk: () => setAlertApproveUser((prev) => ({ ...prev, open: false })),
+      }),
+    [alertApproveUser]
+  );
+
+  const handleApproveCompleted = () => {
+    data[QUERY_INDEX.FETCH_USERS].refetch();
+    startTransition(() =>
+      setAlertApproveUser((prev) => ({ ...prev, open: false }))
+    );
+  };
+
+  const { handle } = useApproveUserHandler(handleApproveCompleted, alertError);
+
+  const data = useQueries({
+    queries: [
+      {
+        queryKey: [QUERY_KEY.GET_USERS, getCookie("token")],
+        queryFn: userService.fetchUsers,
+        enabled: !isUndifined(user) && eq(searchParams.tab, "accounts"),
+      },
+    ],
+  });
+
+  const handleOpenAlertApprove = (data: RowData) => {
+    const alertState = {} as typeof alertApproveUser;
+
+    const id = +data.key;
+
+    if (eq(data.approve, USER_STATUS.APPROVE)) {
       alertState.title = "Are you want to reject or un approve?";
       alertState.cancelText = "Reject";
       alertState.okText = "Un approve";
+      alertState.onCancel = () => handle.reject(id);
+      alertState.onOk = () => handle.unApprove(id);
     }
-    if (data.approve === "rejected") {
+    if (eq(data.approve, USER_STATUS.REJECT)) {
       alertState.title = "Are you want to approve or un approve?";
-      alertState.cancelText = "Approve";
-      alertState.okText = "Un approve";
+      alertState.okText = "Approve";
+      alertState.cancelText = "Un approve";
+      alertState.onOk = () => handle.approve(id);
+      alertState.onCancel = () => handle.unApprove(id);
     }
-    if (data.approve === "un-approve") {
-      alertState.title = "Are you want to approve or un reject?";
-      alertState.cancelText = "Approve";
-      alertState.okText = "Reject";
+    if (eq(data.approve, USER_STATUS.UN_APPROVE)) {
+      alertState.title = "Are you want to approve or reject?";
+      alertState.okText = "Approve";
+      alertState.cancelText = "Reject";
+      alertState.onOk = () => handle.approve(id);
+      alertState.onCancel = () => handle.reject(id);
     }
 
     setAlertApproveUser({
@@ -53,40 +108,23 @@ export default function AdminPage() {
       ...alertState,
       open: true,
       description: data.email,
-      onOk: () => null,
     });
   };
 
-  const data = useQueries({
-    queries: [
-      {
-        queryKey: [QUERY_KEY.GET_USERS],
-        queryFn: userService.fetchUsers,
-      },
-    ],
-  });
-
-  const users = data.at(0)?.data?.data.map((user, userIdx) => ({
-    key: String(userIdx + 1),
-    id: user.id,
+  const users = data.at(QUERY_INDEX.FETCH_USERS)?.data?.data.map((user) => ({
+    key: String(user.id),
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role,
     approve: user.active
       ? "approved"
-      : user.active === null
+      : isNull(user.active)
       ? "un-approve"
       : "rejected",
   }));
 
   const columns = [
-    {
-      key: "id",
-      title: "User Id",
-      dataIndex: "id",
-      width: "10%",
-    },
     {
       key: "email",
       title: "Email",
@@ -124,14 +162,14 @@ export default function AdminPage() {
             <Badge
               onClick={() => handleOpenAlertApprove(data)}
               className={
-                status === "approved"
+                eq(status, "approved")
                   ? `bg-teal-500 text-white hover:bg-teal-600`
                   : undefined
               }
               variant={
-                status === "rejected"
+                eq(status, "rejected")
                   ? "destructive"
-                  : status === "approved"
+                  : eq(status, USER_STATUS.APPROVE)
                   ? "secondary"
                   : "outline"
               }
@@ -144,14 +182,18 @@ export default function AdminPage() {
     },
   ];
 
-  const loading = data.at(0)?.isFetching;
+  const loading = data.at(QUERY_INDEX.FETCH_USERS)?.isFetching;
 
   return (
     <div className="border h-full max-w-7xl mx-auto">
       <DataTable
-        loading={loading}
+        loading={loading || pending}
         name="accounts"
-        data={users as DataTableProps["data"]}
+        data={
+          eq(searchParams.tab, "accounts")
+            ? (users as DataTableProps["data"])
+            : []
+        }
         columns={columns}
       />
       <Alert
