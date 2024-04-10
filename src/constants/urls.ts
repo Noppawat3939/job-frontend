@@ -21,4 +21,14 @@ export const URL = {
     REJECT: "/api/user/reject/:id",
     UN_APPROVE: "/api/user/un-approve/:id",
   },
+  JOB: {
+    GET_JOBS: "/api/job/list",
+    GET_JOB: "/api/job/list/:id",
+    CREATE: "/api/job/create",
+    UPDATE: "/api/job/update/:id",
+    APPROVE: "/api/job/approve/:id",
+    REJECT: "/api/job/reject/:id",
+    UN_APPROVE: "/api/job/un-approve/:id",
+    DELETE: "/api/job/:id",
+  },
 } as const;

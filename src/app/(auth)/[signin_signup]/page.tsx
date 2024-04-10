@@ -31,7 +31,8 @@ import { authService } from "@/services";
 import { setCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import { AxiosError } from "axios";
-import { userService } from "@/services/user";
+import { userService } from "@/services";
+import { userStore } from "@/store";
 
 type SignInSignUpPageProps = {
   params: { signin_signup: string };
@@ -75,6 +76,8 @@ export default function SignInSignUpPage({
 
   const isSignin = eq(signin_signup, "signin");
   const isJobSeeker = eq(selected, "jobseeker");
+
+  const { setUser } = userStore((store) => ({ setUser: store.setUser }));
 
   const mappingSigninWithSignup = () => {
     const signinUser = isSignin && isJobSeeker;
@@ -156,15 +159,18 @@ export default function SignInSignUpPage({
 
     try {
       const { data } = await userService.fetchUser(token);
+
       if (data) {
+        setUser(data);
+
         if (["admin", "super_admin"].includes(role)) {
-          return router.push("/home/admin");
+          return router.push("/home/admin?tab=accounts");
         } else if (["user"].includes(role)) {
           return router.push("/job");
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

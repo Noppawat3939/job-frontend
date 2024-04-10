@@ -20,6 +20,7 @@ export type DataTableProps = {
       index: I
     ) => JSX.Element;
   }[];
+  onRow?: (arg?: TData[number]) => void;
 };
 
 export default function DataTable({
@@ -27,6 +28,7 @@ export default function DataTable({
   data: dataSources = [],
   columns,
   loading,
+  onRow,
 }: Readonly<DataTableProps>) {
   return (
     <Table.Table role={name}>
@@ -49,7 +51,7 @@ export default function DataTable({
             const { key, ...rest } = data;
 
             return (
-              <Table.TableRow key={key}>
+              <Table.TableRow key={key} onClick={() => onRow?.(data)}>
                 {Object.keys(rest).map((cell, cellIdx) => {
                   const dataSource = dataSources.at(idx);
                   const column = columns.at(cellIdx);

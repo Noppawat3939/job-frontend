@@ -7,11 +7,12 @@ export type Job = {
   position: string;
   company: string;
   createdAt: string;
-  updatedAt: string;
+  active?: boolean;
+  updatedAt?: string;
   urgent?: boolean;
   fulltime?: boolean;
   location: string;
-  salary?: number[];
+  salary: number[];
   style: WorkingStyle;
   companyProfile?: string;
   jobDescriptions?: string[];
@@ -19,4 +20,5 @@ export type Job = {
   benefits?: string[];
   transports?: string[];
   contracts?: string[];
+  industry?: string;
 };

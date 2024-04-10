@@ -2,7 +2,7 @@ import { useEffect, type PropsWithChildren } from "react";
 import { Navbar } from "..";
 import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
-import { userService } from "@/services/user";
+import { userService } from "@/services";
 import { isUndifined } from "@/lib";
 import { QUERY_KEY } from "@/constants";
 import { userStore } from "@/store";

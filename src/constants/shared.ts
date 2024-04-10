@@ -12,3 +12,5 @@ export const USER_STATUS = {
   REJECT: "reject",
   UN_APPROVE: "un-approve",
 } as const;
+
+export const DATE_FORMAT = "DD MMM YY";

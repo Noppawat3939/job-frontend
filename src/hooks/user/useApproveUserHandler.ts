@@ -1,5 +1,5 @@
 import { QUERY_KEY } from "@/constants";
-import { userService } from "@/services/user";
+import { userService } from "@/services";
 import { useMutation } from "@tanstack/react-query";
 
 export default function useApproveUserHandler(

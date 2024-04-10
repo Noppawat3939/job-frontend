@@ -1,8 +1,9 @@
 import { type MouseEventHandler } from "react";
+import type { Job } from "@/types";
 import { Badge, Card } from "@/components";
 import { formatDate, formatPrice, mappingWorkStyle } from "@/lib";
-import { Job } from "@/types";
 import { Banknote, MapPin } from "lucide-react";
+import { DATE_FORMAT } from "@/constants";
 
 type JobPreviewProps = Omit<
   Job,
@@ -38,7 +39,7 @@ export default function JobPreview({
             )}
           </Card.CardTitle>
           <sub aria-label="create-date">
-            {formatDate(createdAt, "DD MMM YY")}
+            {formatDate(createdAt, DATE_FORMAT)}
           </sub>
         </span>
         <Card.CardDescription
