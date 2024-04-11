@@ -13,4 +13,10 @@ export const USER_STATUS = {
   UN_APPROVE: "un-approve",
 } as const;
 
+export const JOB_STATUS = {
+  APPROVE: "approve",
+  REJECT: "reject",
+  UN_APPROVE: "un-approve",
+} as const;
+
 export const DATE_FORMAT = "DD MMM YY";

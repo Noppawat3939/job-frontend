@@ -22,3 +22,5 @@ export type Job = {
   contracts?: string[];
   industry?: string;
 };
+
+export type JobStatus = "approve" | "reject" | "un-approve";

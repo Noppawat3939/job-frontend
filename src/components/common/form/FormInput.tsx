@@ -41,6 +41,7 @@ export default function FormInput({
         />
         <Show when={passwordType}>
           <Button
+            type="button"
             size="icon"
             variant="outline"
             className="ml-2"
