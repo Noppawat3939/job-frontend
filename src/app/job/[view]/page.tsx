@@ -7,7 +7,13 @@ import {
   JobHightlightSection,
 } from "@/components";
 import { useChangeTitleWindow, useToggle } from "@/hooks";
-import { diffTime, eq, formatPrice, mappingWorkStyle } from "@/lib";
+import {
+  diffTime,
+  eq,
+  formatPrice,
+  mappingJobDetail,
+  mappingWorkStyle,
+} from "@/lib";
 import { publicService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -89,33 +95,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
     },
   ];
 
-  const jobDetailSections = [
-    {
-      key: "responsibilities",
-      title: "Responsibilities",
-      items: job?.jobDescriptions,
-    },
-    {
-      key: "qualifications",
-      title: "Qualifications",
-      items: job?.qualifications,
-    },
-    {
-      key: "benefits",
-      title: "Benefits",
-      items: job?.benefits,
-    },
-    {
-      key: "transports",
-      title: "Transports",
-      items: job?.transports,
-    },
-    {
-      key: "contracts",
-      title: "Contracts",
-      items: job?.contracts,
-    },
-  ];
+  const mappedJobDetail = mappingJobDetail(job);
 
   const handleMarkWithoutLogin = () => {
     const markData = {
@@ -190,7 +170,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
         </div>
 
         <div className="flex flex-col space-y-10 max-w-2xl">
-          {jobDetailSections.map((section) => (
+          {mappedJobDetail.map((section) => (
             <JobDetailSectionProps
               key={section.key}
               title={section.title}

@@ -5,17 +5,15 @@ import type { User, UserStatus } from "@/types/user";
 import { USER_STATUS } from "@/constants";
 import { useCallback, useState, useTransition } from "react";
 import { cn, eq, mappingWorkingStyleClass } from "@/lib";
-import { userStore } from "@/store";
 import { useApproveUserHandler, useFetchHomeAdmin } from "@/hooks";
 import { useRouter } from "next/navigation";
 
-type RowData = Pick<
+type PickedUser = Pick<
   User,
   "id" | "email" | "firstName" | "lastName" | "role"
-> & {
-  key: string;
-  approve: UserStatus;
-};
+>;
+
+type RowData = PickedUser & { key: string; approve: UserStatus };
 
 type AdminPageProps = {
   searchParams: { tab: "jobs" | "accounts" };
@@ -35,7 +33,6 @@ const initial = {
 };
 
 export default function AdminPage({ searchParams, params }: AdminPageProps) {
-  const { user } = userStore();
   const router = useRouter();
 
   const {
@@ -231,7 +228,11 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
         name="accounts"
         data={renderTableProps().data}
         columns={renderTableProps().columns}
-        onRow={(cb) => router.push(`/home/${params.role}/job/${cb?.key}`)}
+        onRow={(cb) =>
+          selectedAccountsTab
+            ? undefined
+            : router.push(`/home/${params.role}/job/${cb?.key}`)
+        }
       />
       <Alert
         onOpenChange={() => setAlertApproveUser(initial.alertProps)}

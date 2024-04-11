@@ -36,7 +36,7 @@ export default function useFetchHomeAdmin(
         enabled: !isUndifined(user) && selectedAccountsTab,
       },
       {
-        queryKey: ["jobs", getCookie("token")],
+        queryKey: [QUERY_KEY.GET_JOBS, getCookie("token")],
         queryFn: jobService.fetchJobs,
         enabled: !isUndifined(user) && selectedJobsTab,
       },
