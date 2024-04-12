@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useId, useMemo } from "react";
 import {
   Button,
   ContentLayout,
@@ -7,25 +8,12 @@ import {
   JobHightlightSection,
 } from "@/components";
 import { useChangeTitleWindow, useToggle } from "@/hooks";
-import {
-  diffTime,
-  eq,
-  formatPrice,
-  mappingJobDetail,
-  mappingWorkStyle,
-} from "@/lib";
+import { eq, isUndifined, mappingHightlightJob, mappingJobDetail } from "@/lib";
 import { publicService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import {
-  Banknote,
-  Bookmark,
-  BookmarkCheck,
-  BriefcaseBusiness,
-  Clock,
-  MapPin,
-} from "lucide-react";
-import { useEffect, useId } from "react";
+import { Bookmark, BookmarkCheck } from "lucide-react";
+import { QUERY_KEY } from "@/constants";
 
 type ViewJobPageProps = {
   params: { view: string };
@@ -42,7 +30,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
   const _id = useId();
 
   const { data: job, isLoading } = useQuery({
-    queryKey: ["job", params.view],
+    queryKey: [QUERY_KEY.GET_PUBLIC_JOB, params.view],
     queryFn: () => publicService.getPublicJob(params.view),
     select: ({ data }) => data,
   });
@@ -55,7 +43,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
   useEffect(() => {
     const prevMark = window.localStorage.getItem(LOCALSTORAGE_KEY);
 
-    if (typeof window !== "undefined") {
+    if (!isUndifined(window)) {
       if (prevMark) {
         const hasMarked = (JSON.parse(prevMark) as MarkDataLocalstorage[]).find(
           (data) => eq(data.mark_job_id, params.view)
@@ -68,34 +56,16 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
 
   useChangeTitleWindow(job && `${job.position} | Jobify`);
 
-  const jobHightlightSections = [
-    {
-      key: "location",
-      value: job?.location,
-      icon: <MapPin className="w-4 h-4" />,
-    },
-    {
-      key: "salary",
-      value: job?.salary ? formatPrice(job?.salary) : "",
-      icon: <Banknote className="w-4 h-4" />,
-    },
-    {
-      key: "workingStyle",
-      value: mappingWorkStyle[job?.style as keyof typeof mappingWorkStyle],
-      icon: <BriefcaseBusiness className="w-4 h-4" />,
-    },
-    {
-      key: "fulltime",
-      value: job?.fulltime ? "Full time" : "Past time",
-      icon: <Clock className="w-4 h-4" />,
-    },
-    {
-      key: "posted",
-      value: `${diffTime(job?.createdAt, undefined, "day")} days ago`,
-    },
-  ];
+  const memorizedHighlightsJob = useMemo(
+    () =>
+      mappingHightlightJob(job).map((data) => ({
+        ...data,
+        icon: <data.icon className="w-4 h-4" />,
+      })),
+    [job]
+  );
 
-  const mappedJobDetail = mappingJobDetail(job);
+  const memorizedDetailsJob = useMemo(() => mappingJobDetail(job), [job]);
 
   const handleMarkWithoutLogin = () => {
     const markData = {
@@ -160,7 +130,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
         </h3>
         <br />
         <div className="flex flex-col space-y-1 mb-3">
-          {jobHightlightSections.map((hightlight) => (
+          {memorizedHighlightsJob.map((hightlight) => (
             <JobHightlightSection
               {...hightlight}
               key={_id}
@@ -170,7 +140,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
         </div>
 
         <div className="flex flex-col space-y-10 max-w-2xl">
-          {mappedJobDetail.map((section) => (
+          {memorizedDetailsJob.map((section) => (
             <JobDetailSectionProps
               key={section.key}
               title={section.title}

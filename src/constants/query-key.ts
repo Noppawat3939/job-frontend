@@ -6,4 +6,8 @@ export const QUERY_KEY = {
   UN_APPROVE_USER: "unapprove-user",
   GET_JOB: "job",
   GET_JOBS: "jobs",
+  APPROVE_JOB: "approve-job",
+  UN_APPROVE_JOB: "unapprove-job",
+  REJECT_JOB: "reject-job",
+  GET_PUBLIC_JOB: "public-job",
 } as const;

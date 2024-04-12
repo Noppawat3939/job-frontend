@@ -8,6 +8,7 @@ const { USER } = URL;
 
 type MeResponse = ServiceResponse<{ data: User }>;
 type UsersResponse = ServiceResponse<{ data: User[]; total: number }>;
+type UserApproveResponse = ServiceResponse<undefined>;
 
 export const fetchUser = async (token?: string) => {
   const { data } = await service.get<MeResponse>(
@@ -29,7 +30,7 @@ export const fetchUsers = async () => {
 };
 
 export const approveUser = async (id: number) => {
-  const { data } = await service.patch(
+  const { data } = await service.post<UserApproveResponse>(
     USER.APPROVE.replace(":id", String(id)),
     undefined,
     getTokenWithHeaders()
@@ -38,7 +39,7 @@ export const approveUser = async (id: number) => {
 };
 
 export const rejectUser = async (id: number) => {
-  const { data } = await service.patch(
+  const { data } = await service.post<UserApproveResponse>(
     USER.REJECT.replace(":id", String(id)),
     undefined,
     getTokenWithHeaders()
@@ -47,7 +48,7 @@ export const rejectUser = async (id: number) => {
 };
 
 export const unApproveUser = async (id: number) => {
-  const { data } = await service.patch(
+  const { data } = await service.post<UserApproveResponse>(
     USER.UN_APPROVE.replace(":id", String(id)),
     undefined,
     getTokenWithHeaders()

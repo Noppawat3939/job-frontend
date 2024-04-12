@@ -12,38 +12,22 @@ import {
   JobHightlightSection,
   Spinner,
 } from "@/components";
-import {
-  Fragment,
-  useCallback,
-  useId,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
-import { DATE_FORMAT, JOB_STATUS, QUERY_KEY } from "@/constants";
+import { useCallback, useId, useMemo, useState, useTransition } from "react";
+import { JOB_STATUS, QUERY_KEY } from "@/constants";
 import {
   cn,
-  diffTime,
   eq,
-  formatDate,
-  formatPrice,
   isNull,
   isUndifined,
   mappingApproveStyleClass,
+  mappingHightlightJob,
   mappingJobApprove,
   mappingJobDetail,
-  mappingWorkStyle,
 } from "@/lib";
-import {
-  Banknote,
-  BriefcaseBusiness,
-  CalendarPlus,
-  ChevronLeft,
-  Clock,
-  MapPin,
-} from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { type ButtonProps } from "@/components/ui/button";
 import Link from "next/link";
+import { useApproveJobHandler } from "@/hooks";
 
 type AdminJobPageProps = {
   params: { id: string; role: RolePageParam };
@@ -54,7 +38,7 @@ const initial = {
     open: false,
     title: "",
     description: "",
-    onOk: () => null,
+    onOk: () => {},
     okButtonProps: {},
     okText: "",
   },
@@ -68,13 +52,27 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
     data: job,
     isFetching,
     isFetched,
+    refetch: refetchJob,
   } = useQuery({
     queryKey: [QUERY_KEY.GET_JOB, id],
     queryFn: () => jobService.fetchJob(+id),
     select: ({ data }) => data,
   });
 
-  const [, startTransition] = useTransition();
+  const alertError = useCallback(
+    () =>
+      setAlertApproveJob((prev) => ({
+        ...prev,
+        title: "Can not approve job",
+        description: "Please try again",
+        onOk: () => setAlertApproveJob(initial.alertProps),
+      })),
+    []
+  );
+
+  const { handle } = useApproveJobHandler(() => refetchJob(), alertError);
+
+  const [pending, startTransition] = useTransition();
 
   const [alertApproveJob, setAlertApproveJob] = useState(initial.alertProps);
 
@@ -91,52 +89,36 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
     if (eq(status, JOB_STATUS.APPROVE)) {
       alertState.title = "Are your sure to approve job?";
       alertState.okText = "Confirm";
+      alertState.onOk = () => handle.approve(id);
     }
     if (eq(status, JOB_STATUS.REJECT)) {
       alertState.title = "Are your sure to reject job?";
       alertState.okText = "Confirm";
+      alertState.onOk = () => handle.reject(id);
     }
     if (eq(status, JOB_STATUS.UN_APPROVE)) {
       alertState.title = "Are your sure to un approve job?";
       alertState.okText = "Confirm";
+      alertState.onOk = () => handle.unApprove(id);
     }
 
-    setAlertApproveJob((prev) => ({ ...prev, ...alertState, open: true }));
+    setAlertApproveJob((prevProps) => ({
+      ...prevProps,
+      ...alertState,
+      open: true,
+    }));
   };
 
-  const jobHightlightSections = [
-    {
-      key: "location",
-      value: job?.location,
-      icon: <MapPin className="w-4 h-4" />,
-    },
-    {
-      key: "salary",
-      value: job?.salary ? formatPrice(job?.salary) : "",
-      icon: <Banknote className="w-4 h-4" />,
-    },
-    {
-      key: "workingStyle",
-      value: mappingWorkStyle[job?.style as keyof typeof mappingWorkStyle],
-      icon: <BriefcaseBusiness className="w-4 h-4" />,
-    },
-    {
-      key: "fulltime",
-      value: job?.fulltime ? "Full time" : "Past time",
-      icon: <Clock className="w-4 h-4" />,
-    },
-    {
-      key: "created",
-      value: `${formatDate(job?.createdAt, DATE_FORMAT)} (${diffTime(
-        job?.createdAt,
-        undefined,
-        "day"
-      )} days ago)`,
-      icon: <CalendarPlus className="w-4 h-4" />,
-    },
-  ];
+  const memorizedHighlightsJob = useMemo(
+    () =>
+      mappingHightlightJob(job).map((data) => ({
+        ...data,
+        icon: <data.icon className="w-4 h-4" />,
+      })),
+    [job]
+  );
 
-  const mappedJobDetail = mappingJobDetail(job);
+  const memorizedDetailsJob = useMemo(() => mappingJobDetail(job), [job]);
 
   const displayApproveJobBtn = useMemo(() => {
     if (isNull(job?.active) || isUndifined(job?.active))
@@ -186,7 +168,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
           </div>
         </div>
       )}
-      {isFetching ? (
+      {isFetching || pending ? (
         <center className="mt-[30px]">
           <Spinner />
         </center>
@@ -210,7 +192,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
           </h3>
           <br />
           <div className="flex flex-col space-y-1 mb-3">
-            {jobHightlightSections.map((hightlight) => (
+            {memorizedHighlightsJob.map((hightlight) => (
               <JobHightlightSection
                 {...hightlight}
                 key={_id}
@@ -220,12 +202,8 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
           </div>
 
           <div className="flex flex-col space-y-10 max-w-2xl">
-            {mappedJobDetail.map((section) => (
-              <JobDetailSectionProps
-                key={section.key}
-                title={section.title}
-                items={section.items}
-              />
+            {memorizedDetailsJob.map(({ key, ...rest }) => (
+              <JobDetailSectionProps key={key} {...rest} />
             ))}
           </div>
         </ContentLayout>

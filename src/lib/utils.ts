@@ -29,6 +29,7 @@ export const noSpace = (value: string, searchValue?: string | RegExp) =>
   value.replaceAll(searchValue ?? " ", "");
 
 export const goToHome = () => redirect("/");
+
 export const goToHomeByAdmin = () => redirect("/home/admin");
 
 export const formatPrice = (value: number[], fallback?: string) => {

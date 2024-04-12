@@ -7,6 +7,7 @@ const { JOB } = URL;
 
 type JobsResponse = ServiceResponse<{ data: Job[]; total: number }>;
 type JobResponse = ServiceResponse<{ data: Job }>;
+type JobApproveResponse = ServiceResponse<undefined>;
 
 export const fetchJobs = async () => {
   const { data } = await service.get<JobsResponse>(
@@ -25,6 +26,33 @@ export const fetchJob = async (id: number) => {
 };
 
 export const createJob = async () => {
-  const { data } = await service.post(JOB.CREATE);
+  const { data } = await service.post(JOB.CREATE, getTokenWithHeaders());
+  return data;
+};
+
+export const approveJob = async (id: string) => {
+  const { data } = await service.post<JobApproveResponse>(
+    JOB.APPROVE.replace(":id", id),
+    undefined,
+    getTokenWithHeaders()
+  );
+  return data;
+};
+
+export const unApproveJob = async (id: string) => {
+  const { data } = await service.post<JobApproveResponse>(
+    JOB.UN_APPROVE.replace(":id", id),
+    undefined,
+    getTokenWithHeaders()
+  );
+  return data;
+};
+
+export const rejectJob = async (id: string) => {
+  const { data } = await service.post<JobApproveResponse>(
+    JOB.REJECT.replace(":id", id),
+    undefined,
+    getTokenWithHeaders()
+  );
   return data;
 };
