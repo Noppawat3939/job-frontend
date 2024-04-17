@@ -5,7 +5,7 @@ import JobSeekerImage from "@/assets/signin_signup_jobseeker.jpg";
 import EmployerImage from "@/assets/signin-signup_employer.jpg";
 import Image from "next/image";
 import { eq, mappingFormFields } from "@/lib";
-import { Alert, Button, Form, FormInput } from "@/components";
+import { Alert, Button, Form, FormInput, SelectItem } from "@/components";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,13 +26,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useMutation } from "@tanstack/react-query";
-import { authService } from "@/services";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { authService, publicService } from "@/services";
 import { setCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
 import { AxiosError } from "axios";
 import { userService } from "@/services";
 import { userStore } from "@/store";
+import { QUERY_KEY, ROLE } from "@/constants";
 
 type SignInSignUpPageProps = {
   params: { signin_signup: string };
@@ -76,6 +77,13 @@ export default function SignInSignUpPage({
 
   const isSignin = eq(signin_signup, "signin");
   const isJobSeeker = eq(selected, "jobseeker");
+
+  const { data: industries } = useQuery({
+    queryFn: publicService.getPublicIndustries,
+    queryKey: [QUERY_KEY.GET_INDUSTRIES],
+    select: ({ data }) =>
+      data.map((data) => ({ label: data.name, value: data.name })),
+  });
 
   const { setUser } = userStore((store) => ({ setUser: store.setUser }));
 
@@ -164,9 +172,11 @@ export default function SignInSignUpPage({
         setUser(data);
 
         if (["admin", "super_admin"].includes(role)) {
-          return router.push("/home/admin?tab=accounts");
+          return router.push("/admin?tab=accounts");
         } else if (["user"].includes(role)) {
           return router.push("/job");
+        } else if (role === "employer") {
+          return router.push("/company");
         }
       }
     } catch (error) {
@@ -239,29 +249,41 @@ export default function SignInSignUpPage({
                         key={field}
                         control={form.control}
                         name={field as keyof typeof mapping.model}
-                        render={(formProps) => (
-                          <FormItem>
-                            <FormControl>
-                              <FormInput
-                                type={
-                                  ["password", "confirmPassword"].includes(
-                                    field
-                                  )
-                                    ? "password"
-                                    : "text"
-                                }
-                                label={field}
-                                placeholder={`Please enter ${
-                                  mappingFormFields[
-                                    field as keyof typeof mappingFormFields
-                                  ]
-                                }`}
-                                {...formProps.field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        render={(formProps) => {
+                          const mappedField =
+                            mappingFormFields[
+                              field as keyof typeof mappingFormFields
+                            ];
+
+                          return (
+                            <FormItem>
+                              <FormControl>
+                                {eq(field, "industry") ? (
+                                  <SelectItem
+                                    label={mappedField}
+                                    items={industries ?? []}
+                                    placeholder={`Please enter ${mappedField}`}
+                                    {...formProps.field}
+                                  />
+                                ) : (
+                                  <FormInput
+                                    type={
+                                      ["password", "confirmPassword"].includes(
+                                        field
+                                      )
+                                        ? "password"
+                                        : "text"
+                                    }
+                                    label={mappedField}
+                                    placeholder={`Please enter ${mappedField}`}
+                                    {...formProps.field}
+                                  />
+                                )}
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
                       />
                     );
                   })}

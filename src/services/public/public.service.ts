@@ -15,12 +15,16 @@ type OmittedJob = Omit<
   | "qualifications"
 >;
 
-type PbJobsResponse = ServiceResponse<{
+type GetJobsResponse = ServiceResponse<{
   data: OmittedJob[];
   total: number;
 }>;
 
-type PbJobResponse = ServiceResponse<{ data: Job }>;
+type GetJobResponse = ServiceResponse<{ data: Job }>;
+type GetIndustriesResponse = ServiceResponse<{
+  data: { id: number; name: string }[];
+  total: number;
+}>;
 
 const apikeyHeaders: AxiosRequestConfig<unknown> = {
   headers: { ["api-key"]: String(process.env.NEXT_PUBLIC_API_KEY) },
@@ -32,12 +36,15 @@ export const getProvinces = async () => {
 };
 
 export const getPublicIndustries = async () => {
-  const { data } = await serivce.get(PUBLIC.GET_INDUSTRUES, apikeyHeaders);
+  const { data } = await serivce.get<GetIndustriesResponse>(
+    PUBLIC.GET_INDUSTRUES,
+    apikeyHeaders
+  );
   return data;
 };
 
 export const getPublicJobs = async () => {
-  const { data } = await serivce.get<PbJobsResponse>(
+  const { data } = await serivce.get<GetJobsResponse>(
     PUBLIC.GET_JOBS,
     apikeyHeaders
   );
@@ -45,7 +52,7 @@ export const getPublicJobs = async () => {
 };
 
 export const getPublicJob = async (id: string | number) => {
-  const { data } = await serivce.get<PbJobResponse>(
+  const { data } = await serivce.get<GetJobResponse>(
     PUBLIC.GET_JOB.replace(":id", String(id)),
     apikeyHeaders
   );

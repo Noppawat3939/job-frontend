@@ -1,9 +1,8 @@
 "use client";
 
-import type { Role } from "@/types";
 import { type PropsWithChildren } from "react";
 import { SidebarMenu } from "@/components";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { eq, goToHome } from "@/lib";
 import { BriefcaseBusiness, LogOut, User, Users } from "lucide-react";
 import { userStore } from "@/store";
@@ -11,7 +10,6 @@ import { userStore } from "@/store";
 export default function BackofficeLayout({
   children,
 }: Readonly<PropsWithChildren>) {
-  const param = useParams();
   const searchParam = useSearchParams();
   const searchTabParam = searchParam.get("tab") as
     | undefined
@@ -20,9 +18,7 @@ export default function BackofficeLayout({
 
   const { user } = userStore((store) => ({ user: store.user }));
 
-  const role = param.role as Role;
-
-  if (role !== "admin") return goToHome();
+  if (user && !["admin", "super_admin"].includes(user.role)) return goToHome();
 
   const menus = [
     {
@@ -31,22 +27,24 @@ export default function BackofficeLayout({
           label: "Accouts",
           value: "accounts",
           leftIcon: Users,
-          hide: eq(role, "employer"),
-          path: `/home/${role}?tab=accounts`,
+          hide: eq(user?.role, "employer"),
+          path: "/admin?tab=accounts",
           active: eq(searchTabParam, "accounts"),
         },
         {
           label: "Jobs",
           value: "jobs",
           leftIcon: BriefcaseBusiness,
-          path: `/home/${role}?tab=jobs`,
+          path: "/admin?tab=jobs",
           active: eq(searchTabParam, "jobs"),
         },
       ],
     },
     {
       heading: "Setting",
-      items: [{ label: "Profile", value: "profile", leftIcon: User }],
+      items: [
+        { label: "Profile", value: "profile", leftIcon: User, disabled: true },
+      ],
     },
     {
       items: [{ label: "Sign out", value: "signout", leftIcon: LogOut }],

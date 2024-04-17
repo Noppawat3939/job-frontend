@@ -67,16 +67,14 @@ export default function Navbar({ user }: NavbarProps) {
   const displayLoginnedMenus = useMemo(() => {
     if (!user) return;
 
-    if (user?.role === "user")
+    if (eq(user?.role, "user"))
       return [
         { key: "findJob", href: "/job", label: "Find jobs" },
         { key: "myJobs", label: "My jobs", href: "/my-jobs?tab=favorite" },
       ];
 
     if (["super_admin", "admin"].includes(user.role))
-      return [
-        { key: "homeAdmin", label: "Home", href: "/home/admin?tab=accounts" },
-      ];
+      return [{ key: "homeAdmin", label: "Home", href: "/admin?tab=accounts" }];
   }, [user]);
 
   const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";
@@ -128,9 +126,6 @@ export default function Navbar({ user }: NavbarProps) {
                   value: noSpace(role.toLowerCase()),
                 }))}
               />
-              <Button size="sm">{`${
-                eq(selectedRole, "employer") ? "Post" : "Find"
-              } your job`}</Button>
             </Fragment>
           </Show>
 

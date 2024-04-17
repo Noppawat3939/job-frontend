@@ -177,6 +177,13 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
       title: "Urgent",
       dataIndex: "urgent",
       width: "10%",
+      render: (text: string) => (
+        <p
+          className={`${text ? "text-red-500 font-medium" : "text-slate-900"}`}
+        >
+          {text || "-"}
+        </p>
+      ),
     },
     {
       key: "salary",
@@ -229,9 +236,7 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
         data={renderTableProps().data}
         columns={renderTableProps().columns}
         onRow={(cb) =>
-          selectedAccountsTab
-            ? undefined
-            : router.push(`/home/${params.role}/job/${cb?.key}`)
+          selectedAccountsTab ? undefined : router.push(`/admin/job/${cb?.key}`)
         }
       />
       <Alert

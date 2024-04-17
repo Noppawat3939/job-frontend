@@ -61,7 +61,7 @@ export default function useFetchHomeAdmin(
     company: job.company,
     position: job.position,
     fulltime: mappingFulltime(job.fulltime),
-    urgent: mappingUrgetJob(job.urgent, "-"),
+    urgent: mappingUrgetJob(job.urgent, ""),
     salary: formatPrice(job?.salary),
     style: mappingWorkStyle[job.style],
     createdAt: formatDate(job.createdAt, DATE_FORMAT),

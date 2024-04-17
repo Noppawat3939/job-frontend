@@ -15,6 +15,7 @@ type Menu = {
     active?: boolean;
     path?: string;
     hide?: boolean;
+    disabled?: boolean;
   }[];
 }[];
 
@@ -71,9 +72,14 @@ export default function SidebarMenu({ menus, user }: SidebarMenuProps) {
                 <Show key={`item_${itemIdx}`} when={!item.hide}>
                   <div
                     defaultValue={item.value}
-                    onClick={() => (item.path ? push(item.path) : null)}
+                    aria-disabled={item.disabled}
+                    onClick={() =>
+                      item.path && !item.disabled ? push(item.path) : null
+                    }
                     className={`${
-                      item.active
+                      item.disabled
+                        ? "opacity-20 !cursor-default !hover:bg-transparent"
+                        : item.active
                         ? "text-slate-500 font-medium"
                         : "text-slate-400 opacity-70"
                     } flex items-center text-sm my-2 w-full p-2 cursor-pointer hover:bg-slate-50 hover:text-slate-500 transition-all duration-200`}

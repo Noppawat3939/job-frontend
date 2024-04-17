@@ -145,11 +145,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
       {isFetched && (
         <div className="flex items-end justify-between space-x-2 py-2 px-4 shadow-sm">
           <Button asChild size="icon" className="h-fit my-auto" variant="link">
-            <Link
-              href={"/home/admin?tab=jobs"}
-              shallow
-              referrerPolicy="no-referrer"
-            >
+            <Link href={"/admin?tab=jobs"} shallow referrerPolicy="no-referrer">
               <ChevronLeft className="w-5 h-5" />
             </Link>
           </Button>
