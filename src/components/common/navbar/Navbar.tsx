@@ -74,7 +74,15 @@ export default function Navbar({ user }: NavbarProps) {
       ];
 
     if (["super_admin", "admin"].includes(user.role))
-      return [{ key: "homeAdmin", label: "Home", href: "/admin?tab=accounts" }];
+      return [
+        {
+          key: "homeAdmin",
+          label: "Home",
+          href: eq(user.role, "admin")
+            ? "/admin?tab=jobs"
+            : "/admin?tab=accounts",
+        },
+      ];
   }, [user]);
 
   const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";

@@ -1,6 +1,6 @@
 "use client";
 
-import { type PropsWithChildren } from "react";
+import { useEffect, type PropsWithChildren } from "react";
 import { SidebarMenu } from "@/components";
 import { useSearchParams } from "next/navigation";
 import { eq, goToHome } from "@/lib";
@@ -18,6 +18,19 @@ export default function BackofficeLayout({
 
   const { user } = userStore((store) => ({ user: store.user }));
 
+  useEffect(() => {
+    if (searchTabParam && user?.role) {
+      const allowedSuperAdmin =
+        user.role === "super_admin" &&
+        ["accounts", "jobs"].includes(searchTabParam);
+
+      const allowedAdmin =
+        eq(user.role, "admin") && ["jobs"].includes(searchTabParam);
+
+      if (!allowedAdmin && !allowedSuperAdmin) return goToHome();
+    }
+  }, [searchTabParam, user?.role]);
+
   if (user && !["admin", "super_admin"].includes(user.role)) return goToHome();
 
   const menus = [
@@ -27,7 +40,7 @@ export default function BackofficeLayout({
           label: "Accouts",
           value: "accounts",
           leftIcon: Users,
-          hide: eq(user?.role, "employer"),
+          hide: user?.role && ["employer", "admin"].includes(user.role),
           path: "/admin?tab=accounts",
           active: eq(searchTabParam, "accounts"),
         },

@@ -33,7 +33,10 @@ export default function useFetchHomeAdmin(
       {
         queryKey: [QUERY_KEY.GET_USERS, getCookie("token")],
         queryFn: userService.fetchUsers,
-        enabled: !isUndifined(user) && selectedAccountsTab,
+        enabled:
+          !isUndifined(user) &&
+          selectedAccountsTab &&
+          eq(user?.role, "super_admin"),
       },
       {
         queryKey: [QUERY_KEY.GET_JOBS, getCookie("token")],

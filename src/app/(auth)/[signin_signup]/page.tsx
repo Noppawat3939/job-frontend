@@ -33,7 +33,7 @@ import { jwtDecode } from "jwt-decode";
 import { AxiosError } from "axios";
 import { userService } from "@/services";
 import { userStore } from "@/store";
-import { QUERY_KEY, ROLE } from "@/constants";
+import { QUERY_KEY } from "@/constants";
 
 type SignInSignUpPageProps = {
   params: { signin_signup: string };
@@ -171,13 +171,14 @@ export default function SignInSignUpPage({
       if (data) {
         setUser(data);
 
-        if (["admin", "super_admin"].includes(role)) {
-          return router.push("/admin?tab=accounts");
-        } else if (["user"].includes(role)) {
-          return router.push("/job");
-        } else if (role === "employer") {
-          return router.push("/company");
-        }
+        const mappingPathWithRole = {
+          super_admin: "/admin?tab=accounts",
+          admin: "/admin?tab=jobs",
+          user: "/job",
+          employer: "/company",
+        };
+
+        router.push(mappingPathWithRole[role]);
       }
     } catch (error) {
       console.error(error);
