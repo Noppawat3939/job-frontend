@@ -15,13 +15,13 @@ type OmittedJob = Omit<
   | "qualifications"
 >;
 
-type GetJobsResponse = ServiceResponse<{
+export type GetJobsResponse = ServiceResponse<{
   data: OmittedJob[];
   total: number;
 }>;
 
 type GetJobResponse = ServiceResponse<{ data: Job }>;
-type GetIndustriesResponse = ServiceResponse<{
+export type GetIndustriesResponse = ServiceResponse<{
   data: { id: number; name: string }[];
   total: number;
 }>;

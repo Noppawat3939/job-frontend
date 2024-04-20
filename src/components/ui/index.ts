@@ -13,3 +13,4 @@ export { Badge } from "./badge";
 export { Label } from "./label";
 export { Skeleton } from "./skeleton";
 export { Form } from "./form";
+export { Slider } from "./slider";

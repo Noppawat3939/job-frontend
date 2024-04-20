@@ -32,14 +32,16 @@ export const goToHome = () => redirect("/");
 
 export const goToHomeByAdmin = () => redirect("/home/admin");
 
+export const formatNumber = (value: number | string) =>
+  Intl.NumberFormat(TH).format(Number(value));
+
 export const formatPrice = (value: number[], fallback?: string) => {
-  if (value.length === 1)
-    return `${Intl.NumberFormat(TH).format(Number(value))} THB`;
+  if (value.length === 1) return `${formatNumber(Number(value))} THB`;
 
   if (value.length === 2) {
     const [min, max] = value;
-    const formattedMin = Intl.NumberFormat(TH).format(Number(min));
-    const formattedMax = Intl.NumberFormat(TH).format(Number(max));
+    const formattedMin = formatNumber(Number(min));
+    const formattedMax = formatNumber(Number(max));
 
     return `${formattedMin} - ${formattedMax} THB`;
   }
