@@ -28,14 +28,16 @@ export default function InputSearch({
         onChange={onChange}
         aria-label="search-input"
         placeholder="Enter your keyword"
-        className="text-lg bg-transparent outline-none border-none ring-offset-transparent focus-visible:ring-transparent placeholder:text-foreground-50"
+        className="text-lg bg-transparent outline-none border-none ring-offset-transparent focus-visible:ring-transparent placeholder:text-foreground-50 max-sm:text-sm"
       />
       <Button
         role="search-btn"
         loading={loading}
         disabled={disabled}
         onClick={onSearch}
-        className="text-lg rounded-lg"
+        variant="ghost"
+        size="sm"
+        className="text-lg rounded-lg text-slate-400 max-sm:text-sm"
       >
         {"Search"}
       </Button>

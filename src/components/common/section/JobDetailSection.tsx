@@ -22,10 +22,9 @@ export default function JobDetailSection({
         {items.map((item, idx) => (
           <li
             key={`${noSpace(title)}_${idx}`}
+            dangerouslySetInnerHTML={{ __html: item }}
             className="text-slate-700 ml-10 max-md:text-[15px]"
-          >
-            {item}
-          </li>
+          />
         ))}
       </ul>
     </div>

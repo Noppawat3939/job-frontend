@@ -1,15 +1,17 @@
 "use client";
 
 import {
+  Button,
   FormInput,
-  Input,
   JobPreview,
   JobPreviewLoader,
   Label,
   SelectItem,
 } from "@/components";
+import { WORK_STYLES } from "@/constants";
 import { useFetchJobsUser } from "@/hooks";
 import { formatNumber } from "@/lib";
+import { LayoutGrid, List } from "lucide-react";
 import Link from "next/link";
 import { useId, useState } from "react";
 
@@ -35,7 +37,7 @@ export default function FindJobs() {
 
   const {
     jobsQuery,
-    state: { jobs, industries },
+    state: { jobs, industries, provinces },
   } = useFetchJobsUser();
 
   const salaryOptions = {
@@ -59,24 +61,26 @@ export default function FindJobs() {
 
   return (
     <section className="flex h-[calc(100vh-80px)]" role="jobs-container">
-      <div className="h-full py-4 px-3 flex-[0.25] max-lg:flex-[0.3] rounded-lg shadow-md bg-sky-100">
+      <div className="h-full py-4 px-3 flex-[0.25] max-lg:flex-[0.3] rounded-lg shadow-md bg-sky-200">
         <div className="flex flex-col gap-[16px]">
-          <FormInput
-            label="Search"
-            placeholder="Search position, keyword or company name..."
-          />
+          <span className="text-end text-xs cursor-pointer hover:opacity-70">
+            {"Clear All"}
+          </span>
 
           <SelectItem
             items={industries.map((industry) => ({
-              label: industry.name,
+              label: industry.name?.toLowerCase(),
               value: industry.name,
             }))}
-            label="Search by industry"
+            label="Industry"
             className="border-2 mt-[-8px]"
           />
 
           <div className="flex space-y-1 flex-col">
-            <div className="flex items-baseline justify-between">
+            <div
+              datatype="salary"
+              className="flex items-baseline justify-between"
+            >
               <Label>{"Search by salary"}</Label>
               <span className="cursor-pointer text-red-500 font-medium">
                 {"reset"}
@@ -98,9 +102,58 @@ export default function FindJobs() {
               />
             </div>
           </div>
+
+          <SelectItem
+            label="Job type"
+            items={[
+              { label: "full time", value: "fulltime" },
+              { label: "past time", value: "pasttime" },
+            ]}
+          />
+
+          <SelectItem
+            label="Work style"
+            items={WORK_STYLES.map((style) => ({
+              label: style.replaceAll("_", " "),
+              value: style,
+            }))}
+          />
+
+          <SelectItem
+            label="Province"
+            items={provinces.map((province) => ({
+              value: province.code,
+              label: province.name.th,
+            }))}
+          />
         </div>
       </div>
-      <div className="flex-[0.75] flex-col flex space-y-2 px-4 max-lg:flex-[0.7] overflow-y-scroll">
+      <div className="flex-[0.75] flex-col flex space-y-5 px-4 max-lg:flex-[0.7] overflow-y-scroll">
+        <div className="flex items-stretch">
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex font-normal text-slate-400 items-center hover:bg-slate-100"
+            role="search-btn"
+          >
+            {"Search position, company or keyword"}
+            <kbd className="bg-slate-100 ml-2 text-xs flex gap-1 items-center py-1 px-2  rounded-sm text-slate-400">
+              <span className="text-sm">⌘</span>K
+            </kbd>
+          </Button>
+          <div
+            role="job-layout"
+            className="flex text-sm rounded-md items-center ml-auto w-fit"
+          >
+            <p className="mr-1 text-slate-600">{"View"}</p>
+            <Button variant="ghost" size="icon">
+              <List className="w-5 h-5" />
+            </Button>
+            <Button variant="ghost" size="icon">
+              <LayoutGrid className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
         {jobsQuery.isFetching &&
           fakeJobsLoader.map((loader) => (
             <JobPreviewLoader key={`loader_${_id}_${loader}`} />

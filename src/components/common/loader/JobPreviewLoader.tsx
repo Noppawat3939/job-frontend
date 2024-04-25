@@ -2,7 +2,7 @@ import { Card, Skeleton } from "@/components";
 
 export default function JobPreviewLoader() {
   return (
-    <Card.Card>
+    <Card.Card className="border border-slate-100 shadow-sm">
       <Card.CardHeader className="flex flex-col space-y-3">
         <Skeleton className="h-6 w-[250px]" />
         <Skeleton className="h-4 w-[200px]" />

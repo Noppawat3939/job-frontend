@@ -18,3 +18,9 @@ export type DecodedToken = Pick<JwtPayload, "exp" | "iat"> & {
   role: Role;
   id: number;
 };
+
+export type Province = {
+  id: number;
+  name: Record<"th" | "en", string>;
+  code: string;
+};

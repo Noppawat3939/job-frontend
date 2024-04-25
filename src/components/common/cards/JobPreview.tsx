@@ -28,7 +28,7 @@ export default function JobPreview({
   return (
     <Card.Card
       onClick={onClick}
-      className="cursor-pointer transition-all duration-200 hover:bg-slate-50 border-0"
+      className="cursor-pointer transition-all duration-300 hover:bg-slate-50 border-0"
     >
       <Card.CardHeader>
         <span className="flex items-center justify-between">

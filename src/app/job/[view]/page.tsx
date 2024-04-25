@@ -14,6 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { QUERY_KEY } from "@/constants";
+import cover from "@/assets/cover/job_cover.jpg";
+import Image from "next/image";
 
 type ViewJobPageProps = {
   params: { view: string };
@@ -107,8 +109,13 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
       <div className="flex-[0.2] bg-sky-100 border border-sky-400 max-md:hidden">
         {"suggest other jobs"}
       </div>
-      <ContentLayout className="flex-[0.8] max-md:flex-1 max-md:px-2 overflow-y-auto p-[20px]">
-        <div className="flex justify-between">
+      <ContentLayout className="flex-[0.8] max-md:flex-1 max-md:px-2 overflow-y-auto pb-[20px]">
+        <Image
+          className="max-h-[250px] max-md:max-h-[200px] object-cover w-full bg-right"
+          src={cover}
+          alt="job-cover"
+        />
+        <div className="py-3 flex justify-between sticky top-0 bg-white z-10">
           <h2 className="text-4xl font-medium max-md:text-3xl">
             {job?.position}
           </h2>
@@ -125,29 +132,30 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
             )}
           </Button>
         </div>
-        <h3 className="text-sky-500 opacity-70 text-lg max-md:text-[15px]">
+        <h3 className="text-sky-500 opacity-70 text-lg max-md:text-[15px] z-0">
           {job?.company}
         </h3>
-        <br />
-        <div className="flex flex-col space-y-1 mb-3">
-          {memorizedHighlightsJob.map((hightlight) => (
-            <JobHightlightSection
-              {...hightlight}
-              key={_id}
-              loading={isLoading}
-            />
-          ))}
-        </div>
+        <section className="px-3">
+          <div className="flex flex-col space-y-1 mb-3">
+            {memorizedHighlightsJob.map((hightlight) => (
+              <JobHightlightSection
+                {...hightlight}
+                key={_id}
+                loading={isLoading}
+              />
+            ))}
+          </div>
 
-        <div className="flex flex-col space-y-10 max-w-2xl">
-          {memorizedDetailsJob.map((section) => (
-            <JobDetailSectionProps
-              key={section.key}
-              title={section.title}
-              items={section.items}
-            />
-          ))}
-        </div>
+          <div className="flex flex-col space-y-10 max-w-2xl">
+            {memorizedDetailsJob.map((section) => (
+              <JobDetailSectionProps
+                key={section.key}
+                title={section.title}
+                items={section.items}
+              />
+            ))}
+          </div>
+        </section>
       </ContentLayout>
     </section>
   );
