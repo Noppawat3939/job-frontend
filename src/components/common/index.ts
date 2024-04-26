@@ -9,3 +9,4 @@ export * from "./cards";
 export * from "./section";
 export * from "./alert";
 export * from "./loader";
+export * from "./search";

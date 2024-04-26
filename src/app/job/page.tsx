@@ -5,10 +5,11 @@ import {
   FormInput,
   JobPreview,
   JobPreviewLoader,
+  JobsSearch,
   Label,
   SelectItem,
 } from "@/components";
-import { WORK_STYLES } from "@/constants";
+import { JOB_TYPE, WORK_STYLES } from "@/constants";
 import { useFetchJobsUser } from "@/hooks";
 import { formatNumber } from "@/lib";
 import { LayoutGrid, List } from "lucide-react";
@@ -59,74 +60,38 @@ export default function FindJobs() {
     ],
   };
 
+  const displayFilterOptions = {
+    industries: industries.map((industry) => ({
+      label: industry.name?.toLowerCase(),
+      value: industry.name,
+    })),
+    salary: salaryOptions,
+    jobType: Object.values(JOB_TYPE).map((value) => ({ label: value, value })),
+    workStyle: WORK_STYLES.map((style) => ({
+      label: style.replaceAll("_", " "),
+      value: style,
+    })),
+    provinces: provinces.map((province) => ({
+      label: province.name.th,
+      value: province.code,
+    })),
+  };
+
+  const handleSearch = (
+    values?: Record<
+      | Exclude<keyof typeof displayFilterOptions, "salary">
+      | "salaryTo"
+      | "salaryFrom",
+      string
+    >
+  ) => {
+    console.log(values);
+  };
+
   return (
     <section className="flex h-[calc(100vh-80px)]" role="jobs-container">
-      <div className="h-full py-4 px-3 flex-[0.25] max-lg:flex-[0.3] rounded-lg shadow-md bg-sky-200">
-        <div className="flex flex-col gap-[16px]">
-          <span className="text-end text-xs cursor-pointer hover:opacity-70">
-            {"Clear All"}
-          </span>
-
-          <SelectItem
-            items={industries.map((industry) => ({
-              label: industry.name?.toLowerCase(),
-              value: industry.name,
-            }))}
-            label="Industry"
-            className="border-2 mt-[-8px]"
-          />
-
-          <div className="flex space-y-1 flex-col">
-            <div
-              datatype="salary"
-              className="flex items-baseline justify-between"
-            >
-              <Label>{"Search by salary"}</Label>
-              <span className="cursor-pointer text-red-500 font-medium">
-                {"reset"}
-              </span>
-            </div>
-            <div className="flex gap-2 items-center">
-              <SelectItem
-                key="filter-salary-from"
-                items={salaryOptions.from}
-                placeholder="from"
-                value={String(filterParamas.salary.from)}
-              />
-              {"-"}
-              <SelectItem
-                key="filter-salary-to"
-                items={salaryOptions.to}
-                placeholder="to"
-                value={String(filterParamas.salary.to)}
-              />
-            </div>
-          </div>
-
-          <SelectItem
-            label="Job type"
-            items={[
-              { label: "full time", value: "fulltime" },
-              { label: "past time", value: "pasttime" },
-            ]}
-          />
-
-          <SelectItem
-            label="Work style"
-            items={WORK_STYLES.map((style) => ({
-              label: style.replaceAll("_", " "),
-              value: style,
-            }))}
-          />
-
-          <SelectItem
-            label="Province"
-            items={provinces.map((province) => ({
-              value: province.code,
-              label: province.name.th,
-            }))}
-          />
-        </div>
+      <div className="h-full py-4 px-3 flex-[0.25] max-lg:flex-[0.3] rounded-lg shadow-sm bg-gradient-to-t from-sky-100 to-sky-200">
+        <JobsSearch {...displayFilterOptions} onSearch={handleSearch} />
       </div>
       <div className="flex-[0.75] flex-col flex space-y-5 px-4 max-lg:flex-[0.7] overflow-y-scroll">
         <div className="flex items-stretch">

@@ -1,4 +1,6 @@
-import { WORK_STYLES } from "@/constants";
+import { WORK_STYLES, JOB_TYPE } from "@/constants";
+
+const jobType = Object.values(JOB_TYPE);
 
 export type WorkingStyle = (typeof WORK_STYLES)[number];
 
@@ -24,3 +26,5 @@ export type Job = {
 };
 
 export type JobStatus = "approve" | "reject" | "un-approve";
+
+export type JobType = keyof typeof jobType;
