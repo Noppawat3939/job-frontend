@@ -13,6 +13,7 @@ export const URL = {
     GET_PROVINCES: "/api/public/province",
     GET_JOBS: "/api/public/job/list",
     GET_JOB: "/api/public/job/:id",
+    GET_JOB_CATEGORIES: "/api/public/job-categories",
   },
   USER: {
     GET_ME: "/api/user/me",

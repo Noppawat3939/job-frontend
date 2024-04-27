@@ -10,6 +10,8 @@ type JobsSearchProps = {
   jobType?: Items;
   workStyle?: Items;
   provinces?: Items;
+  categories?: Items;
+  experiences?: Items;
   onSearch?: (arg?: Record<string, string>) => void;
 };
 
@@ -20,6 +22,8 @@ type SearchValues = {
   salaryFrom: string;
   salaryTo: string;
   province: string;
+  category: string;
+  experience: string;
 };
 
 const FILTER_KEY = {
@@ -28,6 +32,8 @@ const FILTER_KEY = {
   WORK_STYLE: "work-style-filter-options",
   SALARY: "salary-filter-options",
   PROVINCE: "province-filter-options",
+  CATEGORY: "category-filter-options",
+  EXP: "experience-filter-options",
 } as const;
 
 const initial = {
@@ -37,6 +43,8 @@ const initial = {
   province: "",
   workStyle: "",
   jobType: "",
+  category: "",
+  experience: "",
 };
 
 export default function JobsSearch({
@@ -46,6 +54,8 @@ export default function JobsSearch({
   workStyle,
   provinces,
   onSearch,
+  categories,
+  experiences,
 }: JobsSearchProps) {
   const [searchValues, setSearchValues] =
     useState<Partial<SearchValues>>(initial);
@@ -154,6 +164,27 @@ export default function JobsSearch({
           items={provinces ?? []}
           value={searchValues.province}
           onChange={(value) => onSelected("province", value)}
+        />
+      </Show>
+
+      <Show
+        key={FILTER_KEY.CATEGORY}
+        when={categories && categories?.length > 0}
+      >
+        <SelectItem
+          label="Category"
+          items={categories ?? []}
+          value={searchValues.category}
+          onChange={(value) => onSelected("category", value)}
+        />
+      </Show>
+
+      <Show key={FILTER_KEY.EXP} when={experiences && experiences?.length > 0}>
+        <SelectItem
+          label="Experience"
+          items={experiences ?? []}
+          value={searchValues.experience}
+          onChange={(value) => onSelected("experience", value)}
         />
       </Show>
 

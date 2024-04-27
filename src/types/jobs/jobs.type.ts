@@ -1,8 +1,8 @@
-import { WORK_STYLES, JOB_TYPE } from "@/constants";
-
-const jobType = Object.values(JOB_TYPE);
+import { WORK_STYLES, JOB_TYPE, JOB_EXP_LEVEL } from "@/constants";
 
 export type WorkingStyle = (typeof WORK_STYLES)[number];
+export type JobType = (typeof JOB_TYPE)[number];
+export type JobExperienceLevel = (typeof JOB_EXP_LEVEL)[number];
 
 export type Job = {
   id: number;
@@ -12,7 +12,7 @@ export type Job = {
   active?: boolean;
   updatedAt?: string;
   urgent?: boolean;
-  fulltime?: boolean;
+  jobType: JobType;
   location: string;
   salary: number[];
   style: WorkingStyle;
@@ -23,8 +23,13 @@ export type Job = {
   transports?: string[];
   contracts?: string[];
   industry?: string;
+  experienceLevel: JobExperienceLevel;
 };
 
 export type JobStatus = "approve" | "reject" | "un-approve";
 
-export type JobType = keyof typeof jobType;
+export type JobCategory = {
+  id: number;
+  category_key: string;
+  category_name: string;
+};

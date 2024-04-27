@@ -2,19 +2,17 @@
 
 import {
   Button,
-  FormInput,
+  DialogInputSearch,
   JobPreview,
   JobPreviewLoader,
   JobsSearch,
-  Label,
-  SelectItem,
 } from "@/components";
-import { JOB_TYPE, WORK_STYLES } from "@/constants";
+import { JOB_EXP_LEVEL, JOB_TYPE, WORK_STYLES } from "@/constants";
 import { useFetchJobsUser } from "@/hooks";
 import { formatNumber } from "@/lib";
 import { LayoutGrid, List } from "lucide-react";
 import Link from "next/link";
-import { useId, useState } from "react";
+import { useId } from "react";
 
 const fakeJobsLoader = Array.from({ length: 8 }).fill("");
 
@@ -23,22 +21,12 @@ const SALARY_OPTIONS = {
   to: [0, 10000, 20000, 40000, 80000, 100000, 200000],
 };
 
-const initial = {
-  filter: {
-    search: "",
-    industry: "",
-    salary: { from: 0, to: 0 },
-  },
-};
-
 export default function FindJobs() {
   const _id = useId();
 
-  const [filterParamas, setFilterParams] = useState(initial.filter);
-
   const {
     jobsQuery,
-    state: { jobs, industries, provinces },
+    state: { jobs, industries, provinces, categories },
   } = useFetchJobsUser();
 
   const salaryOptions = {
@@ -75,6 +63,14 @@ export default function FindJobs() {
       label: province.name.th,
       value: province.code,
     })),
+    categories: categories.map((category) => ({
+      label: category.category_name,
+      value: category.category_key,
+    })),
+    experiences: Object.values(JOB_EXP_LEVEL).map((exp) => ({
+      label: exp,
+      value: exp,
+    })),
   };
 
   const handleSearch = (
@@ -94,31 +90,27 @@ export default function FindJobs() {
         <JobsSearch {...displayFilterOptions} onSearch={handleSearch} />
       </div>
       <div className="flex-[0.75] flex-col flex space-y-5 px-4 max-lg:flex-[0.7] overflow-y-scroll">
-        <div className="flex items-stretch">
-          <Button
-            size="sm"
-            variant="outline"
-            className="flex font-normal text-slate-400 items-center hover:bg-slate-100"
-            role="search-btn"
-          >
-            {"Search position, company or keyword"}
-            <kbd className="bg-slate-100 ml-2 text-xs flex gap-1 items-center py-1 px-2  rounded-sm text-slate-400">
-              <span className="text-sm">⌘</span>K
-            </kbd>
-          </Button>
-          <div
-            role="job-layout"
-            className="flex text-sm rounded-md items-center ml-auto w-fit"
-          >
-            <p className="mr-1 text-slate-600">{"View"}</p>
-            <Button variant="ghost" size="icon">
-              <List className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <LayoutGrid className="w-5 h-5" />
-            </Button>
+        {jobsQuery.isFetched && (
+          <div className="flex items-center">
+            <div aria-label="search-box">
+              <DialogInputSearch />
+            </div>
+
+            <div
+              aria-label="job-layout"
+              className="flex text-sm items-center ml-auto w-fit"
+            >
+              <p className="mr-1 text-slate-600">{"View"}</p>
+              <Button variant="ghost" size="icon">
+                <List className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <LayoutGrid className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
+
         {jobsQuery.isFetching &&
           fakeJobsLoader.map((loader) => (
             <JobPreviewLoader key={`loader_${_id}_${loader}`} />

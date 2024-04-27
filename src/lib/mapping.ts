@@ -1,4 +1,11 @@
-import type { Job, JobStatus, Role, WorkingStyle } from "@/types";
+import type {
+  Job,
+  JobExperienceLevel,
+  JobStatus,
+  JobType,
+  Role,
+  WorkingStyle,
+} from "@/types";
 import { HTMLAttributes } from "react";
 import { diffTime, formatDate, formatPrice, isNull, isUndifined } from ".";
 import { DATE_FORMAT, JOB_STATUS } from "@/constants";
@@ -9,6 +16,7 @@ import {
   CalendarPlus,
   Clock,
   MapPin,
+  BarChart4,
 } from "lucide-react";
 
 export const mappingWorkStyle = {
@@ -54,6 +62,20 @@ export const mappingApproveStyleClass = {
   reject: "bg-red-100 text-red-600 hover:bg-red-200",
   "un-approve": "bg-purple-100 text-purple-600 hover:bg-purple-200",
 } as Record<JobStatus, HTMLAttributes<HTMLElement>["className"]>;
+
+export const mappingJobType = {
+  full_time: "Fulltime",
+  past_time: "Pasttime",
+  contract: "Contract",
+  internship: "Internship",
+} as Record<JobType, string>;
+
+export const mappingJobExp = {
+  senior: "Senior",
+  middle: "Middle",
+  entry: "Entry",
+  no_required: "",
+} as Record<JobExperienceLevel, string>;
 
 export const mappingJobDetail = (job?: Job, excludeFields?: (keyof Job)[]) => {
   const details = [
@@ -115,10 +137,16 @@ export const mappingHightlightJob = (job?: Job) => {
       icon: BriefcaseBusiness,
     },
     {
-      key: "fulltime",
-      value: job?.fulltime ? "Full time" : "Past time",
+      key: "experienceLevel",
+      value: mappingJobExp[job?.experienceLevel as keyof typeof mappingJobExp],
+      icon: BarChart4,
+    },
+    {
+      key: "jobType",
+      value: mappingJobType[job?.jobType as keyof typeof mappingJobType],
       icon: Clock,
     },
+
     {
       key: "createdAt",
       value: `${formatDate(job?.createdAt, DATE_FORMAT)} (${diffTime(

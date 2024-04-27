@@ -21,9 +21,16 @@ export const JOB_STATUS = {
 
 export const DATE_FORMAT = "DD MMM YY";
 
-export const JOB_TYPE = {
-  FULL_TIME: "full_time",
-  PAST_TIME: "past_time",
-  CONTRACT: "contract",
-  INTERN: "internship",
-} as const;
+export const JOB_TYPE = [
+  "full_time",
+  "past_time",
+  "contract",
+  "internship",
+] as const;
+
+export const JOB_EXP_LEVEL = [
+  "entry",
+  "middle",
+  "senior",
+  "no_required",
+] as const;
