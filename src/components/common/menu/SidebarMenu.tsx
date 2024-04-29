@@ -6,7 +6,7 @@ import { Avatar, Button, Command, Show } from "@/components";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
-type Menu = {
+export type Menu = {
   heading?: string;
   items: {
     label: string;
@@ -35,7 +35,8 @@ export default function SidebarMenu({ menus, user }: SidebarMenuProps) {
         name: `${user.firstName}`,
         fallbackImage: `${user.firstName.charAt(0)}`,
       };
-    return { name: "", fallbackImage: "" };
+
+    return { name: user?.email, fallbackImage: "" };
   }, [user]);
 
   return (

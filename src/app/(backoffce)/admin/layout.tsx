@@ -6,8 +6,9 @@ import { useSearchParams } from "next/navigation";
 import { eq, goToHome } from "@/lib";
 import { BriefcaseBusiness, LogOut, User, Users } from "lucide-react";
 import { userStore } from "@/store";
+import type { Menu } from "@/components/common/menu/SidebarMenu";
 
-export default function BackofficeLayout({
+export default function AdminBackofficeLayout({
   children,
 }: Readonly<PropsWithChildren>) {
   const searchParam = useSearchParams();
@@ -33,7 +34,7 @@ export default function BackofficeLayout({
 
   if (user && !["admin", "super_admin"].includes(user.role)) return goToHome();
 
-  const menus = [
+  const menus: Menu = [
     {
       items: [
         {
@@ -67,6 +68,7 @@ export default function BackofficeLayout({
   return (
     <main
       role="admin-layout"
+      aria-label="admin-layout"
       className="flex border-t-4 border-sky-100 h-[calc(100vh-80px)]"
     >
       <div className="w-[300px]">

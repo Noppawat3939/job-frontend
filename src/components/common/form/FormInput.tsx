@@ -38,6 +38,7 @@ export default function FormInput({
           placeholder={placeholder}
           type={passwordType ? (state.active ? "text" : "password") : type}
           value={value}
+          disabled={rest.disabled}
         />
         <Show when={passwordType}>
           <Button

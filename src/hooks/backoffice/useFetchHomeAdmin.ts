@@ -5,7 +5,7 @@ import {
   formatPrice,
   isNull,
   isUndifined,
-  mappingFulltime,
+  mappingJobType,
   mappingUrgetJob,
   mappingWorkStyle,
 } from "@/lib";
@@ -63,7 +63,7 @@ export default function useFetchHomeAdmin(
     key: String(job.id),
     company: job.company,
     position: job.position,
-    fulltime: mappingFulltime(job.fulltime),
+    fulltime: mappingJobType[job.jobType],
     urgent: mappingUrgetJob(job.urgent, ""),
     salary: formatPrice(job?.salary),
     style: mappingWorkStyle[job.style],

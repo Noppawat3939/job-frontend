@@ -32,4 +32,7 @@ export const URL = {
     UN_APPROVE: "/api/job/un-approve/:id",
     DELETE: "/api/job/:id",
   },
+  COMPANY: {
+    GET_JOBS: "/api/company/list",
+  },
 } as const;
