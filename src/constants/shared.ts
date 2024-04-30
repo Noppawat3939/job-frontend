@@ -8,8 +8,8 @@ export const WORK_STYLES = [
 ] as const;
 
 export const USER_STATUS = {
-  APPROVE: "approve",
-  REJECT: "reject",
+  APPROVE: "approved",
+  REJECT: "rejected",
   UN_APPROVE: "un-approve",
 } as const;
 

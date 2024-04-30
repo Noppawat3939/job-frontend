@@ -4,7 +4,7 @@ import { useEffect, type PropsWithChildren } from "react";
 import { SidebarMenu } from "@/components";
 import { useSearchParams } from "next/navigation";
 import { eq, goToHome } from "@/lib";
-import { BriefcaseBusiness, LogOut, User, Users } from "lucide-react";
+import { BriefcaseBusiness, User, Users } from "lucide-react";
 import { userStore } from "@/store";
 import type { Menu } from "@/components/common/menu/SidebarMenu";
 
@@ -60,9 +60,6 @@ export default function AdminBackofficeLayout({
         { label: "Profile", value: "profile", leftIcon: User, disabled: true },
       ],
     },
-    {
-      items: [{ label: "Sign out", value: "signout", leftIcon: LogOut }],
-    },
   ];
 
   return (
@@ -71,9 +68,8 @@ export default function AdminBackofficeLayout({
       aria-label="admin-layout"
       className="flex border-t-4 border-sky-100 h-[calc(100vh-80px)]"
     >
-      <div className="w-[300px]">
-        <SidebarMenu menus={menus} user={user} />
-      </div>
+      <SidebarMenu menus={menus} user={user} />
+
       <div className="flex-1">{children}</div>
     </main>
   );

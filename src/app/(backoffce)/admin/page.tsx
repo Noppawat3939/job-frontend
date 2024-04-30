@@ -4,9 +4,17 @@ import { type DataTableProps, DataTable, Badge, Alert } from "@/components";
 import type { User, UserStatus } from "@/types/user";
 import { USER_STATUS } from "@/constants";
 import { useCallback, useState, useTransition } from "react";
-import { cn, eq, mappingWorkingStyleClass } from "@/lib";
+import {
+  cn,
+  eq,
+  mappingRoleUserStyleClass,
+  mappingWorkingStyleClass,
+  pretty,
+  unPretty,
+} from "@/lib";
 import { useApproveUserHandler, useFetchHomeAdmin } from "@/hooks";
 import { useRouter } from "next/navigation";
+import type { Role } from "@/types";
 
 type PickedUser = Pick<
   User,
@@ -126,6 +134,16 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
       title: "Role",
       dataIndex: "role",
       width: "16%",
+      render: (role: string) => (
+        <Badge
+          className={cn(
+            "w-[100px] flex justify-center uppercase",
+            mappingRoleUserStyleClass[unPretty(role) as Role]
+          )}
+        >
+          {role}
+        </Badge>
+      ),
     },
     {
       key: "approve",
@@ -203,7 +221,7 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
           <Badge
             className={cn(
               "w-[130px] flex justify-center uppercase",
-              mappingWorkingStyleClass[String(data.style).replaceAll(" ", "_")]
+              mappingWorkingStyleClass[pretty(String(data.style))]
             )}
           >
             {style}
@@ -229,7 +247,7 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
   const loading = [userQuery.isFetching, jobQuery.isFetching].some(Boolean);
 
   return (
-    <div className="border h-full max-w-7xl mx-auto">
+    <div className="border w-full h-full">
       <DataTable
         loading={loading || pending}
         name="accounts"

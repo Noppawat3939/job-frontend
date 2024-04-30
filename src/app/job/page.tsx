@@ -9,7 +9,7 @@ import {
 } from "@/components";
 import { JOB_EXP_LEVEL, JOB_TYPE, WORK_STYLES } from "@/constants";
 import { useFetchJobsUser } from "@/hooks";
-import { formatNumber } from "@/lib";
+import { formatNumber, pretty } from "@/lib";
 import { LayoutGrid, List } from "lucide-react";
 import Link from "next/link";
 import { useId } from "react";
@@ -56,7 +56,7 @@ export default function FindJobs() {
     salary: salaryOptions,
     jobType: Object.values(JOB_TYPE).map((value) => ({ label: value, value })),
     workStyle: WORK_STYLES.map((style) => ({
-      label: style.replaceAll("_", " "),
+      label: pretty(style),
       value: style,
     })),
     provinces: provinces.map((province) => ({

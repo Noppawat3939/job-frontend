@@ -32,7 +32,7 @@ export default function CompanyPage() {
 
   return (
     <div className="overflow-y-auto max-h-[90vh]">
-      <div className="flex flex-[0.4]">
+      <div className="flex">
         <FormInput disabled placeholder="Search keyword" />
       </div>
       <DataTable

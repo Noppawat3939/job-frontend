@@ -67,3 +67,7 @@ export const getTokenWithHeaders = () =>
         headers: { Authorization: `Bearer ${getCookie("token")}` },
       }
     : undefined;
+
+export const pretty = (text: string) => text.replaceAll("_", " ");
+
+export const unPretty = (text: string) => text.replaceAll(" ", "_");

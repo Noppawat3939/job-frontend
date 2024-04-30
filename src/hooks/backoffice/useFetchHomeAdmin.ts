@@ -8,6 +8,7 @@ import {
   mappingJobType,
   mappingUrgetJob,
   mappingWorkStyle,
+  pretty,
 } from "@/lib";
 import { jobService, userService } from "@/services";
 import { userStore } from "@/store";
@@ -51,7 +52,7 @@ export default function useFetchHomeAdmin(
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    role: user.role,
+    role: pretty(user.role),
     approve: user.active
       ? "approved"
       : isNull(user.active)

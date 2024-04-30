@@ -4,6 +4,7 @@ import { SidebarMenu } from "@/components";
 import type { Menu } from "@/components/common/menu/SidebarMenu";
 import { eq, goToHome } from "@/lib";
 import { userStore } from "@/store";
+import { Briefcase, BriefcaseBusiness, FileText } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { type PropsWithChildren } from "react";
 
@@ -24,16 +25,19 @@ export default function CompanyBackofficeLayout({
           value: "jobs",
           path: "/company",
           active: eq(pathname, "/company"),
+          leftIcon: BriefcaseBusiness,
         },
         {
           label: "Posts",
           value: "posts",
           path: "/company/posts",
+          leftIcon: Briefcase,
         },
         {
           label: "Job applied",
           value: "jop applied",
           path: "/jobs/applied",
+          leftIcon: FileText,
         },
       ],
     },
@@ -45,7 +49,7 @@ export default function CompanyBackofficeLayout({
       className="flex border-t-4 border-sky-100 h-[calc(100vh-80px)]"
       aria-label="company-layout"
     >
-      <div className="w-[300px]">
+      <div className="w-fit">
         <SidebarMenu user={user} menus={menus} />
       </div>
       <div className="flex-1">{children}</div>

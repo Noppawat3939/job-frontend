@@ -26,9 +26,6 @@ export const mappingWorkStyle = {
   remote: "remote",
 } as Record<WorkingStyle, string>;
 
-export const mappingFulltime = (isFulltime?: boolean) =>
-  isFulltime ? "full-time" : "pass-time";
-
 export const mappingUrgetJob = (isUrgent?: boolean, fallback?: string) =>
   isUrgent ? "urgent" : fallback || "";
 
@@ -62,6 +59,13 @@ export const mappingApproveStyleClass = {
   reject: "bg-red-100 text-red-600 hover:bg-red-200",
   "un-approve": "bg-purple-100 text-purple-600 hover:bg-purple-200",
 } as Record<JobStatus, HTMLAttributes<HTMLElement>["className"]>;
+
+export const mappingRoleUserStyleClass = {
+  super_admin: "bg-amber-200 text-amber-600 hover:bg-amber-200",
+  admin: "bg-yellow-100 text-yellow-500 hover:bg-yellow-100",
+  employer: "bg-red-100 text-red-500 hover:bg-red-100",
+  user: "bg-sky-100 text-sky-600 hover:bg-sky-100",
+} as Record<Role, HTMLAttributes<HTMLElement>["className"]>;
 
 export const mappingJobType = {
   full_time: "Fulltime",
