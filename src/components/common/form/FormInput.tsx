@@ -3,10 +3,8 @@ import { Button, Input, Label, Show } from "@/components";
 import { useToggle } from "@/hooks";
 import { cn, noSpace } from "@/lib";
 import { Eye, EyeOff } from "lucide-react";
-import { HTMLAttributes } from "react";
 
-export type FormInputProps = { label?: string } & InputProps &
-  HTMLAttributes<HTMLDivElement>;
+export type FormInputProps = { label?: string } & InputProps;
 
 export default function FormInput({
   type,

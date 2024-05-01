@@ -39,6 +39,19 @@ export const mappingFormFields = {
   companyName: "company name",
   industry: "industry",
   salary: "salary",
+  location: "location",
+  position: "job position",
+  style: "work style",
+  jobType: "job type",
+  experienceLevel: "job experience",
+  category: "job category",
+  jobDescriptions: "job descriptions",
+  qualifications: "job qualifications",
+  benefits: "job benefits",
+  contracts: "contracts",
+  transports: "transports",
+  salaryMin: "salary min",
+  salaryMax: "salary max",
 };
 
 export const mappingRolePath = {

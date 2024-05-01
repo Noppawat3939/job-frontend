@@ -1,6 +1,13 @@
 "use client";
 
-import { Badge, DataTable, FormInput, JobDetailCard, Show } from "@/components";
+import {
+  Badge,
+  Button,
+  DataTable,
+  FormInput,
+  JobDetailCard,
+  Show,
+} from "@/components";
 import { DATE_FORMAT } from "@/constants";
 import {
   cn,
@@ -15,6 +22,8 @@ import {
 import { companyService } from "@/services";
 import type { Job } from "@/types";
 import { useQuery } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function CompanyPage() {
@@ -43,8 +52,14 @@ export default function CompanyPage() {
 
   return (
     <div className="overflow-y-auto max-h-[90vh]">
-      <div className="flex">
+      <div className="flex justify-between p-2">
         <FormInput disabled placeholder="Search keyword" />
+        <Button size="sm" asChild>
+          <Link href={"/company/posts/new"} referrerPolicy="no-referrer">
+            <Plus className="w-3 h-3 mr-2" />
+            {"Create new job"}
+          </Link>
+        </Button>
       </div>
       <section className="flex">
         <div aria-label="jobs-list" className="flex-1">

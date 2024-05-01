@@ -1,11 +1,14 @@
+import { JOB_EXP_LEVEL, JOB_TYPE, WORK_STYLES } from "@/constants";
 import { z } from "zod";
 
 const PASSWORD = { MIN: 8, MAX: 20 };
 const COMMON_FIELDS = { MIN: 2 };
+const SALARY_RANGE_BAHT = { START_MIN: 0, START_MAX: 1 };
 
 const requiredMessage = (field: string) => `${field} is required`;
 const minLenMessage = (field: string, min?: number) =>
   `${field} must be at least ${min || COMMON_FIELDS.MIN} charactors`;
+const invalidValueMessage = (field: string) => `${field} is invalid`;
 
 export const emailSchema = {
   create: z
@@ -76,4 +79,101 @@ export const industryCompanySchema = {
     .string({ required_error: requiredMessage("Industry") })
     .min(COMMON_FIELDS.MIN, { message: minLenMessage("Industry") }),
   common: z.string({ required_error: requiredMessage("Industry") }),
+};
+
+export const positionJobSchema = {
+  create: z
+    .string({ required_error: requiredMessage("Position") })
+    .min(COMMON_FIELDS.MIN, { message: minLenMessage("Position") }),
+};
+
+export const workStyleJobSchema = {
+  create: z.enum(WORK_STYLES, {
+    errorMap: () => ({ message: invalidValueMessage("Work style") }),
+  }),
+};
+
+export const locationJobSchema = {
+  create: z
+    .string({ required_error: requiredMessage("Location") })
+    .min(COMMON_FIELDS.MIN, { message: minLenMessage("Industry") }),
+};
+
+export const categoryJobSchema = {
+  create: z
+    .string({ required_error: requiredMessage("Category job") })
+    .min(COMMON_FIELDS.MIN, { message: minLenMessage("Category job") }),
+};
+
+export const salaryJobSchema = {
+  create: z
+    .tuple([
+      z
+        .number()
+        .min(SALARY_RANGE_BAHT.START_MIN, {
+          message: `Salary should be mininum min range ${SALARY_RANGE_BAHT.START_MIN} baht`,
+        })
+        .optional(),
+      z
+        .number()
+        .min(SALARY_RANGE_BAHT.START_MAX, {
+          message: `Salary should be minimum max range ${SALARY_RANGE_BAHT.START_MAX} baht`,
+        })
+        .optional(),
+    ])
+    .refine((values) => values[1]! > values?.[0]!, {
+      message:
+        "Salary max value range should more than or requal min value range",
+    })
+    .or(z.tuple([z.number().default(SALARY_RANGE_BAHT.START_MIN)]))
+    .or(z.number().default(SALARY_RANGE_BAHT.START_MIN)),
+};
+
+export const descriptionJobSchema = {
+  common: z.string().array().optional(),
+  create: z.string().array().optional(),
+};
+
+export const qualificationJobSchema = {
+  common: z.string().array().optional(),
+  create: z.string().array().optional(),
+};
+
+export const benefitJobSchema = {
+  common: z.string().array().optional(),
+  create: z.string().array().optional(),
+};
+export const contractJobSchema = {
+  common: z.string().array().optional(),
+  create: z.string().array().optional(),
+};
+export const transportJobSchema = {
+  common: z.string().array().optional(),
+  create: z.string().array().optional(),
+};
+
+export const jobTypeSchema = {
+  create: z.enum(JOB_TYPE, {
+    errorMap: () => ({ message: invalidValueMessage("Job type") }),
+  }),
+  update: z
+    .enum(JOB_TYPE, {
+      errorMap: () => ({ message: invalidValueMessage("Job type") }),
+    })
+    .optional(),
+};
+
+export const experienceLevelSchema = {
+  create: z.enum(
+    JOB_EXP_LEVEL,
+
+    {
+      errorMap: () => ({ message: invalidValueMessage("Job experience") }),
+    }
+  ),
+  update: z
+    .enum(JOB_EXP_LEVEL, {
+      errorMap: () => ({ message: invalidValueMessage("Job experience") }),
+    })
+    .optional(),
 };

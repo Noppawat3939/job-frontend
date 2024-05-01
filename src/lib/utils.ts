@@ -71,3 +71,5 @@ export const getTokenWithHeaders = () =>
 export const pretty = (text: string) => text.replaceAll("_", " ");
 
 export const unPretty = (text: string) => text.replaceAll(" ", "_");
+
+export const numOnly = (value: string) => value.replaceAll(/[^0-9]/g, "");
