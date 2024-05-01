@@ -20,7 +20,7 @@ export type DataTableProps = {
       index: I
     ) => JSX.Element;
   }[];
-  onRow?: (arg?: TData[number]) => void;
+  onRow?: (data?: TData[number]) => void;
 };
 
 export default function DataTable({

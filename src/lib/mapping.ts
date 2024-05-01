@@ -49,7 +49,7 @@ export const mappingRolePath = {
 
 export const mappingWorkingStyleClass = {
   work_from_home: "bg-green-100 text-green-600 hover:bg-green-200",
-  onsite: "bg-sky-100 text-sky-600 hover:bg-sky-200",
+  on_site: "bg-sky-100 text-sky-600 hover:bg-sky-200",
   remote: "bg-purple-100 text-purple-600 hover:bg-purple-200",
   hybrid: "bg-orange-100 text-orange-600 hover:bg-orange-200",
 } as Record<string, HTMLAttributes<HTMLElement>["className"]>;

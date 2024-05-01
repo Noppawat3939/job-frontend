@@ -24,6 +24,7 @@ export type Job = {
   contracts?: string[];
   industry?: string;
   experienceLevel: JobExperienceLevel;
+  category: string;
 };
 
 export type JobStatus = "approve" | "reject" | "un-approve";
