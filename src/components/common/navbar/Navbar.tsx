@@ -138,6 +138,17 @@ export default function Navbar({ user }: NavbarProps) {
           </Show>
 
           <Show when={!isUndifined(user)}>
+            <h2
+              aria-label="name"
+              className="capitalize font-medium text-foreground"
+            >
+              {user?.role === "employer"
+                ? user?.companyName
+                : `${user?.firstName} ${user?.lastName}`}
+            </h2>
+          </Show>
+
+          <Show when={!isUndifined(user)}>
             <Button
               size="sm"
               variant="outline"
