@@ -10,6 +10,7 @@ import {
   ContentLayout,
   JobDetailSectionProps,
   JobHightlightSection,
+  Show,
   Spinner,
 } from "@/components";
 import { useCallback, useMemo, useState, useTransition } from "react";
@@ -27,6 +28,7 @@ import { ChevronLeft } from "lucide-react";
 import { type ButtonProps } from "@/components/ui/button";
 import Link from "next/link";
 import { useApproveJobHandler } from "@/hooks";
+import { userStore } from "@/store";
 
 type AdminJobPageProps = {
   params: { id: string; role: RolePageParam };
@@ -50,12 +52,16 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
     data: job,
     isFetching,
     isFetched,
-    refetch: refetchJob,
+    refetch,
   } = useQuery({
     queryKey: [QUERY_KEY.GET_JOB, id],
     queryFn: () => jobService.fetchJob(+id),
     select: ({ data }) => data,
   });
+
+  const { user } = userStore();
+
+  const isSuperAdmin = eq(user?.role, "super_admin");
 
   const alertError = useCallback(
     () =>
@@ -68,7 +74,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
     []
   );
 
-  const { handle } = useApproveJobHandler(() => refetchJob(), alertError);
+  const { handle } = useApproveJobHandler(() => refetch(), alertError);
 
   const [pending, startTransition] = useTransition();
 
@@ -142,24 +148,32 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
     <div>
       {isFetched && (
         <div className="flex items-end justify-between space-x-2 py-2 px-4 shadow-sm">
-          <Button asChild size="icon" className="h-fit my-auto" variant="link">
+          <Button
+            asChild
+            size="sm"
+            className="my-auto hover:no-underline text-slate-700"
+            variant="link"
+          >
             <Link href={"/admin?tab=jobs"} shallow referrerPolicy="no-referrer">
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-5 h-5 mr-2" />
+              {"Back"}
             </Link>
           </Button>
-          <div className="flex space-x-2">
-            {displayApproveJobBtn.map((btn, i) => (
-              <Button
-                variant={btn.variant}
-                size="sm"
-                key={`approve_btn_${i}`}
-                onClick={() => onOpenAlert(btn.status)}
-                className="capitalize w-[100px] text-sm"
-              >
-                {btn.status.replace("-", " ")}
-              </Button>
-            ))}
-          </div>
+          <Show when={isSuperAdmin}>
+            <div className={"flex space-x-2"}>
+              {displayApproveJobBtn.map((btn, i) => (
+                <Button
+                  variant={btn.variant}
+                  size="sm"
+                  key={`approve_btn_${i}`}
+                  onClick={() => onOpenAlert(btn.status)}
+                  className="capitalize w-[100px] text-sm"
+                >
+                  {btn.status.replace("-", " ")}
+                </Button>
+              ))}
+            </div>
+          </Show>
         </div>
       )}
       {isFetching || pending ? (

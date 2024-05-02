@@ -111,13 +111,13 @@ export default function Navbar({ user }: NavbarProps) {
         </div>
         <div className="flex items-baseline space-x-4">
           <Show when={!isUndifined(user)}>
-            <div datatype="loginned-menus">
+            <div datatype="loginned-menus" className=" space-x-4">
               {displayLoginnedMenus?.map((menu) => (
                 <Button
                   asChild
                   key={menu.key}
                   size="sm"
-                  variant="secondary"
+                  variant={"ghost"}
                   className="text-slate-600"
                 >
                   <Link href={menu.href}>{menu.label}</Link>

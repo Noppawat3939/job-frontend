@@ -163,7 +163,9 @@ export const mappingHightlightJob = (job?: Job) => {
     },
     {
       key: "experienceLevel",
-      value: mappingJobExp[job?.experienceLevel as keyof typeof mappingJobExp],
+      value:
+        mappingJobExp[job?.experienceLevel as keyof typeof mappingJobExp] ||
+        "no required experience",
       icon: BarChart4,
     },
     {
