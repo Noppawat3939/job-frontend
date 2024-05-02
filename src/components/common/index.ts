@@ -11,3 +11,4 @@ export * from "./alert";
 export * from "./loader";
 export * from "./search";
 export * from "./badges";
+export * from "./dialog";

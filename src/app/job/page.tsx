@@ -5,7 +5,6 @@ import {
   DialogInputSearch,
   JobPreview,
   JobPreviewLoader,
-  JobsSearch,
 } from "@/components";
 import { JOB_EXP_LEVEL, JOB_TYPE, WORK_STYLES } from "@/constants";
 import { useFetchJobsUser } from "@/hooks";
@@ -86,10 +85,10 @@ export default function FindJobs() {
 
   return (
     <section className="flex h-[calc(100vh-80px)]" role="jobs-container">
-      <div className="h-full py-4 px-3 flex-[0.25] max-lg:flex-[0.3] rounded-lg shadow-sm bg-gradient-to-t from-sky-100 to-sky-200">
+      {/* <div className="h-full py-4 px-3 flex-[0.25] max-lg:flex-[0.3] rounded-lg shadow-sm bg-gradient-to-t from-sky-100 to-sky-200">
         <JobsSearch {...displayFilterOptions} onSearch={handleSearch} />
-      </div>
-      <div className="flex-[0.75] flex-col flex space-y-5 px-4 max-lg:flex-[0.7] overflow-y-scroll">
+      </div> */}
+      <div className="flex-1 flex-col flex space-y-5 px-4 max-lg:flex-[0.7] overflow-y-scroll">
         {jobsQuery.isFetched && (
           <div className="flex items-center">
             <div aria-label="search-box">

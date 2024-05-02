@@ -16,6 +16,7 @@ import { Bookmark, BookmarkCheck } from "lucide-react";
 import { QUERY_KEY } from "@/constants";
 import cover from "@/assets/cover/job_cover.jpg";
 import Image from "next/image";
+import { signinDialogStore, userStore } from "@/store";
 
 type ViewJobPageProps = {
   params: { view: string };
@@ -41,6 +42,11 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
     handle: { setToggle: setMarked },
     state: { active: marked },
   } = useToggle();
+
+  const { user } = userStore();
+  const { openSigninDialog } = signinDialogStore((s) => ({
+    openSigninDialog: s.setOpen,
+  }));
 
   useEffect(() => {
     const prevMark = window.localStorage.getItem(LOCALSTORAGE_KEY);
@@ -106,10 +112,10 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
       role="job-container"
       className="flex space-x-2 px-[3%] max-md:px-[2%]"
     >
-      <div className="flex-[0.2] bg-sky-100 border border-sky-400 max-md:hidden">
+      {/* <div className="flex-[0.2] bg-sky-100 border border-sky-400 max-md:hidden">
         {"suggest other jobs"}
-      </div>
-      <ContentLayout className="flex-[0.8] max-md:flex-1 max-md:px-2 overflow-y-auto pb-[20px]">
+      </div> */}
+      <ContentLayout className="flex-1 max-md:flex-1 max-md:px-2 overflow-y-auto pb-[20px]">
         <Image
           className="max-h-[250px] max-md:max-h-[200px] object-cover w-full bg-right"
           src={cover}
@@ -119,18 +125,27 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
           <h2 className="text-4xl font-medium max-md:text-3xl">
             {job?.position}
           </h2>
-          <Button
-            onClick={handleMarkWithoutLogin}
-            size="icon"
-            role="mark-job-btn"
-            variant="secondary"
-          >
-            {marked ? (
-              <BookmarkCheck className="h-5 w-5 " />
-            ) : (
-              <Bookmark className="h-5 w-5 " />
-            )}
-          </Button>
+          <div className="flex space-x-2">
+            <Button
+              onClick={() => (user?.email ? null : openSigninDialog())}
+              size="sm"
+              className="w-[100px] bg-sky-400 hover:bg-sky-500"
+            >
+              {"Apply"}
+            </Button>
+            <Button
+              onClick={handleMarkWithoutLogin}
+              size="icon"
+              role="mark-job-btn"
+              variant="secondary"
+            >
+              {marked ? (
+                <BookmarkCheck className="h-5 w-5 " />
+              ) : (
+                <Bookmark className="h-5 w-5 " />
+              )}
+            </Button>
+          </div>
         </div>
         <h3 className="text-sky-500 opacity-70 text-lg max-md:text-[15px] z-0">
           {job?.company}
