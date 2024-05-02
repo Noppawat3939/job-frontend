@@ -32,6 +32,7 @@ export default function CompanyBackofficeLayout({
           value: "jop applied",
           path: "/company/applied",
           leftIcon: FileText,
+          active: eq(pathname, "/company/applied"),
         },
       ],
     },
