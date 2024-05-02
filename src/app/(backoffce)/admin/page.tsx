@@ -1,15 +1,22 @@
 "use client";
 
-import { type DataTableProps, DataTable, Badge, Alert } from "@/components";
+import {
+  type DataTableProps,
+  DataTable,
+  Badge,
+  Alert,
+  BadgeJobApprove,
+} from "@/components";
 import type { User, UserStatus } from "@/types/user";
 import { USER_STATUS } from "@/constants";
 import { useCallback, useState, useTransition } from "react";
 import {
   cn,
   eq,
+  mappingJobApproveLabel,
   mappingRoleUserStyleClass,
+  mappingWorkStyle,
   mappingWorkingStyleClass,
-  pretty,
   unPretty,
 } from "@/lib";
 import { useApproveUserHandler, useFetchHomeAdmin } from "@/hooks";
@@ -181,14 +188,30 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
   ];
 
   const jobColumns = [
-    { key: "company", title: "Company", dataIndex: "company", width: "17%" },
+    { key: "company", title: "Company", dataIndex: "company", width: "10%" },
     { key: "position", title: "Position", dataIndex: "position", width: "20%" },
 
     {
       key: "fulltime",
       title: "Job type",
       dataIndex: "fulltime",
-      width: "12%",
+      width: "8%",
+    },
+    {
+      key: "active",
+      title: "Job approve",
+      dataIndex: "active",
+      width: "8%",
+      render: (active: string) => (
+        <BadgeJobApprove
+          status={active}
+          text={
+            mappingJobApproveLabel[
+              active as keyof typeof mappingJobApproveLabel
+            ]
+          }
+        />
+      ),
     },
     {
       key: "urgent",
@@ -220,11 +243,11 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
         return (
           <Badge
             className={cn(
-              "w-[130px] flex justify-center uppercase",
-              mappingWorkingStyleClass[pretty(String(data.style))]
+              "w-[120px] flex justify-center",
+              mappingWorkingStyleClass[String(data.style)]
             )}
           >
-            {style}
+            {mappingWorkStyle[style as keyof typeof mappingWorkStyle]}
           </Badge>
         );
       },

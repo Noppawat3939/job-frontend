@@ -73,11 +73,16 @@ export default function Navbar({ user }: NavbarProps) {
         { key: "myJobs", label: "My jobs", href: "/my-jobs?tab=favorite" },
       ];
 
+    if (eq(user.role, "employer"))
+      return [
+        { key: "homeCompany", label: user.companyName, href: "/company" },
+      ];
+
     if (["super_admin", "admin"].includes(user.role))
       return [
         {
           key: "homeAdmin",
-          label: "Home",
+          label: `${user.firstName} ${user.lastName}`,
           href: eq(user.role, "admin")
             ? "/admin?tab=jobs"
             : "/admin?tab=accounts",
@@ -112,8 +117,8 @@ export default function Navbar({ user }: NavbarProps) {
                   asChild
                   key={menu.key}
                   size="sm"
-                  variant="ghost"
-                  className="font-normal"
+                  variant="secondary"
+                  className="text-slate-600"
                 >
                   <Link href={menu.href}>{menu.label}</Link>
                 </Button>
@@ -135,20 +140,6 @@ export default function Navbar({ user }: NavbarProps) {
                 }))}
               />
             </Fragment>
-          </Show>
-
-          <Show when={!isUndifined(user)}>
-            <h2
-              aria-label="name"
-              className="capitalize font-medium text-foreground cursor-pointer"
-              onClick={() =>
-                user?.role === "employer" ? router.push(`/company`) : null
-              }
-            >
-              {user?.role === "employer"
-                ? user?.companyName
-                : `${user?.firstName} ${user?.lastName}`}
-            </h2>
           </Show>
 
           <Show when={!isUndifined(user)}>

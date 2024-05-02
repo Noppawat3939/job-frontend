@@ -60,6 +60,12 @@ export const mappingRolePath = {
   employer: "employer",
 } as Record<Role, Role>;
 
+export const mappingJobApproveLabel = {
+  approve: "approved",
+  reject: "rejected",
+  "un-approve": "un approve",
+};
+
 export const mappingWorkingStyleClass = {
   work_from_home: "bg-green-100 text-green-600 hover:bg-green-200",
   on_site: "bg-sky-100 text-sky-600 hover:bg-sky-200",
@@ -141,6 +147,8 @@ export const mappingJobApprove = (approve?: boolean | null) => {
 };
 
 export const mappingHightlightJob = (job?: Job) => {
+  const postedDay = diffTime(job?.createdAt, undefined, "day");
+
   const hightlight = [
     { key: "location", value: String(job?.location), icon: MapPin },
     {
@@ -163,14 +171,11 @@ export const mappingHightlightJob = (job?: Job) => {
       value: mappingJobType[job?.jobType as keyof typeof mappingJobType],
       icon: Clock,
     },
-
     {
       key: "createdAt",
-      value: `${formatDate(job?.createdAt, DATE_FORMAT)} (${diffTime(
-        job?.createdAt,
-        undefined,
-        "day"
-      )} days ago)`,
+      value: `${formatDate(job?.createdAt, DATE_FORMAT)} (${
+        postedDay === 0 ? "today" : `${postedDay} days ago`
+      })`,
       icon: CalendarPlus,
     },
   ] satisfies Array<{ key: keyof Job; value: string; icon: LucideIcon }>;

@@ -16,7 +16,7 @@ export default function Banner() {
         </h1>
         <p
           aria-label="banner-description"
-          className="text-xl max-lg:text-[18px] max-md:text-[15px] max-md:text-center"
+          className="text-lg text-slate-700 font-medium max-lg:text-[18px] max-md:text-[15px] max-md:text-center"
         >
           {"A platform where you can get your desired job without any hassle."}
         </p>

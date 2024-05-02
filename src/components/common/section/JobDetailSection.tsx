@@ -23,7 +23,7 @@ export default function JobDetailSection({
           <li
             key={`${noSpace(title)}_${idx}`}
             dangerouslySetInnerHTML={{ __html: item }}
-            className="text-slate-700 ml-10 max-md:text-[15px]"
+            className="text-slate-700 ml-10 list-none max-md:text-[15px]"
           />
         ))}
       </ul>

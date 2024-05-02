@@ -5,23 +5,22 @@ import { jobService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import {
   Alert,
-  Badge,
+  BadgeJobApprove,
   Button,
   ContentLayout,
   JobDetailSectionProps,
   JobHightlightSection,
   Spinner,
 } from "@/components";
-import { useCallback, useId, useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { JOB_STATUS, QUERY_KEY } from "@/constants";
 import {
-  cn,
   eq,
   isNull,
   isUndifined,
-  mappingApproveStyleClass,
   mappingHightlightJob,
   mappingJobApprove,
+  mappingJobApproveLabel,
   mappingJobDetail,
 } from "@/lib";
 import { ChevronLeft } from "lucide-react";
@@ -46,7 +45,6 @@ const initial = {
 
 export default function AdminJobPage({ params }: AdminJobPageProps) {
   const { id } = params;
-  const _id = useId();
 
   const {
     data: job,
@@ -150,11 +148,11 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
             </Link>
           </Button>
           <div className="flex space-x-2">
-            {displayApproveJobBtn.map((btn) => (
+            {displayApproveJobBtn.map((btn, i) => (
               <Button
                 variant={btn.variant}
                 size="sm"
-                key={`approve_btn_${_id}`}
+                key={`approve_btn_${i}`}
                 onClick={() => onOpenAlert(btn.status)}
                 className="capitalize w-[100px] text-sm"
               >
@@ -174,24 +172,21 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
             <h2 className="text-3xl font-medium max-md:text-2xl">
               {job?.position}
             </h2>
-            <Badge
-              className={cn(
-                "h-fit capitalize",
-                mappingApproveStyleClass[mappingJobApprove(job?.active)]
-              )}
-            >
-              {mappingJobApprove(job?.active)}
-            </Badge>
+            <BadgeJobApprove
+              className="h-fit w-fit capitalize"
+              status={mappingJobApprove(job?.active)}
+              text={mappingJobApproveLabel[mappingJobApprove(job?.active)]}
+            />
           </div>
           <h3 className="text-sky-500 opacity-70 text-lg font-medium max-md:text-[15px]">
             {job?.company}
           </h3>
           <br />
           <div className="flex flex-col space-y-1 mb-3">
-            {memorizedHighlightsJob.map((hightlight) => (
+            {memorizedHighlightsJob.map((hightlight, i) => (
               <JobHightlightSection
                 {...hightlight}
-                key={_id}
+                key={`hight_light_${i}`}
                 textClass="text-[16px] max-md:text-[14px]"
               />
             ))}
