@@ -5,6 +5,9 @@ export * as Table from "./table";
 export * as Tabs from "./tabs";
 export * as Card from "./card";
 export * as Dialog from "./dialog";
+export * as Popover from "./popover";
+
+export * from "./use-toast";
 
 export { Button } from "./button";
 export { Input } from "./input";
@@ -15,3 +18,4 @@ export { Skeleton } from "./skeleton";
 export { Form } from "./form";
 export { Slider } from "./slider";
 export { Textarea } from "./textarea";
+export { Toaster } from "./toaster";

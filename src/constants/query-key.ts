@@ -13,4 +13,5 @@ export const QUERY_KEY = {
   GET_INDUSTRIES: "industries",
   GET_PROVINCES: "provinces",
   GET_JOB_CATEGORIES: "job-categories",
+  GET_JOBS_BY_COMPANY: "company-jobs",
 } as const;

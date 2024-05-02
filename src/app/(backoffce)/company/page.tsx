@@ -8,7 +8,7 @@ import {
   JobDetailCard,
   Show,
 } from "@/components";
-import { DATE_FORMAT } from "@/constants";
+import { DATE_FORMAT, QUERY_KEY } from "@/constants";
 import {
   cn,
   formatDate,
@@ -30,7 +30,7 @@ export default function CompanyPage() {
   const [jobDetails, setJobDetails] = useState<Job | undefined>();
 
   const { data: jobs, isLoading } = useQuery({
-    queryKey: ["company-jobs"],
+    queryKey: [QUERY_KEY.GET_JOBS_BY_COMPANY],
     queryFn: companyService.fetchCompanyJobs,
     select: ({ data }) => data || [],
   });
@@ -55,7 +55,7 @@ export default function CompanyPage() {
       <div className="flex justify-between p-2">
         <FormInput disabled placeholder="Search keyword" />
         <Button size="sm" asChild>
-          <Link href={"/company/posts/new"} referrerPolicy="no-referrer">
+          <Link href={"/company/new"} referrerPolicy="no-referrer">
             <Plus className="w-3 h-3 mr-2" />
             {"Create new job"}
           </Link>

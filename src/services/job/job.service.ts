@@ -2,12 +2,14 @@ import { URL } from "@/constants";
 import { service } from "..";
 import { getTokenWithHeaders } from "@/lib";
 import { Job, ServiceResponse } from "@/types";
+import { CreateNewJobSchema } from "@/schemas";
 
 const { JOB } = URL;
 
 type JobsResponse = ServiceResponse<{ data: Job[]; total: number }>;
 type JobResponse = ServiceResponse<{ data: Job }>;
 type JobApproveResponse = ServiceResponse<undefined>;
+type JobCreatedResponse = ServiceResponse<{ data: Job }>;
 
 export const fetchJobs = async () => {
   const { data } = await service.get<JobsResponse>(
@@ -25,8 +27,12 @@ export const fetchJob = async (id: number) => {
   return data;
 };
 
-export const createJob = async () => {
-  const { data } = await service.post(JOB.CREATE, getTokenWithHeaders());
+export const createJob = async (body: CreateNewJobSchema) => {
+  const { data } = await service.post<JobCreatedResponse>(
+    JOB.CREATE,
+    body,
+    getTokenWithHeaders()
+  );
   return data;
 };
 

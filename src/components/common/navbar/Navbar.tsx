@@ -140,7 +140,10 @@ export default function Navbar({ user }: NavbarProps) {
           <Show when={!isUndifined(user)}>
             <h2
               aria-label="name"
-              className="capitalize font-medium text-foreground"
+              className="capitalize font-medium text-foreground cursor-pointer"
+              onClick={() =>
+                user?.role === "employer" ? router.push(`/company`) : null
+              }
             >
               {user?.role === "employer"
                 ? user?.companyName

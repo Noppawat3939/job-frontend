@@ -4,7 +4,7 @@ import { SidebarMenu } from "@/components";
 import type { Menu } from "@/components/common/menu/SidebarMenu";
 import { eq, goToHome } from "@/lib";
 import { userStore } from "@/store";
-import { Briefcase, BriefcaseBusiness, FileText } from "lucide-react";
+import { BriefcaseBusiness, FileText } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { type PropsWithChildren } from "react";
 
@@ -28,15 +28,9 @@ export default function CompanyBackofficeLayout({
           leftIcon: BriefcaseBusiness,
         },
         {
-          label: "Posts",
-          value: "posts",
-          path: "/company/posts",
-          leftIcon: Briefcase,
-        },
-        {
           label: "Job applied",
           value: "jop applied",
-          path: "/jobs/applied",
+          path: "/company/applied",
           leftIcon: FileText,
         },
       ],

@@ -6,6 +6,7 @@ import { userService } from "@/services";
 import { isUndifined } from "@/lib";
 import { QUERY_KEY } from "@/constants";
 import { userStore } from "@/store";
+import { Toaster } from "@/components";
 
 export default function MainLayout({ children }: Readonly<PropsWithChildren>) {
   const { user, setUser } = userStore();
@@ -31,6 +32,7 @@ export default function MainLayout({ children }: Readonly<PropsWithChildren>) {
     >
       <Navbar user={user} />
       {children}
+      <Toaster />
     </main>
   );
 }

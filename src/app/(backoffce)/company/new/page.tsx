@@ -1,19 +1,35 @@
 "use client";
 
-import { CreateJobForm, Dialog, JobDetailCard, Label } from "@/components";
+import { CreateJobForm, Dialog, Label, useToast } from "@/components";
 import { formatPrice, mappingJobExp } from "@/lib";
 import { CreateNewJobSchema } from "@/schemas";
+import { jobService } from "@/services";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function CreateNewJobPage() {
+  const { toast } = useToast();
+
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationFn: jobService.createJob,
+    onSuccess: () => {
+      toast({
+        title: "Job created is successfully",
+        description: "Pleasse wait admin approve",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Can't create job",
+        description: "Please try again letter",
+      });
+    },
+  });
+
   const [previewData, setPreviewData] = useState<{
     open: boolean;
     data?: CreateNewJobSchema;
   }>({ open: false, data: undefined });
-
-  const onSubmit = (values: CreateNewJobSchema) => {
-    console.log({ values });
-  };
 
   const data = [
     { key: "position", label: "Position", value: previewData.data?.position },
@@ -113,17 +129,18 @@ export default function CreateNewJobPage() {
     },
   ];
 
-  const handlePreviewData = (data: CreateNewJobSchema) => {
-    console.log(data);
-    setPreviewData({ open: true, data });
-  };
+  const handlePreviewData = (data: CreateNewJobSchema) => mutate(data);
 
   return (
     <div className="h-full p-4">
       <div className="">
         <h1 className="text-3xl">{"Create a new job"}</h1>
         <div className="mt-3 px-3 h-[calc(100vh-160px)] overflow-y-scroll">
-          <CreateJobForm onSubmit={handlePreviewData} />
+          <CreateJobForm
+            onSubmit={handlePreviewData}
+            loading={isPending}
+            resetWhen={isSuccess}
+          />
         </div>
       </div>
       <Dialog.Dialog

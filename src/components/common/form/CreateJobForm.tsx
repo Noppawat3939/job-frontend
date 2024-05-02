@@ -5,8 +5,8 @@ import { Button, Input, Label, Textarea } from "@/components";
 import { JOB_EXP_LEVEL, JOB_TYPE, QUERY_KEY, WORK_STYLES } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import { publicService } from "@/services";
-import { mappingFormFields, numOnly } from "@/lib";
-import { useCallback, useState } from "react";
+import { formatNumber, mappingFormFields, numOnly } from "@/lib";
+import { useCallback, useEffect, useState } from "react";
 
 const CREATE_JOB_FIELDS = [
   "position",
@@ -40,6 +40,8 @@ const initial = {
   transports: "",
 };
 
+const separate = "•";
+
 type CreatedField = keyof typeof initial;
 type ExcludedArrayFields = Exclude<
   CreatedField,
@@ -52,9 +54,17 @@ type ExcludedArrayFields = Exclude<
   | "salaryMax"
 >;
 
-type CreateJobFormProps = { onSubmit: (data: CreateNewJobSchema) => void };
+type CreateJobFormProps = {
+  onSubmit: (data: CreateNewJobSchema) => void;
+  loading?: boolean;
+  resetWhen?: boolean;
+};
 
-export default function CreateJobForm({ onSubmit }: CreateJobFormProps) {
+export default function CreateJobForm({
+  onSubmit,
+  loading,
+  resetWhen,
+}: CreateJobFormProps) {
   const { data: categories } = useQuery({
     queryKey: [QUERY_KEY.GET_JOB_CATEGORIES],
     queryFn: publicService.getJobCategories,
@@ -63,6 +73,12 @@ export default function CreateJobForm({ onSubmit }: CreateJobFormProps) {
   });
 
   const [createValues, setCreateValues] = useState(initial);
+
+  useEffect(() => {
+    if (resetWhen) {
+      setCreateValues(initial);
+    }
+  }, [resetWhen]);
 
   const onValueChange = useCallback(
     (key: CreatedField, value: string | number) => {
@@ -79,16 +95,16 @@ export default function CreateJobForm({ onSubmit }: CreateJobFormProps) {
       jobType: createValues.jobType,
       experienceLevel: createValues.experienceLevel,
       category: createValues.category,
-      jobDescriptions: createValues.jobDescriptions,
-      qualifications: createValues.qualifications,
-      benefits: createValues.benefits,
-      contracts: createValues.contracts.split(","),
-      transports: createValues.transports.split(","),
+      jobDescriptions: createValues.jobDescriptions.split(separate),
+      qualifications: createValues.qualifications.split(separate),
+      benefits: createValues.benefits.split(separate),
+      contracts: createValues.contracts.split(separate),
+      transports: createValues.transports.split(separate),
       salary: [createValues.salaryMin, createValues.salaryMax],
     };
 
     const res = createNewJobSchema.safeParse(
-      Object.fromEntries(Object.entries(createValues))
+      Object.fromEntries(Object.entries(mappedValues))
     );
 
     if (!res.success) {
@@ -109,8 +125,6 @@ export default function CreateJobForm({ onSubmit }: CreateJobFormProps) {
     experienceLevel: JOB_EXP_LEVEL.map((exp) => ({ label: exp, value: exp })),
     style: WORK_STYLES.map((style) => ({ label: style, value: style })),
   };
-
-  console.log(createValues);
 
   return (
     <form action={action} aria-label="create-job-form">
@@ -158,26 +172,30 @@ export default function CreateJobForm({ onSubmit }: CreateJobFormProps) {
                 <Label className="capitalize" htmlFor={field}>
                   {mappingFormFields[field]}
                 </Label>
-                {/* <MultiInputForm
-                  value={createValues[field] as string[]}
-                  onChange={(value) => onValueChange(field, value)}
-                /> */}
-                <Textarea
-                  aria-label={field}
+                <MultiInputForm
                   name={field}
-                  value={createValues[field as CreatedField]}
-                  onChange={({ target: { value, name } }) =>
-                    onValueChange(name as CreatedField, value)
-                  }
-                  className="h-[80px] resize-none"
-                  onKeyUp={(e) => {
-                    e.preventDefault();
+                  separate={separate}
+                  label={mappingFormFields[field]}
+                  values={String(createValues[field])}
+                  onAddValue={(values) => {
+                    let data: string;
 
-                    if (e.code === "Enter") {
-                      const _value = `${createValues[field as CreatedField]}-`;
+                    const {
+                      url: { url, text },
+                      list,
+                    } = values[field];
 
-                      onValueChange(field as CreatedField, _value);
-                    }
+                    const aTag = `<a target='_blank' href='${url}' >${
+                      text || "click"
+                    }</a>`;
+
+                    const addedOrder = list.map((l, i) => `${i + 1}. ${l}`);
+
+                    data = url
+                      ? [...addedOrder, aTag].join(separate)
+                      : addedOrder.join(separate);
+
+                    onValueChange(field as CreatedField, data);
                   }}
                 />
               </div>
@@ -186,14 +204,14 @@ export default function CreateJobForm({ onSubmit }: CreateJobFormProps) {
 
           if (["salaryMin", "salaryMax"].includes(field)) {
             return (
-              <div key="salary">
+              <div key={field}>
                 <Label className="capitalize" htmlFor={field}>
                   {mappingFormFields[field]}
                 </Label>
                 <div className="flex">
                   <Input
                     name={field}
-                    value={createValues[field as CreatedField]}
+                    value={formatNumber(createValues[field as CreatedField])}
                     onChange={({ target: { name, value } }) =>
                       onValueChange(name as CreatedField, +numOnly(value))
                     }
@@ -231,7 +249,7 @@ export default function CreateJobForm({ onSubmit }: CreateJobFormProps) {
           {"Cancel"}
         </Button>
         <Button
-          loading={pending}
+          loading={pending || loading}
           className="bg-sky-400 hover:bg-sky-500 w-[150px]"
           type="submit"
         >
