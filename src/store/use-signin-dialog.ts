@@ -1,7 +1,7 @@
 import { SigninCompanySchema, SigninUserSchema } from "@/schemas";
 import { create } from "zustand";
 
-type SigninDialogStore = {
+type SigninDialog = {
   open: boolean;
   values: SigninUserSchema & SigninCompanySchema;
   setOpen: () => void;
@@ -15,7 +15,7 @@ const initial = {
   values: { email: "", password: "", companyName: "" },
 };
 
-export const signinDialogStore = create<SigninDialogStore>((set, get) => ({
+export const useSigninDialog = create<SigninDialog>((set, get) => ({
   open: false,
   values: initial.values,
   setOpen: () => set({ open: true }),

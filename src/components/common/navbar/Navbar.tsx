@@ -1,18 +1,18 @@
 "use client";
 
 import type { User } from "@/types/user";
-import { Alert, Button, SelectItem, Show } from "@/components";
-import { eq, goToHome, isUndifined, noSpace } from "@/lib";
+import { Alert, Button, Show } from "@/components";
+import { cn, eq, goToHome, isUndifined, noSpace } from "@/lib";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useCallback, useMemo, useState, useTransition } from "react";
 import { deleteCookie } from "cookies-next";
 import { QueryCache } from "@tanstack/react-query";
 import { userStore } from "@/store";
 import { LogOut } from "lucide-react";
 
-const ROLES = ["Job Seeker", "Employer"];
+type SelectedSearchParams = "job_seeker" | "employer";
 
 type NavbarProps = { user?: User };
 
@@ -23,6 +23,8 @@ export default function Navbar({ user }: NavbarProps) {
   }));
 
   const router = useRouter();
+  const search = useSearchParams();
+  const selectedSearchParams = search.get("selected") as SelectedSearchParams;
 
   const pathname = usePathname();
 
@@ -32,8 +34,8 @@ export default function Navbar({ user }: NavbarProps) {
 
   const [, startTransition] = useTransition();
 
-  const [selectedRole, setSelectedRole] = useState<"job_seeker" | "employer">(
-    "job_seeker"
+  const [selectedRole, setSelectedRole] = useState<SelectedSearchParams>(
+    () => selectedSearchParams || "job_seeker"
   );
   const [openSignoutModal, setOpenSignoutModal] = useState(false);
 
@@ -109,6 +111,34 @@ export default function Navbar({ user }: NavbarProps) {
             </Link>
           </span>
         </div>
+
+        <Show when={isSigninPath || isSignupPath}>
+          <div aria-label="select-role" className="flex space-x-10">
+            <h2
+              datatype="job_seekeer"
+              aria-label="job-seeker-role"
+              className={cn(
+                "text-slate-700 cursor-pointer hover:opacity-60 transition-all duration-200",
+                eq(selectedRole, "job_seeker") && "font-medium text-slate-800"
+              )}
+              onClick={() => handleSelectRole("job_seeker")}
+            >
+              {"Job seeker"}
+            </h2>
+            <h2
+              datatype="company"
+              aria-label="employer-role"
+              className={cn(
+                "text-slate-700 cursor-pointer hover:opacity-60 transition-all duration-200",
+                eq(selectedRole, "employer") && "font-medium text-slate-800"
+              )}
+              onClick={() => handleSelectRole("employer")}
+            >
+              {"Company"}
+            </h2>
+          </div>
+        </Show>
+
         <div className="flex items-baseline space-x-4">
           <Show when={!isUndifined(user)}>
             <div datatype="loginned-menus" className=" space-x-4">
@@ -124,22 +154,6 @@ export default function Navbar({ user }: NavbarProps) {
                 </Button>
               ))}
             </div>
-          </Show>
-
-          <Show when={!user}>
-            <Fragment>
-              <SelectItem
-                onChange={(role) =>
-                  handleSelectRole(role as typeof selectedRole)
-                }
-                className="w-[150px]"
-                placeholder={ROLES.at(0)}
-                items={ROLES?.map((role) => ({
-                  label: role,
-                  value: noSpace(role.toLowerCase()),
-                }))}
-              />
-            </Fragment>
           </Show>
 
           <Show when={!isUndifined(user)}>

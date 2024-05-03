@@ -1,9 +1,9 @@
-import { Button, Dialog, FormInput, Input } from "@/components";
-import { signinDialogStore } from "@/store";
+import { Button, Dialog, FormInput } from "@/components";
+import { useSigninDialog } from "@/store";
 import { useState } from "react";
 
 export default function SigninDialog() {
-  const { values, onOpenChange, open, reset } = signinDialogStore();
+  const { values, onOpenChange, open, reset } = useSigninDialog();
   const [signinWithRole, setSigninWithRole] = useState<"user" | "company">(
     "user"
   );
@@ -15,7 +15,7 @@ export default function SigninDialog() {
 
   return (
     <Dialog.Dialog open={open} onOpenChange={handleClose}>
-      <Dialog.DialogContent>
+      <Dialog.DialogContent aria-label="signin-dialog">
         <Dialog.DialogHeader>
           <Dialog.DialogTitle className="text-4xl">
             {"Sign in"}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Button,
   ContentLayout,
@@ -16,7 +16,7 @@ import { Bookmark, BookmarkCheck } from "lucide-react";
 import { QUERY_KEY } from "@/constants";
 import cover from "@/assets/cover/job_cover.jpg";
 import Image from "next/image";
-import { signinDialogStore, userStore } from "@/store";
+import { useSigninDialog, userStore } from "@/store";
 
 type ViewJobPageProps = {
   params: { view: string };
@@ -30,8 +30,6 @@ type MarkDataLocalstorage = {
 const LOCALSTORAGE_KEY = "mark_job";
 
 export default function ViewJobPage({ params }: ViewJobPageProps) {
-  const _id = useId();
-
   const { data: job, isLoading } = useQuery({
     queryKey: [QUERY_KEY.GET_PUBLIC_JOB, params.view],
     queryFn: () => publicService.getPublicJob(params.view),
@@ -44,7 +42,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
   } = useToggle();
 
   const { user } = userStore();
-  const { openSigninDialog } = signinDialogStore((s) => ({
+  const { openSigninDialog } = useSigninDialog((s) => ({
     openSigninDialog: s.setOpen,
   }));
 
@@ -60,7 +58,8 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
         setMarked(Boolean(hasMarked?.mark_job_id));
       }
     }
-  }, [params.view, setMarked]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useChangeTitleWindow(job && `${job.position} | Jobify`);
 
@@ -152,10 +151,10 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
         </h3>
         <section className="px-3">
           <div className="flex flex-col space-y-1 mb-3">
-            {memorizedHighlightsJob.map((hightlight) => (
+            {memorizedHighlightsJob.map((hightlight, i) => (
               <JobHightlightSection
                 {...hightlight}
-                key={_id}
+                key={`hl_${hightlight.key}_${i}`}
                 loading={isLoading}
               />
             ))}
