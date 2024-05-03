@@ -1,12 +1,12 @@
 import { CreateNewJobSchema, createNewJobSchema } from "@/schemas";
-import { useFormState, useFormStatus } from "react-dom";
 import { MultiInputForm, SelectItem } from ".";
-import { Button, Input, Label, Textarea } from "@/components";
+import { Button, Input, Label } from "@/components";
 import { JOB_EXP_LEVEL, JOB_TYPE, QUERY_KEY, WORK_STYLES } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import { publicService } from "@/services";
 import { formatNumber, mappingFormFields, numOnly } from "@/lib";
 import { useCallback, useEffect, useState } from "react";
+import { useHandleForm } from "@/hooks";
 
 const CREATE_JOB_FIELDS = [
   "position",
@@ -87,34 +87,30 @@ export default function CreateJobForm({
     []
   );
 
-  const [error, action] = useFormState(() => {
-    const mappedValues = {
-      position: createValues.position,
-      location: createValues.location,
-      style: createValues.style,
-      jobType: createValues.jobType,
-      experienceLevel: createValues.experienceLevel,
-      category: createValues.category,
-      jobDescriptions: createValues.jobDescriptions.split(separate),
-      qualifications: createValues.qualifications.split(separate),
-      benefits: createValues.benefits.split(separate),
-      contracts: createValues.contracts.split(separate),
-      transports: createValues.transports.split(separate),
-      salary: [createValues.salaryMin, createValues.salaryMax],
-    };
+  const mappedValues = {
+    position: createValues.position,
+    location: createValues.location,
+    style: createValues.style,
+    jobType: createValues.jobType,
+    experienceLevel: createValues.experienceLevel,
+    category: createValues.category,
+    jobDescriptions: createValues.jobDescriptions.split(separate),
+    qualifications: createValues.qualifications.split(separate),
+    benefits: createValues.benefits.split(separate),
+    contracts: createValues.contracts.split(separate),
+    transports: createValues.transports.split(separate),
+    salary: [createValues.salaryMin, createValues.salaryMax],
+  } as CreateNewJobSchema;
 
-    const res = createNewJobSchema.safeParse(
-      Object.fromEntries(Object.entries(mappedValues))
-    );
-
-    if (!res.success) {
-      return res.error.formErrors.fieldErrors;
-    }
-
-    return onSubmit(res.data);
-  }, {});
-
-  const { pending } = useFormStatus();
+  const {
+    error,
+    action,
+    isPending: pending,
+  } = useHandleForm<CreateNewJobSchema>(
+    createNewJobSchema,
+    mappedValues,
+    (data) => onSubmit(data)
+  );
 
   const mappingSelectOptions = {
     category: categories?.map((category) => ({

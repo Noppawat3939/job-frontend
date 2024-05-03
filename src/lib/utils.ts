@@ -75,3 +75,6 @@ export const unPretty = (text: string) => text.replaceAll(" ", "_");
 export const numOnly = (value: string) => value.replaceAll(/[^0-9]/g, "");
 
 export const reloadPage = () => window.location.reload();
+
+export const convertFromEntries = <T extends object>(obj: T) =>
+  Object.fromEntries(Object.entries(obj));
