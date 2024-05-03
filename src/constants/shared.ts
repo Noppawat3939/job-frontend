@@ -34,3 +34,19 @@ export const JOB_EXP_LEVEL = [
   "senior",
   "no_required",
 ] as const;
+
+export const CREATE_JOB_FIELDS = [
+  "position",
+  "style",
+  "jobType",
+  "experienceLevel",
+  "category",
+  "salaryMin",
+  "salaryMax",
+  "location",
+  "jobDescriptions",
+  "qualifications",
+  "benefits",
+  "contracts",
+  "transports",
+] as const;

@@ -1,46 +1,18 @@
 import { CreateNewJobSchema, createNewJobSchema } from "@/schemas";
 import { MultiInputForm, SelectItem } from ".";
 import { Button, Input, Label } from "@/components";
-import { JOB_EXP_LEVEL, JOB_TYPE, QUERY_KEY, WORK_STYLES } from "@/constants";
+import {
+  CREATE_JOB_FIELDS,
+  JOB_EXP_LEVEL,
+  JOB_TYPE,
+  QUERY_KEY,
+  WORK_STYLES,
+} from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import { publicService } from "@/services";
 import { formatNumber, mappingFormFields, numOnly } from "@/lib";
 import { useCallback, useEffect, useState } from "react";
 import { useHandleForm } from "@/hooks";
-
-const CREATE_JOB_FIELDS = [
-  "position",
-  "style",
-  "jobType",
-  "experienceLevel",
-  "category",
-  "salaryMin",
-  "salaryMax",
-  "location",
-  "jobDescriptions",
-  "qualifications",
-  "benefits",
-  "contracts",
-  "transports",
-] as const;
-
-const initial = {
-  position: "",
-  style: "",
-  jobType: "",
-  experienceLevel: "",
-  category: "",
-  salaryMin: 0,
-  salaryMax: 0,
-  location: "",
-  jobDescriptions: "",
-  qualifications: "",
-  benefits: "",
-  contracts: "",
-  transports: "",
-};
-
-const separate = "•";
 
 type CreatedField = keyof typeof initial;
 type ExcludedArrayFields = Exclude<
@@ -59,6 +31,33 @@ type CreateJobFormProps = {
   loading?: boolean;
   resetWhen?: boolean;
 };
+
+const initial = {
+  position: "",
+  style: "",
+  jobType: "",
+  experienceLevel: "",
+  category: "",
+  salaryMin: 0,
+  salaryMax: 0,
+  location: "",
+  jobDescriptions: "",
+  qualifications: "",
+  benefits: "",
+  contracts: "",
+  transports: "",
+};
+
+const separate = "•";
+const SELECT_COMPONENT = ["category", "style", "jobType", "experienceLevel"];
+const MULTIPLE_INPUT_COMPONENT = [
+  "jobDescriptions",
+  "qualifications",
+  "benefits",
+  "contracts",
+  "transports",
+];
+const SALARY_COMPONENT = ["salaryMin", "salaryMax"];
 
 export default function CreateJobForm({
   onSubmit,
@@ -126,9 +125,7 @@ export default function CreateJobForm({
     <form action={action} aria-label="create-job-form">
       <div className="grid grid-cols-2 gap-2 ">
         {CREATE_JOB_FIELDS.map((field) => {
-          if (
-            ["category", "style", "jobType", "experienceLevel"].includes(field)
-          ) {
+          if (SELECT_COMPONENT.includes(field)) {
             return (
               <div key={field}>
                 <Label htmlFor={field} className="capitalize">
@@ -154,15 +151,7 @@ export default function CreateJobForm({
             );
           }
 
-          if (
-            [
-              "jobDescriptions",
-              "qualifications",
-              "benefits",
-              "contracts",
-              "transports",
-            ].includes(field)
-          ) {
+          if (MULTIPLE_INPUT_COMPONENT.includes(field)) {
             return (
               <div key={field}>
                 <Label className="capitalize" htmlFor={field}>
@@ -198,7 +187,7 @@ export default function CreateJobForm({
             );
           }
 
-          if (["salaryMin", "salaryMax"].includes(field)) {
+          if (SALARY_COMPONENT.includes(field)) {
             return (
               <div key={field}>
                 <Label className="capitalize" htmlFor={field}>
