@@ -8,10 +8,12 @@ import type {
 } from "@/schemas";
 import serivce from "../api";
 import { URL } from "@/constants";
+import { ServiceResponse } from "@/types";
 
 const { AUTH } = URL;
 
 type SignupResponse = { success: boolean; message: string };
+type SigninResponse = ServiceResponse<{ data: string }>;
 
 export const signupWithAdmin = async (body: SignupUserSchema) => {
   const { data } = await serivce.post(AUTH.SIGNUP_ADMIN, body);
@@ -32,7 +34,7 @@ export const signupWithCompany = async (body: SignupCompanySchema) => {
 };
 
 export const signin = async (body: SigninUserSchema) => {
-  const { data } = await serivce.post(AUTH.SIGNIN, body);
+  const { data } = await serivce.post<SigninResponse>(AUTH.SIGNIN, body);
   return data;
 };
 

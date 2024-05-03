@@ -46,6 +46,8 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
     openSigninDialog: s.setOpen,
   }));
 
+  useChangeTitleWindow(job && `${job.position} - ${job.company} | Jobify.com`);
+
   useEffect(() => {
     const prevMark = window.localStorage.getItem(LOCALSTORAGE_KEY);
 
@@ -60,8 +62,6 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useChangeTitleWindow(job && `${job.position} | Jobify`);
 
   const memorizedHighlightsJob = useMemo(
     () =>

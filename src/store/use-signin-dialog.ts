@@ -6,7 +6,6 @@ type SigninDialog = {
   values: SigninUserSchema & SigninCompanySchema;
   setOpen: () => void;
   setClose: () => void;
-  onOpenChange: (open: boolean) => void;
   setValues: (value: SigninUserSchema & SigninCompanySchema) => void;
   reset: () => void;
 };
@@ -20,7 +19,6 @@ export const useSigninDialog = create<SigninDialog>((set, get) => ({
   values: initial.values,
   setOpen: () => set({ open: true }),
   setClose: () => set({ open: false }),
-  onOpenChange: (open) => set({ open }),
   setValues: (values) => set({ values }),
   reset: () => set({ values: initial.values, open: false }),
 }));
