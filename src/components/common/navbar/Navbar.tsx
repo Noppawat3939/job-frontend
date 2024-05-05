@@ -81,7 +81,7 @@ export default function Navbar({ user }: NavbarProps) {
           key: "myJobs",
           label: "My jobs",
           href: "/my-jobs?tab=favorite",
-          hide: false,
+          hide: ["/my-jobs"].includes(pathname),
         },
       ];
 

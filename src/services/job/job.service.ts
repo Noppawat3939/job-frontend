@@ -1,4 +1,10 @@
-import type { AppliedJob, Job, ServiceResponse } from "@/types";
+import type {
+  AppliedJob,
+  Job,
+  ServiceResponse,
+  OmittedJob,
+  OmmitedAppliedJob,
+} from "@/types";
 import { service } from "..";
 import { URL } from "@/constants";
 import { getTokenWithHeaders } from "@/lib";
@@ -11,6 +17,13 @@ type JobResponse = ServiceResponse<{ data: Job }>;
 type JobApproveResponse = ServiceResponse<undefined>;
 type JobCreatedResponse = ServiceResponse<{ data: Job }>;
 type AppliedJobResponse = ServiceResponse<{ data: AppliedJob }>;
+type JobsApplied = ServiceResponse<{
+  data: (OmmitedAppliedJob<"jobId" | "userId"> & {
+    job: OmittedJob<"applicationStatus">;
+  })[];
+  total: number;
+}>;
+type CancelledAppliedJobResponse = ServiceResponse<{ data: AppliedJob }>;
 
 export const fetchJobs = async () => {
   const { data } = await service.get<JobsResponse>(
@@ -67,6 +80,23 @@ export const rejectJob = async (id: string) => {
 export const applyJob = async (id: string) => {
   const { data } = await service.post<AppliedJobResponse>(
     JOB.APPLY.replace(":id", id),
+    undefined,
+    getTokenWithHeaders()
+  );
+  return data;
+};
+
+export const getJobsApplied = async () => {
+  const { data } = await service.get<JobsApplied>(
+    JOB.GET_APPLIED,
+    getTokenWithHeaders()
+  );
+  return data;
+};
+
+export const cancelAppliedJob = async (id: string) => {
+  const { data } = await service.post<CancelledAppliedJobResponse>(
+    JOB.CANCEL_APPLIED_JOB.replace(":id", id),
     undefined,
     getTokenWithHeaders()
   );

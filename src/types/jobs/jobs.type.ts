@@ -48,4 +48,9 @@ export type AppliedJob = {
   userId: number;
   applicationDate: string | Date;
   applicationStatus: ApplicationStatus;
+  cancelledDate?: string | Date;
+  rejectedDate?: string | Date;
 };
+
+export type OmittedJob<K extends keyof Job> = Omit<Job, K>;
+export type OmmitedAppliedJob<K extends keyof AppliedJob> = Omit<AppliedJob, K>;

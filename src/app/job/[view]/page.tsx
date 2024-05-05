@@ -19,7 +19,7 @@ import {
 import { jobService, publicService } from "@/services";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { Bookmark, BookmarkCheck } from "lucide-react";
+import { Heart } from "lucide-react";
 import { QUERY_KEY } from "@/constants";
 import cover from "@/assets/cover/job_cover.jpg";
 import Image from "next/image";
@@ -46,19 +46,18 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
 
   const isLoggined = eq(user?.role, "user");
 
+  const { data: logginedData, isLoading: loaddingLogginedJob } = useQuery({
+    queryKey: [QUERY_KEY.GET_JOB, params.view, isLoggined],
+    queryFn: () => jobService.fetchJob(Number(params.view)),
+    select: ({ data }) => data,
+    enabled: isLoggined,
+  });
+
   const { data: unLogginData, isLoading: loadingUnLogginJob } = useQuery({
     queryKey: [QUERY_KEY.GET_PUBLIC_JOB, params.view, isLoggined],
     queryFn: () => publicService.getPublicJob(params.view),
     select: ({ data }) => data,
-    enabled: !isLoggined,
-    staleTime: 1000,
-  });
-
-  const { data: logginedData, isLoading: loaddingLogginedJob } = useQuery({
-    queryKey: [QUERY_KEY.GET_JOB, params.view],
-    queryFn: () => jobService.fetchJob(Number(params.view)),
-    select: ({ data }) => data,
-    enabled: isLoggined,
+    enabled: !isUndifined(user) ? !isLoggined : false,
   });
 
   const job = useMemo(
@@ -189,12 +188,12 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
               onClick={handleMarkWithoutLogin}
               size="icon"
               role="mark-job-btn"
-              variant="secondary"
+              variant="link"
             >
               {marked ? (
-                <BookmarkCheck className="h-5 w-5 " />
+                <Heart className="h-5 w-5 text-sky-500" />
               ) : (
-                <Bookmark className="h-5 w-5 " />
+                <Heart className="h-5 w-5 " />
               )}
             </Button>
           </div>

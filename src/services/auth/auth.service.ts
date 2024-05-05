@@ -12,7 +12,7 @@ import { ServiceResponse } from "@/types";
 
 const { AUTH } = URL;
 
-type SignupResponse = { success: boolean; message: string };
+type SignupResponse = ServiceResponse;
 type SigninResponse = ServiceResponse<{ data: string }>;
 
 export const signupWithAdmin = async (body: SignupUserSchema) => {

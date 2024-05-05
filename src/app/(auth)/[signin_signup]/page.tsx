@@ -144,7 +144,7 @@ export default function SignInSignUpPage({
       if (isSignin) {
         handleSigninSuccess(res.data);
       } else {
-        handleSignupSuccess(res);
+        handleSignupSuccess(res.success);
       }
     },
     onError: (e) => {
@@ -157,6 +157,11 @@ export default function SignInSignUpPage({
         description: errMessage,
       });
     },
+  });
+
+  const userSigninMutation = useMutation({
+    mutationFn: authService.signin,
+    onSuccess: (res) => handleSigninSuccess(res.data),
   });
 
   const handleSigninSuccess = async (token: string) => {
@@ -185,8 +190,12 @@ export default function SignInSignUpPage({
     }
   };
 
-  const handleSignupSuccess = (data: unknown) => {
-    //TODO: doing...
+  const handleSignupSuccess = (success: boolean) => {
+    if (isJobSeeker && success) {
+      const email = form.watch("email");
+      const password = form.watch("password");
+      userSigninMutation.mutate({ email, password });
+    }
 
     resetForm();
   };
@@ -291,7 +300,7 @@ export default function SignInSignUpPage({
                 </div>
 
                 <Button
-                  loading={isPending}
+                  loading={isPending || userSigninMutation.isPending}
                   type="submit"
                   className="w-[60%] mt-[50px] mx-auto"
                 >

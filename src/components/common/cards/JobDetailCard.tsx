@@ -51,7 +51,7 @@ export default function JobDetailCard({
       value: (
         <Badge
           className={cn(
-            "w-[80px] justify-center flex capitalize",
+            "w-fit justify-center flex capitalize",
             mappingWorkingStyleClass[String(style)]
           )}
         >

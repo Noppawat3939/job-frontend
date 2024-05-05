@@ -33,6 +33,7 @@ export const URL = {
     DELETE: "/api/job/:id",
     APPLY: "/api/user-job/apply/:id",
     GET_APPLIED: "/api/user-job/applied",
+    CANCEL_APPLIED_JOB: "/api/user-job/cancel/:id",
   },
   COMPANY: {
     GET_JOBS: "/api/company/list",

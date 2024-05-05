@@ -1,4 +1,5 @@
 import type {
+  ApplicationStatus,
   Job,
   JobExperienceLevel,
   JobStatus,
@@ -85,6 +86,16 @@ export const mappingRoleUserStyleClass = {
   employer: "bg-red-100 text-red-500 hover:bg-red-100",
   user: "bg-sky-100 text-sky-600 hover:bg-sky-100",
 } as Record<Role, HTMLAttributes<HTMLElement>["className"]>;
+
+export const mappingApplicationStatusClass = {
+  applied: "text-teal-500 bg-teal-50 hover:bg-teal-50",
+  reviewing: "text-orange-500 bg-orange-50 hover:bg-orange-50",
+  interviewing: "text-orange-400 bg-orange-50 hover:bg-orange-50",
+  offering: "text-lime-600 bg-lime-50 hover:bg-lime-50",
+  offered: "text-sky-500 bg-sky-50 hover:bg-sky-50",
+  rejected: "text-red-500 bg-red-50 hover:bg-red-50",
+  cancelled: "text-gray-500",
+} as Record<ApplicationStatus, HTMLAttributes<HTMLElement>["className"]>;
 
 export const mappingJobType = {
   full_time: "Fulltime",

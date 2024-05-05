@@ -14,7 +14,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
   const searchParam = useSearchParams();
   const searchTabParam = searchParam.get("tab") as
     | "favorite"
-    | "apply-history"
+    | "apply"
     | undefined;
 
   const menus = [
@@ -30,22 +30,17 @@ export default function UserLayout({ children }: UserLayoutProps) {
         {
           label: "Job Apply history",
           value: "job-apply-history",
-          path: "/my-jobs?tab=apply-history",
+          path: "/my-jobs?tab=apply",
           leftIcon: History,
-          active: eq(searchTabParam, "apply-history"),
+          active: eq(searchTabParam, "apply"),
         },
       ],
     },
   ];
 
   return (
-    <main
-      role="admin-layout"
-      className="flex border-t-4 border-sky-100 h-[calc(100vh-80px)]"
-    >
-      <div className="w-[300px]">
-        <SidebarMenu menus={menus} user={user} />
-      </div>
+    <main className="flex border-t-4 border-sky-100 h-[calc(100vh-80px)]">
+      <SidebarMenu menus={menus} user={user} />
       <div className="flex-1">{children}</div>
     </main>
   );

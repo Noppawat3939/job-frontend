@@ -1,5 +1,5 @@
 import { QUERY_KEY } from "@/constants";
-import { jobService, publicService } from "@/services";
+import { publicService } from "@/services";
 import { useQueries } from "@tanstack/react-query";
 
 export default function useFetchJobsUser() {

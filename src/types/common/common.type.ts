@@ -5,7 +5,9 @@ import { JwtPayload } from "jwt-decode";
 
 const statusCode = Object.values(HttpStatusCode);
 
-export type ServiceResponse<D extends unknown> = {
+export type Nullable<T = unknown> = T | null;
+
+export type ServiceResponse<D = unknown> = {
   success: boolean;
   message: string | null;
 } & D;

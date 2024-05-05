@@ -8,6 +8,7 @@ import {
 } from "@/components";
 import { useFetchJobsUser } from "@/hooks";
 import { formatNumber } from "@/lib";
+import { userStore } from "@/store";
 import { LayoutGrid, List } from "lucide-react";
 import Link from "next/link";
 
@@ -23,6 +24,8 @@ export default function FindJobs() {
     jobsQuery,
     state: { jobs },
   } = useFetchJobsUser();
+
+  const { user } = userStore((s) => ({ user: s.user }));
 
   const salaryOptions = {
     from: SALARY_OPTIONS.from.map((num) => ({
@@ -105,7 +108,7 @@ export default function FindJobs() {
               key={`job_${job}_${i}`}
               href={`/job/${job.id}`}
               referrerPolicy="no-referrer"
-              target="_blank"
+              target={user?.email ? undefined : "_blank"}
             >
               <JobPreview {...job} />
             </Link>
