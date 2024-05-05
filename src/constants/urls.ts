@@ -31,6 +31,8 @@ export const URL = {
     REJECT: "/api/job/reject/:id",
     UN_APPROVE: "/api/job/un-approve/:id",
     DELETE: "/api/job/:id",
+    APPLY: "/api/user-job/apply/:id",
+    GET_APPLIED: "/api/user-job/applied",
   },
   COMPANY: {
     GET_JOBS: "/api/company/list",

@@ -19,6 +19,16 @@ export const JOB_STATUS = {
   UN_APPROVE: "un-approve",
 } as const;
 
+export const APPLICATION_STATUS = [
+  "applied",
+  "reviewing",
+  "interviewing",
+  "offering",
+  "offered",
+  "rejected",
+  "cancelled",
+] as const;
+
 export const DATE_FORMAT = "DD MMM YY";
 
 export const JOB_TYPE = [

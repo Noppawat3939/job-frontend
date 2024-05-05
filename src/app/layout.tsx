@@ -11,7 +11,7 @@ const kanit = Kanit({
 });
 
 export const metadata: Metadata = {
-  title: "Jobify",
+  title: "Jobify.com | find your job easy and fast.",
   description: "Jobify | Find your jobs",
 };
 

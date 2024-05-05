@@ -71,13 +71,28 @@ export default function Navbar({ user }: NavbarProps) {
 
     if (eq(user?.role, "user"))
       return [
-        { key: "findJob", href: "/job", label: "Find jobs" },
-        { key: "myJobs", label: "My jobs", href: "/my-jobs?tab=favorite" },
+        {
+          key: "findJob",
+          href: "/job",
+          label: "Find jobs",
+          hide: ["/job"].includes(pathname),
+        },
+        {
+          key: "myJobs",
+          label: "My jobs",
+          href: "/my-jobs?tab=favorite",
+          hide: false,
+        },
       ];
 
     if (eq(user.role, "employer"))
       return [
-        { key: "homeCompany", label: user.companyName, href: "/company" },
+        {
+          key: "homeCompany",
+          label: user.companyName,
+          href: "/company",
+          hide: false,
+        },
       ];
 
     if (["super_admin", "admin"].includes(user.role))
@@ -88,9 +103,10 @@ export default function Navbar({ user }: NavbarProps) {
           href: eq(user.role, "admin")
             ? "/admin?tab=jobs"
             : "/admin?tab=accounts",
+          hide: false,
         },
       ];
-  }, [user]);
+  }, [user, pathname]);
 
   const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";
 
@@ -113,7 +129,7 @@ export default function Navbar({ user }: NavbarProps) {
         </div>
 
         <Show when={isSigninPath || isSignupPath}>
-          <div aria-label="select-role" className="flex space-x-10">
+          <div aria-label="select-role" className="flex space-x-[50px]">
             <h2
               datatype="job_seekeer"
               aria-label="job-seeker-role"
@@ -142,17 +158,19 @@ export default function Navbar({ user }: NavbarProps) {
         <div className="flex items-baseline space-x-4">
           <Show when={!isUndifined(user)}>
             <div datatype="loginned-menus" className=" space-x-4">
-              {displayLoginnedMenus?.map((menu) => (
-                <Button
-                  asChild
-                  key={menu.key}
-                  size="sm"
-                  variant={"ghost"}
-                  className="text-slate-600"
-                >
-                  <Link href={menu.href}>{menu.label}</Link>
-                </Button>
-              ))}
+              {displayLoginnedMenus
+                ?.filter((menu) => !menu.hide)
+                ?.map((menu) => (
+                  <Button
+                    asChild
+                    key={menu.key}
+                    size="sm"
+                    variant={"ghost"}
+                    className="text-slate-600"
+                  >
+                    <Link href={menu.href}>{menu.label}</Link>
+                  </Button>
+                ))}
             </div>
           </Show>
 

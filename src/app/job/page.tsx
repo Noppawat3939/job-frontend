@@ -6,12 +6,10 @@ import {
   JobPreview,
   JobPreviewLoader,
 } from "@/components";
-import { JOB_EXP_LEVEL, JOB_TYPE, WORK_STYLES } from "@/constants";
 import { useFetchJobsUser } from "@/hooks";
-import { formatNumber, pretty } from "@/lib";
+import { formatNumber } from "@/lib";
 import { LayoutGrid, List } from "lucide-react";
 import Link from "next/link";
-import { useId } from "react";
 
 const fakeJobsLoader = Array.from({ length: 8 }).fill("");
 
@@ -21,11 +19,9 @@ const SALARY_OPTIONS = {
 };
 
 export default function FindJobs() {
-  const _id = useId();
-
   const {
     jobsQuery,
-    state: { jobs, industries, provinces, categories },
+    state: { jobs },
   } = useFetchJobsUser();
 
   const salaryOptions = {
@@ -47,48 +43,37 @@ export default function FindJobs() {
     ],
   };
 
-  const displayFilterOptions = {
-    industries: industries.map((industry) => ({
-      label: industry.name?.toLowerCase(),
-      value: industry.name,
-    })),
-    salary: salaryOptions,
-    jobType: Object.values(JOB_TYPE).map((value) => ({ label: value, value })),
-    workStyle: WORK_STYLES.map((style) => ({
-      label: pretty(style),
-      value: style,
-    })),
-    provinces: provinces.map((province) => ({
-      label: province.name.th,
-      value: province.code,
-    })),
-    categories: categories.map((category) => ({
-      label: category.category_name,
-      value: category.category_key,
-    })),
-    experiences: Object.values(JOB_EXP_LEVEL).map((exp) => ({
-      label: exp,
-      value: exp,
-    })),
-  };
-
-  const handleSearch = (
-    values?: Record<
-      | Exclude<keyof typeof displayFilterOptions, "salary">
-      | "salaryTo"
-      | "salaryFrom",
-      string
-    >
-  ) => {
-    console.log(values);
-  };
+  // const displayFilterOptions = {
+  //   industries: industries.map((industry) => ({
+  //     label: industry.name?.toLowerCase(),
+  //     value: industry.name,
+  //   })),
+  //   salary: salaryOptions,
+  //   jobType: Object.values(JOB_TYPE).map((value) => ({ label: value, value })),
+  //   workStyle: WORK_STYLES.map((style) => ({
+  //     label: pretty(style),
+  //     value: style,
+  //   })),
+  //   provinces: provinces.map((province) => ({
+  //     label: province.name.th,
+  //     value: province.code,
+  //   })),
+  //   categories: categories.map((category) => ({
+  //     label: category.category_name,
+  //     value: category.category_key,
+  //   })),
+  //   experiences: Object.values(JOB_EXP_LEVEL).map((exp) => ({
+  //     label: exp,
+  //     value: exp,
+  //   })),
+  // };
 
   return (
     <section className="flex h-[calc(100vh-80px)]" role="jobs-container">
       {/* <div className="h-full py-4 px-3 flex-[0.25] max-lg:flex-[0.3] rounded-lg shadow-sm bg-gradient-to-t from-sky-100 to-sky-200">
         <JobsSearch {...displayFilterOptions} onSearch={handleSearch} />
       </div> */}
-      <div className="flex-1 flex-col flex space-y-5 px-4 max-lg:flex-[0.7] overflow-y-scroll">
+      <div className="flex-1 flex-col flex space-y-5 px-4 overflow-y-scroll">
         {jobsQuery.isFetched && (
           <div className="flex items-center">
             <div aria-label="search-box">
@@ -111,13 +96,13 @@ export default function FindJobs() {
         )}
 
         {jobsQuery.isFetching &&
-          fakeJobsLoader.map((loader) => (
-            <JobPreviewLoader key={`loader_${_id}_${loader}`} />
+          fakeJobsLoader.map((loader, i) => (
+            <JobPreviewLoader key={`loader_${i}_${loader}`} />
           ))}
         {jobsQuery.isFetched &&
-          jobs?.map((job) => (
+          jobs?.map((job, i) => (
             <Link
-              key={_id}
+              key={`job_${job}_${i}`}
               href={`/job/${job.id}`}
               referrerPolicy="no-referrer"
               target="_blank"

@@ -1,22 +1,31 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useTransition } from "react";
 import {
   Button,
   ContentLayout,
   JobDetailSectionProps,
   JobHightlightSection,
+  useToast,
 } from "@/components";
 import { useChangeTitleWindow, useToggle } from "@/hooks";
-import { eq, isUndifined, mappingHightlightJob, mappingJobDetail } from "@/lib";
-import { publicService } from "@/services";
-import { useQuery } from "@tanstack/react-query";
+import {
+  eq,
+  isUndifined,
+  mappingHightlightJob,
+  mappingJobDetail,
+  reloadPage,
+} from "@/lib";
+import { jobService, publicService } from "@/services";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { QUERY_KEY } from "@/constants";
 import cover from "@/assets/cover/job_cover.jpg";
 import Image from "next/image";
 import { useSigninDialog, userStore } from "@/store";
+import type { Job, ServiceErrorResponse } from "@/types";
+import { type AxiosError } from "axios";
 
 type ViewJobPageProps = {
   params: { view: string };
@@ -30,10 +39,51 @@ type MarkDataLocalstorage = {
 const LOCALSTORAGE_KEY = "mark_job";
 
 export default function ViewJobPage({ params }: ViewJobPageProps) {
-  const { data: job, isLoading } = useQuery({
-    queryKey: [QUERY_KEY.GET_PUBLIC_JOB, params.view],
+  const { user } = userStore();
+  const { toast } = useToast();
+
+  const [isPending, startTransition] = useTransition();
+
+  const isLoggined = eq(user?.role, "user");
+
+  const { data: unLogginData, isLoading: loadingUnLogginJob } = useQuery({
+    queryKey: [QUERY_KEY.GET_PUBLIC_JOB, params.view, isLoggined],
     queryFn: () => publicService.getPublicJob(params.view),
     select: ({ data }) => data,
+    enabled: !isLoggined,
+    staleTime: 1000,
+  });
+
+  const { data: logginedData, isLoading: loaddingLogginedJob } = useQuery({
+    queryKey: [QUERY_KEY.GET_JOB, params.view],
+    queryFn: () => jobService.fetchJob(Number(params.view)),
+    select: ({ data }) => data,
+    enabled: isLoggined,
+  });
+
+  const job = useMemo(
+    () => (isLoggined ? logginedData : unLogginData) as Job,
+    [isLoggined, logginedData, unLogginData]
+  );
+
+  const isLoading = [loadingUnLogginJob, loaddingLogginedJob, isPending].some(
+    Boolean
+  );
+
+  const { mutate: applyJob } = useMutation({
+    mutationFn: jobService.applyJob,
+    onError: (e) => {
+      const error = e as AxiosError;
+      const {
+        data: { message: title },
+      } = error.response as ServiceErrorResponse;
+
+      toast({ title });
+    },
+    onSuccess: ({ message }) => {
+      toast({ title: message || "Applied job" });
+      startTransition(reloadPage);
+    },
   });
 
   const {
@@ -41,7 +91,6 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
     state: { active: marked },
   } = useToggle();
 
-  const { user } = userStore();
   const { openSigninDialog } = useSigninDialog((s) => ({
     openSigninDialog: s.setOpen,
   }));
@@ -73,6 +122,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
   );
 
   const memorizedDetailsJob = useMemo(() => mappingJobDetail(job), [job]);
+  const isApplied = !isUndifined(job?.applicationStatus);
 
   const handleMarkWithoutLogin = () => {
     const markData = {
@@ -126,11 +176,14 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
           </h2>
           <div className="flex space-x-2">
             <Button
-              onClick={() => (user?.email ? null : openSigninDialog())}
+              onClick={() =>
+                isLoggined ? applyJob(String(job?.id)) : openSigninDialog()
+              }
               size="sm"
+              loading={isLoading}
               className="w-[100px] bg-sky-400 hover:bg-sky-500"
             >
-              {"Apply"}
+              {isApplied ? "Applied" : "Apply"}
             </Button>
             <Button
               onClick={handleMarkWithoutLogin}

@@ -32,7 +32,10 @@ export default function JobPreview({
     >
       <Card.CardHeader>
         <span className="flex items-center justify-between">
-          <Card.CardTitle aria-label="position" className="flex items-center">
+          <Card.CardTitle
+            aria-label="position"
+            className="flex items-center text-gray-700"
+          >
             {position}
             {urgent && (
               <span className="text-red-500 ml-1 text-xs">{"urgent"}</span>
@@ -61,7 +64,7 @@ export default function JobPreview({
             <Badge
               variant="outline"
               aria-label="salary"
-              className=" border-yellow-400 bg-orange-50 text-yellow-500 "
+              className="text-gray-600"
             >
               <Banknote className="w-4 h-4 mr-1" />
               {salary ? `${formatPrice(salary)}` : ""}

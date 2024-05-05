@@ -1,8 +1,14 @@
-import { WORK_STYLES, JOB_TYPE, JOB_EXP_LEVEL } from "@/constants";
+import {
+  WORK_STYLES,
+  JOB_TYPE,
+  JOB_EXP_LEVEL,
+  APPLICATION_STATUS,
+} from "@/constants";
 
 export type WorkingStyle = (typeof WORK_STYLES)[number];
 export type JobType = (typeof JOB_TYPE)[number];
 export type JobExperienceLevel = (typeof JOB_EXP_LEVEL)[number];
+export type ApplicationStatus = (typeof APPLICATION_STATUS)[number];
 
 export type Job = {
   id: number;
@@ -25,6 +31,7 @@ export type Job = {
   industry?: string;
   experienceLevel: JobExperienceLevel;
   category: string;
+  applicationStatus?: ApplicationStatus;
 };
 
 export type JobStatus = "approve" | "reject" | "un-approve";
@@ -33,4 +40,12 @@ export type JobCategory = {
   id: number;
   category_key: string;
   category_name: string;
+};
+
+export type AppliedJob = {
+  id: number;
+  jobId: number;
+  userId: number;
+  applicationDate: string | Date;
+  applicationStatus: ApplicationStatus;
 };

@@ -1,7 +1,7 @@
-import { URL } from "@/constants";
+import type { AppliedJob, Job, ServiceResponse } from "@/types";
 import { service } from "..";
+import { URL } from "@/constants";
 import { getTokenWithHeaders } from "@/lib";
-import { Job, ServiceResponse } from "@/types";
 import { CreateNewJobSchema } from "@/schemas";
 
 const { JOB } = URL;
@@ -10,6 +10,7 @@ type JobsResponse = ServiceResponse<{ data: Job[]; total: number }>;
 type JobResponse = ServiceResponse<{ data: Job }>;
 type JobApproveResponse = ServiceResponse<undefined>;
 type JobCreatedResponse = ServiceResponse<{ data: Job }>;
+type AppliedJobResponse = ServiceResponse<{ data: AppliedJob }>;
 
 export const fetchJobs = async () => {
   const { data } = await service.get<JobsResponse>(
@@ -57,6 +58,15 @@ export const unApproveJob = async (id: string) => {
 export const rejectJob = async (id: string) => {
   const { data } = await service.post<JobApproveResponse>(
     JOB.REJECT.replace(":id", id),
+    undefined,
+    getTokenWithHeaders()
+  );
+  return data;
+};
+
+export const applyJob = async (id: string) => {
+  const { data } = await service.post<AppliedJobResponse>(
+    JOB.APPLY.replace(":id", id),
     undefined,
     getTokenWithHeaders()
   );
