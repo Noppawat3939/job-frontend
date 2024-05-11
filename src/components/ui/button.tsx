@@ -14,11 +14,13 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-input transition-all duration-200 bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        primary:
+          "transition-all duration-200 bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-sky-400 hover:to-purple-600",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -64,10 +66,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading ? (
-          <>
+          <React.Fragment>
             <Loader className="w-4 h-4 mr-2 animate-spin" />
-            <>{children}</>
-          </>
+            <React.Fragment>{children}</React.Fragment>
+          </React.Fragment>
         ) : (
           children
         )}

@@ -34,6 +34,7 @@ import { AxiosError } from "axios";
 import { userService } from "@/services";
 import { userStore } from "@/store";
 import { QUERY_KEY } from "@/constants";
+import GoogleLogo from "@/assets/shared/goolgle-logo.png";
 
 type SignInSignUpPageProps = {
   params: { signin_signup: string };
@@ -321,11 +322,18 @@ export default function SignInSignUpPage({
             </form>
           </Form>
           <Button
+            variant="outline"
+            className="flex gap-2"
             onClick={() =>
               getUrlSigninWithSocial(String(process.env.googleApiKey))
             }
           >
-            Google
+            <Image
+              src={GoogleLogo}
+              alt="google-logo"
+              className="w-4 h-4 object-contain"
+            />
+            {"continue with Google"}
           </Button>
         </section>
       </div>

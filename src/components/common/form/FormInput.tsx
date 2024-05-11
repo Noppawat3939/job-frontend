@@ -1,8 +1,6 @@
 import { type InputProps } from "@/components/ui/input";
-import { Button, Input, Label, Show } from "@/components";
-import { useToggle } from "@/hooks";
-import { cn, noSpace } from "@/lib";
-import { Eye, EyeOff } from "lucide-react";
+import { Input, Label, Show } from "@/components";
+import { cn, isUndifined, noSpace } from "@/lib";
 
 export type FormInputProps = { label?: string } & InputProps;
 
@@ -16,13 +14,9 @@ export default function FormInput({
   name,
   ...rest
 }: FormInputProps) {
-  const { state, handle } = useToggle();
-
-  const passwordType = type === "password";
-
   return (
     <div {...rest} className={cn("space-y-1", className)}>
-      <Show when={label !== undefined}>
+      <Show when={!isUndifined(label)}>
         <Label
           htmlFor={noSpace(String(label)?.toLowerCase())}
           className="capitalize"
@@ -34,25 +28,10 @@ export default function FormInput({
         <Input
           onChange={onChange}
           placeholder={placeholder}
-          type={passwordType ? (state.active ? "text" : "password") : type}
           value={value}
+          type={type}
           disabled={rest.disabled}
         />
-        <Show when={passwordType}>
-          <Button
-            type="button"
-            size="icon"
-            variant="outline"
-            className="ml-2"
-            onClick={handle.toggle}
-          >
-            {state.active ? (
-              <Eye className="w-5 h-5" />
-            ) : (
-              <EyeOff className="w-5 h-5" />
-            )}
-          </Button>
-        </Show>
       </span>
     </div>
   );
