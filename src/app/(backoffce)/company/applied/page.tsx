@@ -1,3 +1,9 @@
+import { Suspense } from "react";
+
 export default function JobsAppliedPage() {
-  return <div>JobsAppliedPage</div>;
+  return (
+    <Suspense>
+      <div>JobsAppliedPage</div>
+    </Suspense>
+  );
 }
