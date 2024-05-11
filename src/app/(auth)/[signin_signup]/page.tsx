@@ -4,7 +4,7 @@ import type { DecodedToken, RolesParams } from "@/types";
 import JobSeekerImage from "@/assets/signin_signup_jobseeker.jpg";
 import EmployerImage from "@/assets/signin-signup_employer.jpg";
 import Image from "next/image";
-import { eq, mappingFormFields } from "@/lib";
+import { eq, isUndifined, mappingFormFields } from "@/lib";
 import { Alert, Button, Form, FormInput, SelectItem } from "@/components";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -74,6 +74,7 @@ export default function SignInSignUpPage({
 }: SignInSignUpPageProps) {
   const { signin_signup } = params;
   const { selected } = searchParams;
+  const router = useRouter();
 
   const isSignin = eq(signin_signup, "signin");
   const isJobSeeker = eq(selected, "jobseeker");
@@ -83,6 +84,12 @@ export default function SignInSignUpPage({
     queryKey: [QUERY_KEY.GET_INDUSTRIES],
     select: ({ data }) =>
       data.map((data) => ({ label: data.name, value: data.name })),
+  });
+
+  const { mutate: getUrlSigninWithSocial } = useMutation({
+    mutationFn: authService.getUrlSigninWithSocial,
+    onSuccess: ({ data: url }) =>
+      !isUndifined(window) && window.open(url, "default"),
   });
 
   const { setUser } = userStore((store) => ({ setUser: store.setUser }));
@@ -200,8 +207,6 @@ export default function SignInSignUpPage({
     resetForm();
   };
 
-  const router = useRouter();
-
   useEffect(() => {
     resetForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -315,6 +320,13 @@ export default function SignInSignUpPage({
               </div>
             </form>
           </Form>
+          <Button
+            onClick={() =>
+              getUrlSigninWithSocial(String(process.env.googleApiKey))
+            }
+          >
+            Google
+          </Button>
         </section>
       </div>
 

@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function MainPage() {
   const router = useRouter();
+
   const [searchKeyword, setSearchKeyword] = useState("");
 
   const goToFindJobs = () =>

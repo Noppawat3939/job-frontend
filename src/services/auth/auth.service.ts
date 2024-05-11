@@ -9,11 +9,13 @@ import type {
 import serivce from "../api";
 import { URL } from "@/constants";
 import { ServiceResponse } from "@/types";
+import { isUndifined } from "@/lib";
 
 const { AUTH } = URL;
 
 type SignupResponse = ServiceResponse;
 type SigninResponse = ServiceResponse<{ data: string }>;
+type GetSigninSocialUrlResponse = ServiceResponse<{ data: string }>;
 
 export const signupWithAdmin = async (body: SignupUserSchema) => {
   const { data } = await serivce.post(AUTH.SIGNUP_ADMIN, body);
@@ -52,5 +54,18 @@ export const forgotPasswordWithCompany = async (
   body: ForgotPasswordCompanySchema
 ) => {
   const { data } = await serivce.patch(AUTH.FORGOT_PASSWORD_COMPANY, body);
+  return data;
+};
+
+export const getUrlSigninWithSocial = async (apiKey: string) => {
+  const { data } = await serivce.get<GetSigninSocialUrlResponse>(
+    AUTH.GET_URL_SIGNIN_SOCIAL,
+    {
+      headers: {
+        ["api-key"]: apiKey,
+        ...(!isUndifined(window) && { ["callback-url"]: window.location.href }),
+      },
+    }
+  );
   return data;
 };
