@@ -18,7 +18,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Jobify.com | find your job easy and fast.",
+  title: "Jobify | Find your job easy and fast.",
   description: "Jobify | Find your jobs",
 };
 
