@@ -11,6 +11,8 @@ import { deleteCookie } from "cookies-next";
 import { QueryCache } from "@tanstack/react-query";
 import { userStore } from "@/store";
 import { LogOut } from "lucide-react";
+import AppLogo from "../../../../public/favicon.ico";
+import Image from "next/image";
 
 type NavbarProps = { user?: User };
 
@@ -86,21 +88,33 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <Fragment>
-      <nav
-        className={`${
-          isMainPath && "sticky top-0"
-        } backdrop-blur-md border-b border-white px-4 py-5 flex items-center justify-between`}
-      >
-        <div className="flex items-center space-x-10">
-          <span
-            aria-label="logo"
-            className="text-4xl max-md:text-3xl font-semibold bg-gradient-to-t from-sky-500 via-sky-400 to-sky-300 inline-block text-transparent bg-clip-text"
+      <nav className="sticky top-0 max-w-[1250px] mx-auto backdrop-blur-md border-b border-white p-5 flex items-center justify-between">
+        <Link
+          href="/"
+          className={cn(
+            "flex items-center hover:opacity-95",
+            isMainPath && "border rounded-lg shadow-sm pl-1 pr-2 py-1"
+          )}
+          aria-label="app-logo-link"
+        >
+          <div
+            className={cn(
+              "flex rounded-full mr-1",
+              !isMainPath && "border border-gray-100"
+            )}
           >
-            <Link href={"/"} shallow>
-              {"Jobify"}
-            </Link>
-          </span>
-        </div>
+            <Image src={AppLogo} alt="app-logo" className="w-8 h-8" />
+          </div>
+          <div
+            aria-label="logo"
+            className={cn(
+              "text-slate-800 max-md:text-3xl font-semibold",
+              isMainPath ? "text-2xl" : "text-3xl"
+            )}
+          >
+            {"Jobify"}
+          </div>
+        </Link>
 
         <div className="flex items-baseline space-x-4">
           <Show when={!isUndifined(user)}>
@@ -142,7 +156,7 @@ export default function Navbar({ user }: NavbarProps) {
             >
               {!isLoginPath && (
                 <Button
-                  variant="outline"
+                  variant={isSignupPath ? "primary" : "outline"}
                   className="w-[80px] cursor-pointer"
                   size="sm"
                   asChild

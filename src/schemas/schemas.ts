@@ -11,10 +11,7 @@ const minLenMessage = (field: string, min?: number) =>
 const invalidValueMessage = (field: string) => `${field} is invalid`;
 
 export const emailSchema = {
-  create: z
-    .string()
-    .email({ message: "Email is invalid format" })
-    .min(1, { message: requiredMessage("Email") }),
+  create: z.string().email({ message: "Email is invalid format" }),
   common: z.string().min(1, { message: requiredMessage("Email") }),
 };
 
@@ -60,6 +57,13 @@ export const lastNameSchema = {
   create: z
     .string({ required_error: requiredMessage("Lastname") })
     .min(COMMON_FIELDS.MIN, { message: minLenMessage("Lastname") }),
+  common: z.string(),
+};
+
+export const fullNameSchema = {
+  create: z
+    .string({ required_error: requiredMessage("Fullname") })
+    .min(COMMON_FIELDS.MIN, { message: minLenMessage("Fullname") }),
   common: z.string(),
 };
 

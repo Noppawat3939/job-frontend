@@ -78,4 +78,12 @@
 .bg-grid {
   background-image: url("../assets/cover/bg-grid.jpeg");
   background-size: calc(40%);
+
+  @media (width <= 768px) {
+    background-size: calc(60%);
+  }
+
+  @media (width <= 500px) {
+    background-size: calc(90%);
+  }
 }

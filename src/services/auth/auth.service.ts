@@ -17,12 +17,17 @@ type SignupResponse = ServiceResponse;
 type SigninResponse = ServiceResponse<{ data: string }>;
 type GetSigninSocialUrlResponse = ServiceResponse<{ data: string }>;
 
+type OmmitedUserSignup = Omit<SignupUserSchema, "fullName"> & {
+  firstName: string;
+  lastName: string;
+};
+
 export const signupWithAdmin = async (body: SignupUserSchema) => {
   const { data } = await serivce.post(AUTH.SIGNUP_ADMIN, body);
   return data;
 };
 
-export const signupWithUser = async (body: SignupUserSchema) => {
+export const signupWithUser = async (body: OmmitedUserSignup) => {
   const { data } = await serivce.post<SignupResponse>(AUTH.SIGNUP_USER, body);
   return data;
 };

@@ -4,6 +4,7 @@ import {
   confirmPasswordSchema,
   emailSchema,
   firstNameSchema,
+  fullNameSchema,
   industryCompanySchema,
   lastNameSchema,
   newPasswordSchema,
@@ -20,8 +21,7 @@ export const signinCompanySchema = signinUserSchema;
 
 export const signupUserSchema = z
   .object({
-    firstName: firstNameSchema.create,
-    lastName: lastNameSchema.create,
+    fullName: fullNameSchema.create,
     email: emailSchema.create,
     password: passwordSchema.create,
     confirmPassword: confirmPasswordSchema.create,

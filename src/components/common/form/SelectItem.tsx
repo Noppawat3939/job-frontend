@@ -3,7 +3,7 @@ import { Label, Select, Show } from "@/components";
 import { Fragment } from "react";
 import { noSpace } from "@/lib";
 
-type SelectItemProps = {
+export type SelectItemProps = {
   items: { label: string; value: string }[];
   placeholder?: string;
   className?: string;
@@ -24,7 +24,7 @@ export default function SelectItem({
       <Show when={label !== undefined}>
         <Label
           htmlFor={noSpace(String(label)?.toLowerCase())}
-          className="capitalize"
+          className="capitalize text-gray-700 text-xs font-normal"
         >
           {label}
         </Label>

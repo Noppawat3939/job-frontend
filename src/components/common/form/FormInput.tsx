@@ -23,7 +23,7 @@ export default function FormInput({
       <Show when={!isUndifined(label)}>
         <Label
           htmlFor={noSpace(String(label)?.toLowerCase())}
-          className="capitalize"
+          className="capitalize text-gray-700 text-xs font-normal"
         >
           {label}
         </Label>
@@ -35,7 +35,10 @@ export default function FormInput({
           value={value}
           type={type}
           disabled={rest.disabled}
-          className={cn(error && "border-red-400")}
+          className={cn(
+            "placeholder:font-normal placeholder:opacity-70",
+            error && "border-red-400"
+          )}
         />
       </span>
       {error && (

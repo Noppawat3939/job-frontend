@@ -76,7 +76,7 @@ export default function LoginSection({
           <form
             about="signin-with-email"
             action={action}
-            className="gap-2 flex flex-col"
+            className="flex flex-col gap-2"
           >
             <FormInput
               name="email"
