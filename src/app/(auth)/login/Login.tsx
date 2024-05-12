@@ -1,4 +1,4 @@
-import { LoginCard } from "@/components";
+import { LoginSection } from "@/components";
 import { useHandleSignin } from "@/hooks";
 import Link from "next/link";
 
@@ -13,7 +13,7 @@ export default function Login() {
       className="flex h-[calc(100vh-80px)] bg-grid flex-col justify-center items-center"
     >
       <div className="flex my-auto">
-        <LoginCard
+        <LoginSection
           onSigninWithGoogle={() => handle.googleSignin(GOOGLE_KEY)}
           onSigninWithEmail={handle.userSingin}
           onSigninWithCompany={handle.companySignin}

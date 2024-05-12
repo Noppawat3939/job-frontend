@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useHandleForm, useToggle } from "@/hooks";
 import googleLogo from "@/assets/shared/goolgle-logo.png";
 
-type LoginCardProps = {
+type LoginSectionProps = {
   onSigninWithGoogle?: () => void;
   onSigninWithEmail?: (arg: SigninUserSchema) => void;
   onSigninWithCompany?: (arg: SigninUserSchema) => void;
@@ -14,12 +14,12 @@ type LoginCardProps = {
 
 const initial = { email: "", password: "" };
 
-export default function LoginCard({
+export default function LoginSection({
   onSigninWithGoogle,
   onSigninWithEmail,
   onSigninWithCompany,
   pending = false,
-}: LoginCardProps) {
+}: LoginSectionProps) {
   const [signinValues, setSigninValues] = useState<SigninUserSchema>(initial);
   const {
     state: { active: withCompany },

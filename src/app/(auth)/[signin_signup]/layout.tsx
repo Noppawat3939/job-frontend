@@ -1,5 +1,5 @@
 "use client";
-
+//TODO: remove file
 import { goToHome } from "@/lib";
 import { usePathname, useSearchParams } from "next/navigation";
 import { type PropsWithChildren } from "react";
