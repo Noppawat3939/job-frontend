@@ -1,5 +1,5 @@
 "use client";
-
+// TODO: remove this page
 import type { DecodedToken, RolesParams } from "@/types";
 import JobSeekerImage from "@/assets/signin_signup_jobseeker.jpg";
 import EmployerImage from "@/assets/signin-signup_employer.jpg";

@@ -16,11 +16,7 @@ export const signinUserSchema = z.object({
   password: passwordSchema.common,
 });
 
-export const signinCompanySchema = signinUserSchema.merge(
-  z.object({
-    companyName: companyNameSchema.common,
-  })
-);
+export const signinCompanySchema = signinUserSchema;
 
 export const signupUserSchema = z
   .object({

@@ -2,7 +2,10 @@ import { type InputProps } from "@/components/ui/input";
 import { Input, Label, Show } from "@/components";
 import { cn, isUndifined, noSpace } from "@/lib";
 
-export type FormInputProps = { label?: string } & InputProps;
+export type FormInputProps = {
+  label?: string;
+  error?: string | string[];
+} & InputProps;
 
 export default function FormInput({
   type,
@@ -12,6 +15,7 @@ export default function FormInput({
   onChange,
   className,
   name,
+  error,
   ...rest
 }: FormInputProps) {
   return (
@@ -31,8 +35,14 @@ export default function FormInput({
           value={value}
           type={type}
           disabled={rest.disabled}
+          className={cn(error && "border-red-400")}
         />
       </span>
+      {error && (
+        <sup aria-label={`error-message-${name}`} className="text-red-500">
+          {error}
+        </sup>
+      )}
     </div>
   );
 }

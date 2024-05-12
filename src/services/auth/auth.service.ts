@@ -41,7 +41,10 @@ export const signin = async (body: SigninUserSchema) => {
 };
 
 export const signinWithCompany = async (body: SigninCompanySchema) => {
-  const { data } = await serivce.post(AUTH.SIGNIN_COMPANY, body);
+  const { data } = await serivce.post<SigninResponse>(
+    AUTH.SIGNIN_COMPANY,
+    body
+  );
   return data;
 };
 

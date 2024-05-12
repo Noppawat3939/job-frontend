@@ -1,18 +1,16 @@
 "use client";
 
 import type { User } from "@/types/user";
-import { Alert, Button, Show } from "@/components";
-import { cn, eq, goToHome, isUndifined, noSpace } from "@/lib";
+import { Alert, Button, Card, Show } from "@/components";
+import { cn, eq, goToHome, isUndifined } from "@/lib";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Fragment, useCallback, useMemo, useState, useTransition } from "react";
+import { usePathname } from "next/navigation";
+import { Fragment, useMemo, useState, useTransition } from "react";
 import { deleteCookie } from "cookies-next";
 import { QueryCache } from "@tanstack/react-query";
 import { userStore } from "@/store";
 import { LogOut } from "lucide-react";
-
-type SelectedSearchParams = "job_seeker" | "employer";
 
 type NavbarProps = { user?: User };
 
@@ -22,38 +20,16 @@ export default function Navbar({ user }: NavbarProps) {
     removeUser: store.removeUser,
   }));
 
-  const router = useRouter();
-  const search = useSearchParams();
-  const selectedSearchParams = search.get("selected") as SelectedSearchParams;
-
   const pathname = usePathname();
 
   const isMainPath = eq(pathname, "/");
-  const isSigninPath = eq(pathname, "/signin");
+
+  const isLoginPath = eq(pathname, "/login");
   const isSignupPath = eq(pathname, "/signup");
 
   const [, startTransition] = useTransition();
 
-  const [selectedRole, setSelectedRole] = useState<SelectedSearchParams>(
-    () => selectedSearchParams || "job_seeker"
-  );
   const [openSignoutModal, setOpenSignoutModal] = useState(false);
-
-  const handleSelectRole = useCallback(
-    (role: typeof selectedRole) => {
-      const [, searchParams] = location.search.split("?");
-      setSelectedRole(role);
-
-      if (searchParams && (isSigninPath || isSignupPath)) {
-        const href = `${location.origin}${location.pathname}?selected=${
-          eq(role, "employer") ? "employer" : "jobseeker"
-        }`;
-
-        router.push(href);
-      }
-    },
-    [isSigninPath, isSignupPath, router]
-  );
 
   const handleSignout = () => {
     deleteCookie("token");
@@ -108,8 +84,6 @@ export default function Navbar({ user }: NavbarProps) {
       ];
   }, [user, pathname]);
 
-  const signinAndSignup = isSigninPath ? "Sign up" : "Sign in";
-
   return (
     <Fragment>
       <nav
@@ -127,33 +101,6 @@ export default function Navbar({ user }: NavbarProps) {
             </Link>
           </span>
         </div>
-
-        <Show when={isSigninPath || isSignupPath}>
-          <div aria-label="select-role" className="flex space-x-[50px]">
-            <h2
-              datatype="job_seekeer"
-              aria-label="job-seeker-role"
-              className={cn(
-                "text-slate-700 cursor-pointer hover:opacity-60 transition-all duration-200",
-                eq(selectedRole, "job_seeker") && "font-medium text-slate-800"
-              )}
-              onClick={() => handleSelectRole("job_seeker")}
-            >
-              {"Job seeker"}
-            </h2>
-            <h2
-              datatype="company"
-              aria-label="employer-role"
-              className={cn(
-                "text-slate-700 cursor-pointer hover:opacity-60 transition-all duration-200",
-                eq(selectedRole, "employer") && "font-medium text-slate-800"
-              )}
-              onClick={() => handleSelectRole("employer")}
-            >
-              {"Company"}
-            </h2>
-          </div>
-        </Show>
 
         <div className="flex items-baseline space-x-4">
           <Show when={!isUndifined(user)}>
@@ -184,17 +131,40 @@ export default function Navbar({ user }: NavbarProps) {
             </Button>
           </Show>
 
-          <Show when={!isSigninPath && !isSignupPath && !user}>
-            <Button className="w-[80px]" size="sm" variant="outline" asChild>
-              <Link
-                href={`/${noSpace(
-                  signinAndSignup.toLowerCase()
-                )}?selected=${noSpace(selectedRole, "_")}`}
-                shallow={false}
-              >
-                {signinAndSignup}
-              </Link>
-            </Button>
+          <Show when={!user}>
+            <Card.Card
+              className={cn(
+                "p-1 flex gap-2",
+                ["/login", "/signup"].includes(pathname)
+                  ? "border-none shadow-none bg-transparent"
+                  : null
+              )}
+            >
+              {!isLoginPath && (
+                <Button
+                  variant="outline"
+                  className="w-[80px] cursor-pointer"
+                  size="sm"
+                  asChild
+                >
+                  <Link href="/login" aria-label="login-link" shallow={false}>
+                    {"Login"}
+                  </Link>
+                </Button>
+              )}
+              {!isSignupPath && (
+                <Button
+                  variant="primary"
+                  className="font-bold w-[80px] cursor-pointer"
+                  size="sm"
+                  asChild
+                >
+                  <Link href="/signup" aria-label="signup-link" shallow={false}>
+                    {"Sign Up"}
+                  </Link>
+                </Button>
+              )}
+            </Card.Card>
           </Show>
         </div>
       </nav>

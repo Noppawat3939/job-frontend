@@ -2,10 +2,10 @@ import { type ZodSchema } from "zod";
 import { useFormState, useFormStatus } from "react-dom";
 import { convertFromEntries } from "@/lib";
 
-export default function useHandleForm<Schema extends Record<string, unknown>>(
+export default function useHandleForm<Values extends Record<string, unknown>>(
   schema: ZodSchema,
-  values: Schema,
-  onsubmit: (arg: Schema) => void
+  values: Values,
+  onsubmit: (arg: Values) => void
 ) {
   const [error, action] = useFormState(() => {
     const resp = schema.safeParse(convertFromEntries(values));
