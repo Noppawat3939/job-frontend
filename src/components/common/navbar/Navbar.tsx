@@ -88,7 +88,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <Fragment>
-      <nav className="sticky top-0 max-w-[1250px] mx-auto backdrop-blur-md border-b border-white p-5 flex items-center justify-between">
+      <nav className="sticky top-0 z-10 max-w-[1250px] mx-auto backdrop-blur-sm border-b border-gray-50/55 p-5 flex items-center justify-between">
         <Link
           href="/"
           className={cn(

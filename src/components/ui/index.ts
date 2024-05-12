@@ -6,6 +6,7 @@ export * as Tabs from "./tabs";
 export * as Card from "./card";
 export * as Dialog from "./dialog";
 export * as Popover from "./popover";
+export * as Radio from "./radio-group";
 
 export * from "./use-toast";
 

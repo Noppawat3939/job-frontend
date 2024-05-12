@@ -1,27 +1,44 @@
 "use client";
 
-import { Banner, InputSearch } from "@/components";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Lazyload } from "@/components";
+import Landing from "./Landing";
+import { useQueries } from "@tanstack/react-query";
+import { QUERY_KEY } from "@/constants";
+import { publicService } from "@/services";
+import {
+  GetIndustriesResponse,
+  GetJobCategoriesResponse,
+} from "@/services/public";
 
 export default function MainPage() {
-  const router = useRouter();
+  const [queryIndustries, queryCategory] = useQueries({
+    queries: [
+      {
+        queryKey: [QUERY_KEY.GET_INDUSTRIES],
+        queryFn: publicService.getPublicIndustries,
+        select: ({ data }: GetIndustriesResponse) =>
+          data.map((ids) => ids.name),
+      },
+      {
+        queryKey: [QUERY_KEY.GET_JOB_CATEGORIES],
+        queryFn: publicService.getJobCategories,
+        select: ({ data }: GetJobCategoriesResponse) =>
+          data.map((cat) => cat.category_name),
+      },
+    ],
+  });
 
-  const [searchKeyword, setSearchKeyword] = useState("");
-
-  const goToFindJobs = () =>
-    router.push(`/job${searchKeyword ? `?search=${searchKeyword}` : ""}`);
+  const loading = [queryCategory.isLoading, queryIndustries.isLoading].some(
+    Boolean
+  );
 
   return (
-    <div>
-      <Banner />
-      <div className="max-w-xl mx-auto flex items-center hover:shadow-md transition-all duration-300 space-x-4 border-2 rounded-xl p-2">
-        <InputSearch
-          value={searchKeyword}
-          onChange={({ target: { value } }) => setSearchKeyword(value)}
-          onSearch={goToFindJobs}
-        />
-      </div>
-    </div>
+    <Lazyload>
+      <Landing
+        categoryData={queryCategory.data}
+        industryData={queryIndustries.data}
+        loading={loading}
+      />
+    </Lazyload>
   );
 }

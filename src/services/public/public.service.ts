@@ -21,7 +21,7 @@ export type GetJobsResponse = ServiceResponse<{
 }>;
 
 type GetJobResponse = ServiceResponse<{ data: Job }>;
-type GetJobCategoriesResponse = ServiceResponse<{
+export type GetJobCategoriesResponse = ServiceResponse<{
   data: JobCategory[];
   total: number;
 }>;
