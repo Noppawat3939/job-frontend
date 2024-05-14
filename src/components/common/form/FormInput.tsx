@@ -36,7 +36,7 @@ export default function FormInput({
           type={type}
           disabled={rest.disabled}
           className={cn(
-            "placeholder:font-normal placeholder:opacity-70",
+            "placeholder:font-normal placeholder:opacity-70 focus-visible:ring-transparent",
             error && "border-red-400"
           )}
         />

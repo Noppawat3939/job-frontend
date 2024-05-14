@@ -71,10 +71,25 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        slidein: {
+          from: {
+            opacity: "0",
+            transform: "translateY(-10px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        slidein300: "slidein 1s ease 300ms",
+        slidein500: "slidein 1s ease 500ms",
+        slidein700: "slidein 1s ease 700ms",
+        slidein800: "slidein 1s ease 800ms",
+        slidein900: "slidein 1s ease 900ms",
       },
     },
   },

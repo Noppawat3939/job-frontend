@@ -12,3 +12,4 @@ export * from "./loader";
 export * from "./search";
 export * from "./badges";
 export * from "./dialog";
+export * from "./footer";

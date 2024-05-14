@@ -11,6 +11,7 @@ import Netflix from "@/assets/company/Netflix-logo.png";
 import Tesla from "@/assets/company/Tesla-logo.png";
 import Uniliver from "@/assets/company/Unilever-logo.png";
 import Apple from "@/assets/company/Apple-logo.png";
+import Uniqlo from "@/assets/company/Uniqlo-logo.png";
 
 import { cn } from "@/lib";
 
@@ -23,17 +24,18 @@ const LOGO = [
   },
   { key: "ptt", image: PTT },
   { key: "line", image: Line },
-  { key: "microsoft", image: Microsoft },
+  { key: "tesla", image: Tesla },
   { key: "apple", image: Apple },
+  { key: "microsoft", image: Microsoft },
   { key: "netflix", image: Netflix },
   { key: "samsung", image: Samsung },
-  { key: "tesla", image: Tesla },
+  { key: "unqlo", image: Uniqlo },
   { key: "uniliver", image: Uniliver },
 ] as { key: string; image: StaticImageData }[];
 
 export default function BrandCompaniesSection() {
   return (
-    <div className="flex bg-gradient-to-b from-gray-50/20 via-slate-100/80 to-gray-100/40 py-8 px-[8%] justify-center items-center flex-wrap gap-[30px]">
+    <div className="animate-slidein500 flex bg-gradient-to-b from-gray-50/20 via-slate-100/80 to-gray-100/40 py-8 px-[8%] justify-center items-center flex-wrap gap-[30px]">
       {LOGO.map((item) => (
         <div key={item.key}>
           {
@@ -44,8 +46,8 @@ export default function BrandCompaniesSection() {
                 `${item.key === "tiktok" && "bg-black"}`
               )}
               alt={item.key}
-              width={180}
-              height={120}
+              width={140}
+              height={100}
               loading="lazy"
             />
           }

@@ -92,7 +92,7 @@ export default function Navbar({ user }: NavbarProps) {
         <Link
           href="/"
           className={cn(
-            "flex items-center hover:opacity-95",
+            "flex items-center hover:opacity-90 bg-white",
             isMainPath && "border rounded-lg shadow-sm pl-1 pr-2 py-1"
           )}
           aria-label="app-logo-link"

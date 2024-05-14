@@ -15,7 +15,7 @@ export default function ListCategorySection({
   loading = false,
 }: ListCategorySectionProps) {
   return (
-    <div className="flex-col flex items-center gap-5 py-[60px]">
+    <div className="animate-slidein900 flex-col flex items-center gap-5 py-[60px]">
       <h1 className="font-semibold text-3xl text-slate-800">
         {`"What category are you looking for work in?"`}
       </h1>

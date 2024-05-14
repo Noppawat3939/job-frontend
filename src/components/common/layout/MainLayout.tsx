@@ -1,5 +1,5 @@
 import { useEffect, type PropsWithChildren } from "react";
-import { Navbar, SigninDialog } from "@/components";
+import { Footer, Navbar, SigninDialog } from "@/components";
 import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "cookies-next";
 import { userService } from "@/services";
@@ -34,6 +34,7 @@ export default function MainLayout({ children }: Readonly<PropsWithChildren>) {
       {children}
       <Toaster />
       <SigninDialog />
+      <Footer />
     </main>
   );
 }

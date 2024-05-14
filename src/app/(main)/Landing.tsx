@@ -3,7 +3,9 @@ import {
   BrandCompaniesSection,
   ListCategorySection,
   ListIndustrySection,
+  SubscribeByEmailSection as SubscribeSection,
 } from "@/components";
+import { useRouter } from "next/navigation";
 
 type LandingProps = {
   industryData?: string[];
@@ -16,12 +18,25 @@ export default function Landing({
   categoryData,
   loading,
 }: LandingProps) {
+  const router = useRouter();
+
+  const goToJobs = (param?: string) => router.push(`/jobs${param}`);
+
   return (
     <section className="bg-grid">
-      <Banner />
+      <Banner onClick={(keyword) => goToJobs(`?keyword=${keyword}`)} />
       <BrandCompaniesSection />
-      <ListIndustrySection data={industryData} loading={loading} />
-      <ListCategorySection data={categoryData} loading={loading} />
+      <ListIndustrySection
+        data={industryData}
+        onClick={(industry) => goToJobs(`?industry=${industry}`)}
+        loading={loading}
+      />
+      <ListCategorySection
+        data={categoryData}
+        onClick={(category) => goToJobs(`?category=${category}`)}
+        loading={loading}
+      />
+      <SubscribeSection />
     </section>
   );
 }

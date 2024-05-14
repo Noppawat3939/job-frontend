@@ -15,7 +15,7 @@ export default function ListIndustrySection({
   loading = false,
 }: ListIndustrySectionProps) {
   return (
-    <div className="flex-col flex items-center gap-5 py-[60px]">
+    <div className="animate-slidein700 flex-col flex items-center gap-5 py-[60px]">
       <h1 className="font-semibold text-3xl text-slate-800">
         {`"What industry are you looking for work in?"`}
       </h1>
