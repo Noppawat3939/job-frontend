@@ -13,13 +13,17 @@ export default function useHandleSignup() {
   const [, startTransition] = useTransition();
 
   const handleSignuped = (message?: string | null) => {
-    toast({ title: message || "Success" });
+    toast({ title: message || "Success", duration: 2000 });
 
     startTransition(() => redirect("/login"));
   };
 
   const handleSignupFailed = (message?: string | null) => {
-    toast({ title: message || "Error", variant: "destructive" });
+    toast({
+      title: message || "Error",
+      variant: "destructive",
+      duration: 2000,
+    });
   };
 
   const signupWithUser = useMutation({

@@ -16,12 +16,14 @@ export default function CreateNewJobPage() {
       toast({
         title: "Job created is successfully",
         description: "Pleasse wait admin approve",
+        duration: 2000,
       });
     },
     onError: () => {
       toast({
         title: "Can't create job",
         description: "Please try again letter",
+        duration: 2000,
       });
     },
   });

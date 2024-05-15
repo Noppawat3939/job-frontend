@@ -6,7 +6,7 @@ import { cn, eq, goToHome, isUndifined } from "@/lib";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, useMemo, useState, useTransition } from "react";
+import { Fragment, useEffect, useMemo, useState, useTransition } from "react";
 import { deleteCookie } from "cookies-next";
 import { QueryCache } from "@tanstack/react-query";
 import { userStore } from "@/store";
@@ -25,9 +25,22 @@ export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
 
   const isMainPath = eq(pathname, "/");
-
   const isLoginPath = eq(pathname, "/login");
   const isSignupPath = eq(pathname, "/signup");
+
+  const [isShowFilter, setIsShowFilter] = useState(false);
+
+  const handleScroll = () => {
+    const { scrollY } = window;
+
+    setIsShowFilter(scrollY > 200 ? true : false);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const [, startTransition] = useTransition();
 
@@ -88,7 +101,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <Fragment>
-      <nav className="sticky top-0 z-10 max-w-[1250px] mx-auto backdrop-blur-sm border-b border-gray-50/55 p-5 flex items-center justify-between">
+      <nav className="sticky top-0 z-10 max-w-[1250px] mx-auto backdrop-blur-sm border-b border-gray-50/55 p-5 flex items-center">
         <Link
           href="/"
           className={cn(
@@ -115,8 +128,18 @@ export default function Navbar({ user }: NavbarProps) {
             {"Jobify"}
           </div>
         </Link>
+        <Show when={isShowFilter && isMainPath}>
+          <div className="flex bg-white border p-1 rounded-lg mx-2">
+            <Button size="sm" variant="ghost">
+              {"filter V"}
+            </Button>
+            <Button size="sm" variant="ghost">
+              {"filter V"}
+            </Button>
+          </div>
+        </Show>
 
-        <div className="flex items-baseline space-x-4">
+        <div className="flex items-baseline ml-auto space-x-4">
           <Show when={!isUndifined(user)}>
             <div datatype="loginned-menus" className=" space-x-4">
               {displayLoginnedMenus

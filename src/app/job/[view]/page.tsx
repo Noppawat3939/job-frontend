@@ -80,7 +80,7 @@ export default function ViewJobPage({ params }: ViewJobPageProps) {
       toast({ title });
     },
     onSuccess: ({ message }) => {
-      toast({ title: message || "Applied job" });
+      toast({ title: message || "Applied job", duration: 2000 });
       startTransition(reloadPage);
     },
   });

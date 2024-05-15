@@ -3,8 +3,13 @@ import {
   BrandCompaniesSection,
   ListCategorySection,
   ListIndustrySection,
-  SubscribeByEmailSection as SubscribeSection,
 } from "@/components";
+import dynamic from "next/dynamic";
+
+const SubscribeSection = dynamic(
+  () => import("@/components/common/section/SubscribeByEmailSection")
+);
+
 import { useRouter } from "next/navigation";
 
 type LandingProps = {
