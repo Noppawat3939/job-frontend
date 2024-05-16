@@ -40,8 +40,13 @@ export const formatPrice = (value: number[], fallback?: string) => {
 
   if (value.length === 2) {
     const [min, max] = value;
+
     const formattedMin = formatNumber(Number(min));
     const formattedMax = formatNumber(Number(max));
+
+    if (min === 0 && max > 0) {
+      return `${formattedMax} THB`;
+    }
 
     return `${formattedMin} - ${formattedMax} THB`;
   }

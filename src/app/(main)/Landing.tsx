@@ -29,7 +29,9 @@ export default function Landing({
 
   return (
     <section className="bg-grid">
-      <Banner onClick={(keyword) => goToJobs(`?keyword=${keyword}`)} />
+      <Banner
+        onClick={(keyword) => goToJobs(keyword ? `?keyword=${keyword}` : "")}
+      />
       <BrandCompaniesSection />
       <ListIndustrySection
         data={industryData}

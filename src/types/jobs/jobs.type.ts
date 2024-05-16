@@ -4,6 +4,7 @@ import {
   JOB_EXP_LEVEL,
   APPLICATION_STATUS,
 } from "@/constants";
+import { User } from "../user";
 
 export type WorkingStyle = (typeof WORK_STYLES)[number];
 export type JobType = (typeof JOB_TYPE)[number];
@@ -54,3 +55,13 @@ export type AppliedJob = {
 
 export type OmittedJob<K extends keyof Job> = Omit<Job, K>;
 export type OmmitedAppliedJob<K extends keyof AppliedJob> = Omit<AppliedJob, K>;
+
+export type PublicJobs = OmittedJob<
+  | "companyProfile"
+  | "contracts"
+  | "transports"
+  | "jobDescriptions"
+  | "benefits"
+  | "qualifications"
+  | "company"
+> & { company: Pick<User, "id" | "companyName" | "userProfile"> };

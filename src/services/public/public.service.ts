@@ -1,22 +1,18 @@
 import { type AxiosRequestConfig } from "axios";
 import { URL } from "@/constants";
 import serivce from "../api";
-import type { Job, JobCategory, Province, ServiceResponse } from "@/types";
+import type {
+  Job,
+  JobCategory,
+  Province,
+  PublicJobs,
+  ServiceResponse,
+} from "@/types";
 
 const { PUBLIC } = URL;
 
-type OmittedJob = Omit<
-  Job,
-  | "companyProfile"
-  | "contracts"
-  | "transports"
-  | "jobDescriptions"
-  | "benefits"
-  | "qualifications"
->;
-
 export type GetJobsResponse = ServiceResponse<{
-  data: OmittedJob[];
+  data: PublicJobs[];
   total: number;
 }>;
 

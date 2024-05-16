@@ -6,6 +6,7 @@ export type User = {
   firstName?: string;
   lastName?: string;
   companyProfile?: string;
+  userProfile?: string;
   companyName?: string;
   industry?: string;
   companyHistory?: string;
