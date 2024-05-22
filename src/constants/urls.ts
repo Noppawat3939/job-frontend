@@ -35,6 +35,8 @@ export const URL = {
     APPLY: "/user-job/apply/:id",
     GET_APPLIED: "/user-job/applied",
     CANCEL_APPLIED_JOB: "/user-job/cancel/:id",
+    GET_FAVORITED: "/user-job/favorited",
+    FAVORITE_JOB: "/user-job/favorite/:id",
   },
   COMPANY: {
     GET_JOBS: "/company/list",

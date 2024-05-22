@@ -49,9 +49,19 @@ export default function Jobs({ jobs }: JobsProps) {
     },
   });
 
+  const { mutate: favoriteJob } = useMutation({
+    mutationFn: jobService.favoriteJob,
+    onSuccess: (res) => {
+      if (res.message) {
+        toast({ title: res.message, variant: "success" });
+        selectJob && getJobById(selectJob.id);
+      }
+    },
+  });
+
   const handleApply = (jobId: number) => {
     if (user) {
-      applyJob(jobId.toString());
+      applyJob(String(jobId));
       return;
     }
 
@@ -60,6 +70,7 @@ export default function Jobs({ jobs }: JobsProps) {
 
   const handleFavorite = (jobId: number) => {
     if (user) {
+      favoriteJob(String(jobId));
       return;
     }
 

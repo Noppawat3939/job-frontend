@@ -13,7 +13,7 @@ import {
   mappingWorkingStyleClass,
 } from "@/lib";
 import type { Job } from "@/types";
-import { Bookmark, ChevronRight, X } from "lucide-react";
+import { Bookmark, BookmarkCheck, ChevronRight, X } from "lucide-react";
 
 type JobDetailCardProps = Partial<Job> & {
   onClose?: MouseEventHandler<HTMLButtonElement>;
@@ -37,6 +37,7 @@ export default function JobDetailCard({
   id,
   applicationStatus,
   onFavorite,
+  favoritedJob,
 }: JobDetailCardProps) {
   const mappedDetails: { key: string; label: string; value: ReactNode }[] = [
     {
@@ -160,7 +161,11 @@ export default function JobDetailCard({
               role="favorite"
               onClick={() => id && onFavorite?.(id)}
             >
-              <Bookmark className="w-4 h-4" />
+              {favoritedJob ? (
+                <BookmarkCheck className="w-4 h-4 text-pink-600" />
+              ) : (
+                <Bookmark className="w-4 h-4" />
+              )}
             </Button>
             <Button
               size="sm"

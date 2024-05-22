@@ -4,6 +4,7 @@ import type {
   ServiceResponse,
   OmittedJob,
   OmmitedAppliedJob,
+  FavoriteJob,
 } from "@/types";
 import { service } from "..";
 import { URL } from "@/constants";
@@ -24,6 +25,7 @@ type JobsApplied = ServiceResponse<{
   total: number;
 }>;
 type CancelledAppliedJobResponse = ServiceResponse<{ data: AppliedJob }>;
+type JobFavoritedResponser = ServiceResponse<{ data: FavoriteJob }>;
 
 export const fetchJobs = async () => {
   const { data } = await service.get<JobsResponse>(
@@ -97,6 +99,20 @@ export const getJobsApplied = async () => {
 export const cancelAppliedJob = async (id: string) => {
   const { data } = await service.post<CancelledAppliedJobResponse>(
     JOB.CANCEL_APPLIED_JOB.replace(":id", id),
+    undefined,
+    getTokenWithHeaders()
+  );
+  return data;
+};
+
+export const getFavoritedJobs = async () => {
+  const { data } = await service.get(JOB.GET_FAVORITED, getTokenWithHeaders());
+  return data;
+};
+
+export const favoriteJob = async (id: string) => {
+  const { data } = await service.post<JobFavoritedResponser>(
+    JOB.FAVORITE_JOB.replace(":id", id),
     undefined,
     getTokenWithHeaders()
   );

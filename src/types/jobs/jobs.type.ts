@@ -33,6 +33,7 @@ export type Job = {
   experienceLevel: JobExperienceLevel;
   category: string;
   applicationStatus?: ApplicationStatus;
+  favoritedJob?: boolean;
 };
 
 export type JobStatus = "approve" | "reject" | "un-approve";
@@ -65,3 +66,10 @@ export type PublicJobs = OmittedJob<
   | "qualifications"
   | "company"
 > & { company: Pick<User, "id" | "companyName" | "userProfile"> };
+
+export type FavoriteJob = {
+  favoriteDate: string;
+  id: number;
+  jobId: number;
+  userId: number;
+};
