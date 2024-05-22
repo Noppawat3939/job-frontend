@@ -86,3 +86,6 @@ export const convertFromEntries = <T extends object>(obj: T) =>
 
 export const scrollToTop = () =>
   document.scrollingElement?.scrollTo({ top: 0, behavior: "smooth" });
+
+export const isEmptyArray = (arr?: unknown[]) =>
+  arr && (arr.length === 0 || !arr?.[0]);

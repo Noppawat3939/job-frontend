@@ -2,7 +2,7 @@
 
 import { Lazyload, Spinner } from "@/components";
 import Jobs from "./Jobs";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { QUERY_KEY } from "@/constants";
 import { publicService } from "@/services";
 

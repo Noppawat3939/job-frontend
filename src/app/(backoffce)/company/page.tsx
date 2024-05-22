@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  DataTable,
-  FormInput,
-  JobDetailCard,
-  Show,
-} from "@/components";
+import { Badge, Button, DataTable, FormInput, Show } from "@/components";
 import { DATE_FORMAT, QUERY_KEY } from "@/constants";
 import {
   cn,
@@ -97,10 +90,10 @@ export default function CompanyPage() {
             aria-label="job-details"
             className="flex bg-slate-50 overflow-y-auto py-2 px-4 flex-[0.6] h-[calc(100vh-120px)]"
           >
-            <JobDetailCard
+            {/* <JobDetailCard
               {...jobDetails}
               onClose={() => setJobDetails(undefined)}
-            />
+            /> */}
           </div>
         </Show>
       </section>

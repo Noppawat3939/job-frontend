@@ -1,8 +1,10 @@
 import { type MouseEventHandler, type ReactNode } from "react";
-import { Badge, Button, Card, Label } from "@/components";
+import { Badge, Button, Card, Label, Show } from "@/components";
 import {
   cn,
   formatPrice,
+  isEmptyArray,
+  isUndifined,
   mappingJobExp,
   mappingJobType,
   mappingUrgetJob,
@@ -10,10 +12,10 @@ import {
   mappingWorkingStyleClass,
 } from "@/lib";
 import type { Job } from "@/types";
-import { X } from "lucide-react";
+import { Bookmark, ChevronRight, X } from "lucide-react";
 
 type JobDetailCardProps = Partial<Job> & {
-  onClose: MouseEventHandler<HTMLButtonElement>;
+  onClose?: MouseEventHandler<HTMLButtonElement>;
 };
 
 export default function JobDetailCard({
@@ -27,10 +29,11 @@ export default function JobDetailCard({
   jobDescriptions,
   qualifications,
   urgent,
+  company,
 }: JobDetailCardProps) {
   const mappedDetails: { key: string; label: string; value: ReactNode }[] = [
     {
-      key: "cateegory",
+      key: "category",
       label: "Category",
       value: (
         <Badge className="bg-orange-100 text-orange-600 hover:bg-orange-100 capitalize">
@@ -42,7 +45,7 @@ export default function JobDetailCard({
       key: "salary",
       label: "Salary",
       value: (
-        <p className="text-sm text-slate-700">{formatPrice(salary ?? [])}</p>
+        <p className="text-md text-slate-700">{formatPrice(salary ?? [])}</p>
       ),
     },
     {
@@ -73,7 +76,7 @@ export default function JobDetailCard({
       key: "type",
       label: "Job type",
       value: (
-        <p className="text-sm text-slate-700">
+        <p className="text-md text-slate-700">
           {mappingJobType[jobType as keyof typeof mappingJobType]}
         </p>
       ),
@@ -84,7 +87,7 @@ export default function JobDetailCard({
       value: (
         <p
           className={cn(
-            "capitalize text-sm",
+            "capitalize text-md",
             urgent ? "text-red-500" : "text-slate-700"
           )}
         >
@@ -97,11 +100,16 @@ export default function JobDetailCard({
       label: "Job descriptions",
       value: (
         <ul>
-          {jobDescriptions?.map((desc, i) => (
-            <li className="list-disc text-sm text-slate-700" key={`jd_${i}`}>
-              {desc}
-            </li>
-          ))}
+          {isEmptyArray(jobDescriptions)
+            ? "-"
+            : jobDescriptions?.map((desc, i) => (
+                <li
+                  className="list-disc text-md text-slate-700"
+                  key={`jd_${i}`}
+                >
+                  {desc}
+                </li>
+              ))}
         </ul>
       ),
     },
@@ -111,7 +119,7 @@ export default function JobDetailCard({
       value: (
         <ul>
           {qualifications?.map((qual, i) => (
-            <li className="list-disc text-sm text-slate-700" key={`qual_${i}`}>
+            <li className="list-disc text-md text-slate-700" key={`qual_${i}`}>
               {qual}
             </li>
           ))}
@@ -121,41 +129,55 @@ export default function JobDetailCard({
   ];
 
   return (
-    <Card.Card className="flex-1 border-0 h-fit">
+    <Card.Card className="flex-1 border-0">
       <Card.CardHeader>
         <Card.CardTitle
-          aria-label="title"
-          className="flex justify-between items-baseline text-slate-800 font-medium"
+          aria-label="position"
+          className="flex justify-between text-3xl text-slate-700 items-baseline"
         >
-          {"Job Details"}
-          <Button
-            onClick={onClose}
-            aria-label="close-job-details"
-            size="icon"
-            variant="outline"
-            className="w-6 h-6"
-          >
-            <X className="w-4 h-4" />
-          </Button>
+          <span className="flex flex-col">
+            {position}
+            <h3
+              className="text-[15px] font-normal text-pink-600 capitalize"
+              aria-label="company-name"
+            >
+              {company}
+            </h3>
+          </span>
+          <div className="flex space-x-4">
+            <Button variant="link" size="icon" role="mark">
+              <Bookmark className="w-4 h-4" />
+            </Button>
+            <Button size="sm" variant="purple-shadow" role="apply">
+              {"Apply"}
+              <ChevronRight strokeWidth={3} className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+
+          <Show when={!isUndifined(onClose)}>
+            <Button
+              onClick={onClose}
+              aria-label="close-job-details"
+              size="icon"
+              variant="outline"
+              className="w-6 h-6"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </Show>
         </Card.CardTitle>
       </Card.CardHeader>
       <Card.CardContent>
-        <Card.CardTitle
-          aria-label="postion"
-          className="mb-4 text-lg font-medium"
-        >
-          {position}
-        </Card.CardTitle>
         {mappedDetails.map((detail) => (
           <div
             aria-label={`detail_${detail.key}`}
             key={detail.key}
             className="flex justify-between items-baseline mb-2 gap-2"
           >
-            <Label className="text-sm text-foreground w-[100px]">
+            <Label className="text-foreground text-md max-w-[200px] w-full">
               {detail.label}
             </Label>
-            <span className="max-w-[350px] w-full">{detail.value}</span>
+            <span className="max-w-[500px] w-full">{detail.value}</span>
           </div>
         ))}
       </Card.CardContent>

@@ -99,9 +99,18 @@ export default function Navbar({ user }: NavbarProps) {
       ];
   }, [user, pathname]);
 
+  const shouldBlurNavbar = ["/", "/signup", "/login"].includes(pathname);
+  console.log({ isShowFilter });
   return (
     <Fragment>
-      <nav className="sticky top-0 z-10 max-w-[1250px] mx-auto backdrop-blur-sm border-b border-gray-50/55 p-5 flex items-center">
+      <nav
+        className={cn(
+          "sticky top-0 z-10 rounded-b-xl mx-auto p-5 flex items-center",
+          shouldBlurNavbar
+            ? "max-w-[1250px] backdrop-blur-sm border-b border-gray-50/55"
+            : "max-w-[95%] bg-white"
+        )}
+      >
         <Link
           href="/"
           className={cn(

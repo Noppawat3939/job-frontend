@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  JobDetailCard,
   JobPreviewLoader,
   MyJobCard,
   NoContentSection,
@@ -87,10 +86,10 @@ export default function MyJobsPage({ searchParams }: MyJobsPageProps) {
         )}
         <Show when={viewJob.open}>
           <div className="flex-[.5] ml-2 max-h-[calc(100vh-200px)] overflow-y-scroll">
-            <JobDetailCard
+            {/* <JobDetailCard
               {...viewJob.data}
               onClose={() => setViewJob({ data: null, open: false })}
-            />
+            /> */}
           </div>
         </Show>
       </div>

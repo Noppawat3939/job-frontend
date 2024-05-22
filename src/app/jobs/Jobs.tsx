@@ -1,23 +1,47 @@
-import { BadgeWorkStyle, Card, ContentLayout } from "@/components";
-import { diffTime, eq, formatPrice, mappingWorkStyle } from "@/lib";
-import { PublicJobs } from "@/types";
-import { Bookmark } from "lucide-react";
+import {
+  BadgeWorkStyle,
+  Card,
+  ContentLayout,
+  JobDetailCard,
+  Show,
+  Spinner,
+} from "@/components";
+import { diffTime, eq, formatPrice } from "@/lib";
+import { publicService } from "@/services";
+import { Job, Nullable, PublicJobs } from "@/types";
+import { useMutation } from "@tanstack/react-query";
+import { Bookmark, ChevronLeft } from "lucide-react";
+import { useState } from "react";
 
 type JobsProps = {
   jobs?: PublicJobs[];
 };
 
 export default function Jobs({ jobs }: JobsProps) {
+  const [selectJob, setSelectJob] = useState<Nullable<Job>>(null);
+
+  const { mutate: getJobById, isPending } = useMutation({
+    mutationFn: publicService.getPublicJob,
+    onSuccess: ({ data }) => setSelectJob(data),
+  });
+
   return (
     <ContentLayout>
-      <div className="flex">
+      <div className="flex space-x-4">
         <div className="flex flex-[.4] max-h-[calc(100dvh-100px)] overflow-y-auto">
           <div className="flex flex-col gap-y-3 w-full">
             {jobs?.map((job) => {
               const jobPostedDay = diffTime(job.createdAt, undefined, "day");
 
               return (
-                <Card.Card key={job.id}>
+                <Card.Card
+                  className="cursor-pointer"
+                  onClick={() =>
+                    ((selectJob && selectJob.id !== job.id) || !selectJob) &&
+                    getJobById(job.id)
+                  }
+                  key={job.id}
+                >
                   <Card.CardHeader className="flex-row gap-2 items-center">
                     <picture>
                       <img
@@ -35,7 +59,6 @@ export default function Jobs({ jobs }: JobsProps) {
                       <Card.CardDescription>
                         {job.company.companyName}
                       </Card.CardDescription>
-                      <Bookmark className="text-gray-400 cursor-pointer w-5 h-5 absolute top-[50%] translate-y-[-50%] right-0" />
                     </div>
                   </Card.CardHeader>
                   <Card.CardContent>
@@ -57,7 +80,27 @@ export default function Jobs({ jobs }: JobsProps) {
             })}
           </div>
         </div>
-        <div className="flex flex-[.6]"></div>
+        <div className="flex flex-[.6]">
+          <Show when={isPending}>
+            <div className="flex w-full items-center justify-center">
+              <Spinner label={""} />
+            </div>
+          </Show>
+          {!isPending && !selectJob && (
+            <div className="p-[50px] bg-violet-50 w-full rounded-xl">
+              <div className="flex flex-col space-y-[30px]">
+                <ChevronLeft className="w-8 h-8" />
+                <h1 className="text-slate-700 text-5xl font-semibold">
+                  {"Select job"}
+                </h1>
+                <div className="bg-violet-500 w-[120px] h-2 rounded-md"></div>
+                <p className="text-gray-600 text-lg">{"Show details here"}</p>
+              </div>
+            </div>
+          )}
+
+          {!isPending && selectJob && <JobDetailCard {...selectJob} />}
+        </div>
       </div>
     </ContentLayout>
   );
