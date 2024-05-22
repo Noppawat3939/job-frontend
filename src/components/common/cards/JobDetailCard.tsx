@@ -2,6 +2,7 @@ import { type MouseEventHandler, type ReactNode } from "react";
 import { Badge, Button, Card, Label, Show } from "@/components";
 import {
   cn,
+  eq,
   formatPrice,
   isEmptyArray,
   isUndifined,
@@ -16,6 +17,8 @@ import { Bookmark, ChevronRight, X } from "lucide-react";
 
 type JobDetailCardProps = Partial<Job> & {
   onClose?: MouseEventHandler<HTMLButtonElement>;
+  onApply?: (jobId: number) => void;
+  onFavorite?: (jobId: number) => void;
 };
 
 export default function JobDetailCard({
@@ -30,6 +33,10 @@ export default function JobDetailCard({
   qualifications,
   urgent,
   company,
+  onApply,
+  id,
+  applicationStatus,
+  onFavorite,
 }: JobDetailCardProps) {
   const mappedDetails: { key: string; label: string; value: ReactNode }[] = [
     {
@@ -128,6 +135,8 @@ export default function JobDetailCard({
     },
   ];
 
+  const applied = eq(applicationStatus, "applied");
+
   return (
     <Card.Card className="flex-1 border-0">
       <Card.CardHeader>
@@ -145,11 +154,22 @@ export default function JobDetailCard({
             </h3>
           </span>
           <div className="flex space-x-4">
-            <Button variant="link" size="icon" role="mark">
+            <Button
+              variant="link"
+              size="icon"
+              role="favorite"
+              onClick={() => id && onFavorite?.(id)}
+            >
               <Bookmark className="w-4 h-4" />
             </Button>
-            <Button size="sm" variant="purple-shadow" role="apply">
-              {"Apply"}
+            <Button
+              size="sm"
+              variant="purple-shadow"
+              onClick={() => (applied ? null : id && onApply?.(id))}
+              role="apply"
+              disabled={applied}
+            >
+              {applied ? "Applied" : "Apply"}
               <ChevronRight strokeWidth={3} className="w-4 h-4 ml-2" />
             </Button>
           </div>

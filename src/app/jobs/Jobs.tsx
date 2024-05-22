@@ -5,12 +5,15 @@ import {
   JobDetailCard,
   Show,
   Spinner,
+  useToast,
 } from "@/components";
 import { diffTime, eq, formatPrice } from "@/lib";
-import { publicService } from "@/services";
-import { Job, Nullable, PublicJobs } from "@/types";
+import { jobService, publicService } from "@/services";
+import { useSigninDialog, userStore } from "@/store";
+import { Job, Nullable, PublicJobs, ServiceErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
-import { Bookmark, ChevronLeft } from "lucide-react";
+import { AxiosError } from "axios";
+import { BriefcaseBusiness, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 
 type JobsProps = {
@@ -18,17 +21,55 @@ type JobsProps = {
 };
 
 export default function Jobs({ jobs }: JobsProps) {
+  const { user } = userStore();
+  const { setOpen } = useSigninDialog();
+  const { toast } = useToast();
+
   const [selectJob, setSelectJob] = useState<Nullable<Job>>(null);
 
   const { mutate: getJobById, isPending } = useMutation({
-    mutationFn: publicService.getPublicJob,
+    mutationFn: user ? jobService.fetchJob : publicService.getPublicJob,
     onSuccess: ({ data }) => setSelectJob(data),
   });
 
+  const { mutate: applyJob } = useMutation({
+    mutationFn: jobService.applyJob,
+    onSuccess: ({ message }) => {
+      if (message) {
+        toast({ title: message, duration: 1500, variant: "success" });
+        selectJob && getJobById(selectJob.id);
+      }
+    },
+    onError: (e) => {
+      const error = e as AxiosError;
+      const {
+        data: { message },
+      } = error.response as ServiceErrorResponse;
+      toast({ title: message, duration: 1500, variant: "destructive" });
+    },
+  });
+
+  const handleApply = (jobId: number) => {
+    if (user) {
+      applyJob(jobId.toString());
+      return;
+    }
+
+    setOpen();
+  };
+
+  const handleFavorite = (jobId: number) => {
+    if (user) {
+      return;
+    }
+
+    setOpen();
+  };
+
   return (
     <ContentLayout>
-      <div className="flex space-x-4">
-        <div className="flex flex-[.4] max-h-[calc(100dvh-100px)] overflow-y-auto">
+      <div className="flex space-x-4 max-h-[calc(100dvh-100px)] h-full">
+        <div className="flex flex-[.4] overflow-y-auto">
           <div className="flex flex-col gap-y-3 w-full">
             {jobs?.map((job) => {
               const jobPostedDay = diffTime(job.createdAt, undefined, "day");
@@ -81,25 +122,36 @@ export default function Jobs({ jobs }: JobsProps) {
           </div>
         </div>
         <div className="flex flex-[.6]">
+          {!isPending && !selectJob && (
+            <div className="p-[50px] bg-gradient-to-b from-indigo-50 via-purple-100 to-pink-50 w-full items-center justify-center flex flex-col rounded-xl">
+              <div className="flex flex-col mx-auto w-fit">
+                <center className="bg-white/30 w-fit mx-auto p-4 rounded-full">
+                  <BriefcaseBusiness className="w-[36px] h-[36px] text-purple-500" />
+                </center>
+                <h1 className="text-slate-700 mt-4 text-5xl font-semibold">
+                  {"Select job"}
+                </h1>
+                <div
+                  aria-label="line"
+                  className="bg-purple-500 mt-[24px] mb-2 w-[120px] h-2 rounded-md"
+                ></div>
+                <p className="text-purple-300 text-md">{"Show details here"}</p>
+              </div>
+            </div>
+          )}
           <Show when={isPending}>
             <div className="flex w-full items-center justify-center">
               <Spinner label={""} />
             </div>
           </Show>
-          {!isPending && !selectJob && (
-            <div className="p-[50px] bg-violet-50 w-full rounded-xl">
-              <div className="flex flex-col space-y-[30px]">
-                <ChevronLeft className="w-8 h-8" />
-                <h1 className="text-slate-700 text-5xl font-semibold">
-                  {"Select job"}
-                </h1>
-                <div className="bg-violet-500 w-[120px] h-2 rounded-md"></div>
-                <p className="text-gray-600 text-lg">{"Show details here"}</p>
-              </div>
-            </div>
-          )}
 
-          {!isPending && selectJob && <JobDetailCard {...selectJob} />}
+          {!isPending && selectJob && (
+            <JobDetailCard
+              {...selectJob}
+              onApply={handleApply}
+              onFavorite={handleFavorite}
+            />
+          )}
         </div>
       </div>
     </ContentLayout>

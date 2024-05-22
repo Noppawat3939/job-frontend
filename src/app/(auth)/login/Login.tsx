@@ -13,12 +13,14 @@ export default function Login() {
       className="flex h-[calc(100vh-80px)] bg-grid flex-col justify-center items-center"
     >
       <div className="flex my-auto">
-        <LoginSection
-          onSigninWithGoogle={() => handle.googleSignin(GOOGLE_KEY)}
-          onSigninWithEmail={handle.userSingin}
-          onSigninWithCompany={handle.companySignin}
-          pending={isPending}
-        />
+        <div className="shadow-md rounded-lg border border-slate-50">
+          <LoginSection
+            onSigninWithGoogle={() => handle.googleSignin(GOOGLE_KEY)}
+            onSigninWithEmail={handle.userSingin}
+            onSigninWithCompany={handle.companySignin}
+            pending={isPending}
+          />
+        </div>
       </div>
       <RedirectExternalLink />
     </section>

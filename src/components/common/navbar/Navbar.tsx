@@ -64,9 +64,9 @@ export default function Navbar({ user }: NavbarProps) {
       return [
         {
           key: "findJob",
-          href: "/job",
+          href: "/jobs",
           label: "Find jobs",
-          hide: ["/job"].includes(pathname),
+          hide: ["/jobs"].includes(pathname),
         },
         {
           key: "myJobs",
@@ -99,8 +99,11 @@ export default function Navbar({ user }: NavbarProps) {
       ];
   }, [user, pathname]);
 
-  const shouldBlurNavbar = ["/", "/signup", "/login"].includes(pathname);
-  console.log({ isShowFilter });
+  const shouldBlurNavbar = useMemo(
+    () => ["/", "/signup", "/login"].includes(pathname),
+    [pathname]
+  );
+
   return (
     <Fragment>
       <nav

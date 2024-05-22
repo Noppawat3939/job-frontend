@@ -4,12 +4,15 @@ import { Button, Card, FormInput, Show } from "@/components";
 import Image from "next/image";
 import { useHandleForm, useToggle } from "@/hooks";
 import googleLogo from "@/assets/shared/goolgle-logo.png";
+import { cn } from "@/lib";
 
 type LoginSectionProps = {
   onSigninWithGoogle?: () => void;
   onSigninWithEmail?: (arg: SigninUserSchema) => void;
   onSigninWithCompany?: (arg: SigninUserSchema) => void;
   pending?: boolean;
+  hideSignInWithCompany?: boolean;
+  withDialog?: boolean;
 };
 
 const initial = { email: "", password: "" };
@@ -19,6 +22,8 @@ export default function LoginSection({
   onSigninWithEmail,
   onSigninWithCompany,
   pending = false,
+  hideSignInWithCompany = false,
+  withDialog = false,
 }: LoginSectionProps) {
   const [signinValues, setSigninValues] = useState<SigninUserSchema>(initial);
   const {
@@ -40,7 +45,12 @@ export default function LoginSection({
   );
 
   return (
-    <Card.Card className="border-none shadow-md px-6 min-w-[400px]">
+    <Card.Card
+      className={cn(
+        "border-none shadow-none min-w-[400px]",
+        withDialog ? "px-0" : "px-6"
+      )}
+    >
       <Card.CardHeader className="px-0">
         <h1
           aria-label="signin-title"
@@ -110,15 +120,17 @@ export default function LoginSection({
               >
                 {"Log in"}
               </Button>
-              <Button
-                className="text-[12px] font-normal text-purple-600 opacity-80 hover:opacity-100"
-                variant="link"
-                role="company-login"
-                type="button"
-                onClick={() => (pending ? undefined : onToggleToCompany())}
-              >
-                {`or login with ${withCompany ? "Job seekeer" : "Company"}`}
-              </Button>
+              <Show when={!hideSignInWithCompany}>
+                <Button
+                  className="text-[12px] font-normal text-purple-600 opacity-80 hover:opacity-100"
+                  variant="link"
+                  role="company-login"
+                  type="button"
+                  onClick={() => (pending ? undefined : onToggleToCompany())}
+                >
+                  {`or login with ${withCompany ? "Job seekeer" : "Company"}`}
+                </Button>
+              </Show>
             </Card.CardFooter>
           </form>
         </div>
