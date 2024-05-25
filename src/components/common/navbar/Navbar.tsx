@@ -108,10 +108,10 @@ export default function Navbar({ user }: NavbarProps) {
     <Fragment>
       <nav
         className={cn(
-          "sticky top-0 z-10 rounded-b-xl mx-auto p-5 flex items-center",
+          "sticky top-0 z-10 rounded-b-xl mx-auto flex items-center",
           shouldBlurNavbar
-            ? "max-w-[1250px] backdrop-blur-sm border-b border-gray-50/55"
-            : "max-w-[95%] bg-white"
+            ? "max-w-[1250px] p-5 backdrop-blur-sm border-b border-gray-50/55"
+            : "w-full bg-white py-5 px-[50px]"
         )}
       >
         <Link

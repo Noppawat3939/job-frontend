@@ -46,8 +46,8 @@ export default function BrandCompaniesSection() {
                 `${item.key === "tiktok" && "bg-black"}`
               )}
               alt={item.key}
-              width={140}
-              height={100}
+              width={120}
+              height={80}
               loading="lazy"
             />
           }

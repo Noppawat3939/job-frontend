@@ -1,9 +1,16 @@
 import {
   Banner,
-  BrandCompaniesSection,
-  ListCategorySection,
-  ListIndustrySection,
+  BrandCompaniesSection as Brand,
+  ListCategorySection as Categories,
+  ListIndustrySection as Industries,
 } from "@/components";
+import { QUERY_KEY } from "@/constants";
+import { publicService } from "@/services";
+import type {
+  GetIndustriesResponse,
+  GetJobCategoriesResponse,
+} from "@/services/public";
+import { useQueries } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 
 const SubscribeSection = dynamic(
@@ -12,18 +19,32 @@ const SubscribeSection = dynamic(
 
 import { useRouter } from "next/navigation";
 
-type LandingProps = {
-  industryData?: string[];
-  categoryData?: string[];
-  loading?: boolean;
-};
-
-export default function Landing({
-  industryData,
-  categoryData,
-  loading,
-}: LandingProps) {
+export default function Landing() {
   const router = useRouter();
+
+  const [queryIndustries, queryCategory] = useQueries({
+    queries: [
+      {
+        queryKey: [QUERY_KEY.GET_INDUSTRIES],
+        queryFn: publicService.getPublicIndustries,
+        select: ({ data }: GetIndustriesResponse) =>
+          data.map((ids) => ids.name),
+      },
+      {
+        queryKey: [QUERY_KEY.GET_JOB_CATEGORIES],
+        queryFn: publicService.getJobCategories,
+        select: ({ data }: GetJobCategoriesResponse) =>
+          data.map((cat) => cat.category_name),
+      },
+    ],
+  });
+
+  const loading = [queryCategory.isLoading, queryIndustries.isLoading].some(
+    Boolean
+  );
+
+  const industryData = queryIndustries.data;
+  const categoryData = queryCategory.data;
 
   const goToJobs = (param?: string) => router.push(`/jobs${param}`);
 
@@ -32,13 +53,13 @@ export default function Landing({
       <Banner
         onClick={(keyword) => goToJobs(keyword ? `?keyword=${keyword}` : "")}
       />
-      <BrandCompaniesSection />
-      <ListIndustrySection
+      <Brand />
+      <Industries
         data={industryData}
         onClick={(industry) => goToJobs(`?industry=${industry}`)}
         loading={loading}
       />
-      <ListCategorySection
+      <Categories
         data={categoryData}
         onClick={(category) => goToJobs(`?category=${category}`)}
         loading={loading}

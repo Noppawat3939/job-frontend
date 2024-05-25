@@ -7,13 +7,14 @@ import {
   Spinner,
   useToast,
 } from "@/components";
+import { QUERY_KEY } from "@/constants";
 import { diffTime, eq, formatPrice } from "@/lib";
 import { jobService, publicService } from "@/services";
 import { useSigninDialog, userStore } from "@/store";
 import { Job, Nullable, PublicJobs, ServiceErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { BriefcaseBusiness, ChevronLeft } from "lucide-react";
+import { BriefcaseBusiness } from "lucide-react";
 import { useState } from "react";
 
 type JobsProps = {
@@ -30,6 +31,7 @@ export default function Jobs({ jobs }: JobsProps) {
   const { mutate: getJobById, isPending } = useMutation({
     mutationFn: user ? jobService.fetchJob : publicService.getPublicJob,
     onSuccess: ({ data }) => setSelectJob(data),
+    mutationKey: [user ? QUERY_KEY.GET_JOB : QUERY_KEY.GET_PUBLIC_JOB],
   });
 
   const { mutate: applyJob } = useMutation({
@@ -71,6 +73,7 @@ export default function Jobs({ jobs }: JobsProps) {
   const handleFavorite = (jobId: number) => {
     if (user) {
       favoriteJob(String(jobId));
+
       return;
     }
 

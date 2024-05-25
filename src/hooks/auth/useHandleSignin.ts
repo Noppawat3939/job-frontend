@@ -11,8 +11,9 @@ export default function useHandleSignin() {
 
   const signinWithGoogle = useMutation({
     mutationFn: authService.getUrlSigninWithSocial,
-    onSuccess: ({ data: url }) =>
-      !isUndifined(window) && window.open(url, "_blank"),
+    onSuccess: ({ data: url }) => {
+      !isUndifined(window) && window.open(url, "_self");
+    },
   });
 
   const signin = useMutation({
