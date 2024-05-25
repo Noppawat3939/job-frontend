@@ -8,6 +8,7 @@ export default function ContentLayout({
   return (
     <div
       {...rest}
+      suppressHydrationWarning
       className={cn(
         "h-[calc(100vh-80px)] mx-auto max-w-[95%] max-2xl:max-w-[92%] max-lg:max-w-[90%] max-sm:max-w-[95%]",
         rest.className

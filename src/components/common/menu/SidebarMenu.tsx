@@ -1,12 +1,12 @@
 "use client";
 
 import { type LucideIcon, ChevronRight, ChevronLeft } from "lucide-react";
-import type { User } from "@/types/user";
 import { Avatar, Button, Command, Show } from "@/components";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { cn } from "@/lib";
-import { collapseSidebarStore } from "@/store";
+import { collapseSidebarStore, userStore } from "@/store";
+import { ClassValue } from "clsx";
 
 export type Menu = {
   heading?: string;
@@ -21,10 +21,12 @@ export type Menu = {
   }[];
 }[];
 
-type SidebarMenuProps = { menus: Menu; user?: User };
+type SidebarMenuProps = { menus: Menu; className?: ClassValue };
 
-export default function SidebarMenu({ menus, user }: SidebarMenuProps) {
+export default function SidebarMenu({ menus, className }: SidebarMenuProps) {
   const { push } = useRouter();
+
+  const { user } = userStore((s) => ({ user: s.user }));
 
   const { collapse, toggleCollapse } = collapseSidebarStore();
 
@@ -46,9 +48,11 @@ export default function SidebarMenu({ menus, user }: SidebarMenuProps) {
   return (
     <aside
       role="sidebar-menus"
+      datatype={collapse ? "close" : "open"}
       className={cn(
         "bg-transparent h-full border-r py-3 px-2 transition-all duration-200 relative",
-        collapse ? "w-[60px] flex flex-col items-center" : "w-[300px]"
+        collapse ? "w-[60px] flex flex-col items-center" : "w-[300px]",
+        className
       )}
     >
       <div>
@@ -57,6 +61,7 @@ export default function SidebarMenu({ menus, user }: SidebarMenuProps) {
           variant="secondary"
         >
           <Avatar.Avatar className={cn("w-7 h-7", !collapse ? "mr-2" : "")}>
+            <Avatar.AvatarImage src={user?.userProfile} />
             <Avatar.AvatarFallback className="bg-sky-400 text-white">
               {displayName.fallbackImage.toUpperCase()}
             </Avatar.AvatarFallback>

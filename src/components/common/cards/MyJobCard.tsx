@@ -1,27 +1,41 @@
-import { ApplicationStatus, Button, Card, Label, Show } from "@/components";
-import { cn, eq, formatDate } from "@/lib";
-import { OmittedJob, OmmitedAppliedJob } from "@/types";
+import { ApplicationStatus, Button, Card, Show } from "@/components";
+import { cn, eq, formatDate, isUndifined } from "@/lib";
+import { AppliedJob, Job } from "@/types";
 import { HTMLAttributes } from "react";
 
-type MyJobCardProps = {
-  job: OmittedJob<"applicationStatus">;
-} & OmmitedAppliedJob<"jobId" | "userId"> &
-  Pick<HTMLAttributes<HTMLDivElement>, "onClick"> & {
-    onCancel?: (id: number) => void;
-  };
+type MyJobCardProps =
+  | {
+      job: Job;
+      type: "favorite" | "apply";
+      favoritedDate?: string;
+      applicationDate?: string | Date;
+      cancelledDate?: string | Date;
+      applicationStatus?: AppliedJob["applicationStatus"];
+    } & Pick<HTMLAttributes<HTMLDivElement>, "onClick"> & {
+        onCancel?: (id: number) => void;
+      };
 
-export default function MyJobCard(props: MyJobCardProps) {
-  const {
-    job,
-    applicationDate,
-    applicationStatus,
-    cancelledDate,
-    onClick,
-    onCancel,
-  } = props;
+export default function MyJobCard({
+  type,
+  job,
+  applicationDate,
+  applicationStatus,
+  cancelledDate,
+  onCancel,
+  onClick,
+  favoritedDate,
+}: MyJobCardProps) {
+  const isApply = eq(type, "apply");
+  const isFavorite = eq(type, "favorite");
 
   return (
-    <Card.Card className="min-h-[20px] border-0" onClick={onClick}>
+    <Card.Card
+      className={cn(
+        "min-h-[24px] border-y-0 border-r-0 transition-all border-slate-100 duration-200 border-l-[5px] p-2",
+        isFavorite ? "hover:border-pink-400" : "hover:border-sky-400"
+      )}
+      onClick={onClick}
+    >
       <Card.CardHeader className="p-3">
         <Card.CardTitle
           aria-label="job-position"
@@ -33,23 +47,38 @@ export default function MyJobCard(props: MyJobCardProps) {
               {job.company}
             </Card.CardDescription>
           </div>
+          <Show when={isApply}>
+            <p
+              className={cn(
+                "text-xs ml-auto font-normal",
+                cancelledDate ? "text-red-500" : "text-slate-700"
+              )}
+            >{`${cancelledDate ? "Cancelled" : "Applied"} at: ${formatDate(
+              cancelledDate || applicationDate,
+              "DD MMM YYYY"
+            )}`}</p>
+          </Show>
 
-          <p
-            className={cn(
-              "text-xs ml-auto font-normal",
-              cancelledDate ? "text-red-500" : "text-slate-700"
-            )}
-          >{`${cancelledDate ? "Cancelled" : "Applied"} at: ${formatDate(
-            cancelledDate || applicationDate,
-            "DD MMM YYYY"
-          )}`}</p>
+          <Show when={isFavorite}>
+            <p className="text-xs ml-auto font-normal text-slate-700">{`Favorited at: ${formatDate(
+              favoritedDate,
+              "DD MMM YYYY"
+            )}`}</p>
+          </Show>
         </Card.CardTitle>
       </Card.CardHeader>
       <Card.CardContent className="py-2 px-3">
-        <div className="flex justify-between items-center">
-          <ApplicationStatus status={applicationStatus} />
+        <div
+          className={cn(
+            "flex items-center",
+            applicationStatus ? "justify-between" : "justify-end"
+          )}
+        >
+          {isApply && !isUndifined(applicationStatus) && (
+            <ApplicationStatus status={applicationStatus!} />
+          )}
           <div className="flex">
-            <Show when={eq(applicationStatus, "applied")}>
+            {isApply && applicationStatus === "applied" && (
               <Button
                 size="sm"
                 role="cancel"
@@ -61,9 +90,25 @@ export default function MyJobCard(props: MyJobCardProps) {
                 className="text-slate-700"
                 variant="outline"
               >
-                {"Cancel apply"}
+                {"Cancel applied"}
               </Button>
-            </Show>
+            )}
+
+            {isFavorite && (
+              <Button
+                size="sm"
+                role="un-favorite"
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  onCancel?.(job.id);
+                }}
+                className="text-slate-700"
+                variant="outline"
+              >
+                {"Un favorited"}
+              </Button>
+            )}
           </div>
         </div>
       </Card.CardContent>

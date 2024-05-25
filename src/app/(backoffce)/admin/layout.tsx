@@ -68,7 +68,7 @@ export default function AdminBackofficeLayout({
       aria-label="admin-layout"
       className="flex border-t-4 border-sky-100 h-[calc(100vh-80px)]"
     >
-      <SidebarMenu menus={menus} user={user} />
+      <SidebarMenu menus={menus} />
 
       <div className="flex-1">{children}</div>
     </main>

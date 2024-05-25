@@ -68,13 +68,15 @@ export default function Alert({
               {...cancelButtonProps}
               variant={cancelButtonProps?.variant || "secondary"}
               onClick={(e) => onCancel?.(e)}
+              role="cancel"
             >
               {cancelText || "Cancel"}
             </Button>
           )}
           <Button
-            {...okButtonProps}
             onClick={(e) => onOk?.(e) || onOpenChange?.(!open)}
+            role="confrim"
+            {...okButtonProps}
           >
             {okText || "OK"}
           </Button>

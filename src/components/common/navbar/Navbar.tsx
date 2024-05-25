@@ -221,9 +221,10 @@ export default function Navbar({ user }: NavbarProps) {
       <Alert
         onOpenChange={setOpenSignoutModal}
         onCancel={() => setOpenSignoutModal(false)}
+        okButtonProps={{ variant: "purple-shadow" }}
         title={"Are you sure want to sign out?"}
         closeable={false}
-        leftIcon={<LogOut className="mr-2 text-sky-400" />}
+        leftIcon={<LogOut className="mr-2 text-violet-400" />}
         open={openSignoutModal}
         okText="Confirm"
         onOk={handleSignout}

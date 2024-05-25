@@ -19,6 +19,8 @@ type JobDetailCardProps = Partial<Job> & {
   onClose?: MouseEventHandler<HTMLButtonElement>;
   onApply?: (jobId: number) => void;
   onFavorite?: (jobId: number) => void;
+  hideApply?: boolean;
+  hideFavorite?: boolean;
 };
 
 export default function JobDetailCard({
@@ -38,6 +40,8 @@ export default function JobDetailCard({
   applicationStatus,
   onFavorite,
   favoritedJob,
+  hideApply = false,
+  hideFavorite = false,
 }: JobDetailCardProps) {
   const mappedDetails: { key: string; label: string; value: ReactNode }[] = [
     {
@@ -155,28 +159,34 @@ export default function JobDetailCard({
             </h3>
           </span>
           <div className="flex space-x-4">
-            <Button
-              variant="link"
-              size="icon"
-              role="favorite"
-              onClick={() => id && onFavorite?.(id)}
-            >
-              {favoritedJob ? (
-                <BookmarkCheck className="w-4 h-4 text-pink-600" />
-              ) : (
-                <Bookmark className="w-4 h-4" />
-              )}
-            </Button>
-            <Button
-              size="sm"
-              variant="purple-shadow"
-              onClick={() => (applied ? null : id && onApply?.(id))}
-              role="apply"
-              disabled={applied}
-            >
-              {applied ? "Applied" : "Apply"}
-              <ChevronRight strokeWidth={3} className="w-4 h-4 ml-2" />
-            </Button>
+            <Show when={!hideFavorite}>
+              <Button
+                variant="link"
+                size="icon"
+                role="favorite"
+                onClick={() => !hideFavorite && id && onFavorite?.(id)}
+              >
+                {favoritedJob ? (
+                  <BookmarkCheck className="w-4 h-4 text-pink-600" />
+                ) : (
+                  <Bookmark className="w-4 h-4" />
+                )}
+              </Button>
+            </Show>
+            <Show when={!hideApply}>
+              <Button
+                size="sm"
+                variant="purple-shadow"
+                onClick={() =>
+                  applied ? null : id && !hideApply && onApply?.(id)
+                }
+                role="apply"
+                disabled={applied}
+              >
+                {applied ? "Applied" : "Apply"}
+                <ChevronRight strokeWidth={3} className="w-4 h-4 ml-2" />
+              </Button>
+            </Show>
           </div>
 
           <Show when={!isUndifined(onClose)}>

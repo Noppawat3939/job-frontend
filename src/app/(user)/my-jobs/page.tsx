@@ -2,97 +2,133 @@
 
 import {
   JobPreviewLoader,
-  MyJobCard,
+  LayoutWithSidebar,
   NoContentSection,
   Show,
 } from "@/components";
 import { QUERY_KEY } from "@/constants";
 import { useChangeTitleWindow } from "@/hooks";
-import { cn, eq } from "@/lib";
+import { eq } from "@/lib";
 import { jobService } from "@/services";
-import { Job } from "@/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueries } from "@tanstack/react-query";
 import { Heart, History } from "lucide-react";
-import { useState } from "react";
-
-type MyJobsPageProps = { searchParams: { tab: "favorite" | "apply" } };
+import MyJobs from "./MyJobs";
+import { useSearchParams } from "next/navigation";
+import { JobsAppliedResponse, JobsFavoritedResponse } from "@/services/job";
 
 const mockLoader = Array.from({ length: 5 }).fill("");
 
-export default function MyJobsPage({ searchParams }: MyJobsPageProps) {
-  useChangeTitleWindow(`My jobs - ${searchParams.tab} | jobify.com`);
+export default function MyJobsPage() {
+  const searchParam = useSearchParams();
 
-  const {
-    data: jobsApplied,
-    isLoading,
-    isFetched,
-    isRefetching,
-    refetch: refetchAppliedJobs,
-  } = useQuery({
-    queryKey: [QUERY_KEY.GET_JOBS_APPLIED],
-    queryFn: jobService.getJobsApplied,
-    select: (res) => res.data,
-    enabled: eq(searchParams.tab, "apply"),
+  const tabParam = searchParam.get("tab") as "favorite" | "apply" | undefined;
+
+  useChangeTitleWindow(`My jobs - ${tabParam} | jobify.com`);
+
+  const [
+    {
+      data: jobsFavorited,
+      refetch: refetchFavorited,
+      isLoading: loadingFavorited,
+      isRefetching: refetchingFavorited,
+    },
+    {
+      data: jobsApplied,
+      refetch: refetchApplied,
+      isLoading: loadingApplied,
+      isRefetching: refetchingApplied,
+    },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: [QUERY_KEY.GET_JOBS_FAVORITED, tabParam],
+        queryFn: jobService.getFavoritedJobs,
+        select: (res: JobsFavoritedResponse) => res.data,
+      },
+      {
+        queryKey: [QUERY_KEY.GET_JOBS_APPLIED, tabParam],
+        queryFn: jobService.getJobsApplied,
+        select: (res: JobsAppliedResponse) => res.data,
+      },
+    ],
   });
 
   const { mutate: cancelApplied } = useMutation({
     mutationFn: jobService.cancelAppliedJob,
-    onSuccess: () => refetchAppliedJobs(),
+    onSuccess: () => refetchApplied(),
   });
 
-  const [viewJob, setViewJob] = useState<{ open: boolean; data: Job | null }>({
-    data: null,
-    open: false,
+  const { mutate: favoriteJob } = useMutation({
+    mutationFn: jobService.favoriteJob,
+    onSuccess: () => refetchFavorited(),
   });
 
-  const noContent = eq(searchParams.tab, "apply")
-    ? eq(jobsApplied?.length, 0)
-    : true;
-  const hasLoading = [isLoading, isRefetching].some(Boolean);
+  const noContent = eq(tabParam, "favorite")
+    ? eq(jobsFavorited?.length, 0)
+    : eq(jobsApplied?.length, 0);
 
-  if (noContent)
-    return (
-      <NoContentSection
-        title={
-          eq(searchParams.tab, "apply")
-            ? "Apply job not found"
-            : "Favorite job not found"
-        }
-        icon={eq(searchParams.tab, "favorite") ? Heart : History}
-      />
-    );
+  const hasLoading = [
+    loadingApplied,
+    loadingFavorited,
+    refetchingApplied,
+    refetchingFavorited,
+  ].some(Boolean);
 
   return (
-    <div className="p-3">
-      {hasLoading &&
-        mockLoader.map((_, i) => <JobPreviewLoader key={`loader_${i}`} />)}
-      <div className="flex">
-        {isFetched && (
-          <div
-            className={cn(
-              "flex flex-col gap-2 max-h-[calc(100vh-80px)] overflow-y-scroll",
-              viewJob.open ? "flex-[.5]" : "flex-1"
-            )}
-          >
-            {jobsApplied?.map((job) => (
-              <MyJobCard
-                key={`my_job_${job.id}`}
-                {...job}
-                onClick={() => setViewJob({ open: true, data: job.job })}
-                onCancel={(jobId) => cancelApplied(String(jobId))}
+    <LayoutWithSidebar
+      scrollAreaClass="h-full flex flex-col"
+      menu={[
+        {
+          items: [
+            {
+              label: "Job Favorite",
+              value: "job-favorite",
+              path: "/my-jobs?tab=favorite",
+              leftIcon: Heart,
+              active: eq(tabParam, "favorite"),
+            },
+            {
+              label: "Job Apply history",
+              value: "job-apply-history",
+              path: "/my-jobs?tab=apply",
+              leftIcon: History,
+              active: eq(tabParam, "apply"),
+            },
+          ],
+        },
+      ]}
+    >
+      <section className="bg-transparent px-[24px]">
+        <Show
+          when={hasLoading}
+          otherwise={
+            noContent ? (
+              <NoContentSection
+                title={
+                  eq(tabParam, "apply")
+                    ? "Apply job not found"
+                    : "Favorite job not found"
+                }
+                icon={eq(tabParam, "favorite") ? Heart : History}
               />
+            ) : (
+              <MyJobs
+                tab={tabParam}
+                jobsFavorited={jobsFavorited}
+                jobsApplied={jobsApplied}
+                onCancelApplied={cancelApplied}
+                onCancelFavorited={favoriteJob}
+              />
+            )
+          }
+        >
+          <div className="flex flex-col space-y-3">
+            {mockLoader.map((_, i) => (
+              <JobPreviewLoader key={`loader_${i}`} />
             ))}
           </div>
-        )}
-        <Show when={viewJob.open}>
-          <div className="flex-[.5] ml-2 max-h-[calc(100vh-200px)] overflow-y-scroll">
-            {/* <JobDetailCard
-              {...viewJob.data}
-              onClose={() => setViewJob({ data: null, open: false })}
-            /> */}
-          </div>
         </Show>
-      </div>
-    </div>
+      </section>
+    </LayoutWithSidebar>
   );
 }

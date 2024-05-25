@@ -18,14 +18,18 @@ type JobResponse = ServiceResponse<{ data: Job }>;
 type JobApproveResponse = ServiceResponse<undefined>;
 type JobCreatedResponse = ServiceResponse<{ data: Job }>;
 type AppliedJobResponse = ServiceResponse<{ data: AppliedJob }>;
-type JobsApplied = ServiceResponse<{
+export type JobsAppliedResponse = ServiceResponse<{
   data: (OmmitedAppliedJob<"jobId" | "userId"> & {
     job: OmittedJob<"applicationStatus">;
   })[];
   total: number;
 }>;
 type CancelledAppliedJobResponse = ServiceResponse<{ data: AppliedJob }>;
-type JobFavoritedResponser = ServiceResponse<{ data: FavoriteJob }>;
+type JobFavoritedResponse = ServiceResponse<{ data: FavoriteJob }>;
+export type JobsFavoritedResponse = ServiceResponse<{
+  data: (FavoriteJob & { job: Job })[];
+  total: number;
+}>;
 
 export const fetchJobs = async () => {
   const { data } = await service.get<JobsResponse>(
@@ -89,7 +93,7 @@ export const applyJob = async (id: string) => {
 };
 
 export const getJobsApplied = async () => {
-  const { data } = await service.get<JobsApplied>(
+  const { data } = await service.get<JobsAppliedResponse>(
     JOB.GET_APPLIED,
     getTokenWithHeaders()
   );
@@ -106,12 +110,15 @@ export const cancelAppliedJob = async (id: string) => {
 };
 
 export const getFavoritedJobs = async () => {
-  const { data } = await service.get(JOB.GET_FAVORITED, getTokenWithHeaders());
+  const { data } = await service.get<JobsFavoritedResponse>(
+    JOB.GET_FAVORITED,
+    getTokenWithHeaders()
+  );
   return data;
 };
 
 export const favoriteJob = async (id: string) => {
-  const { data } = await service.post<JobFavoritedResponser>(
+  const { data } = await service.post<JobFavoritedResponse>(
     JOB.FAVORITE_JOB.replace(":id", id),
     undefined,
     getTokenWithHeaders()
