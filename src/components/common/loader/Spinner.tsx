@@ -19,7 +19,7 @@ export default function Spinner({ label, textProps, iconProps }: SpinnerProps) {
         className={cn("text-slate-400 mt-1", textProps?.className)}
         {...textProps}
       >
-        {label ?? "Loading..."}
+        {label ?? "Loading"}
       </p>
     </div>
   );

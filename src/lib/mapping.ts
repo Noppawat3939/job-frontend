@@ -81,8 +81,8 @@ export const mappingApproveStyleClass = {
 } as Record<JobStatus, HTMLAttributes<HTMLElement>["className"]>;
 
 export const mappingRoleUserStyleClass = {
-  super_admin: "bg-amber-200 text-amber-600 hover:bg-amber-200",
-  admin: "bg-yellow-100 text-yellow-500 hover:bg-yellow-100",
+  super_admin: "bg-pink-200 text-pink-500 hover:bg-pink-200",
+  admin: "bg-yellow-200 text-orange-500 hover:bg-yellow-300",
   employer: "bg-red-100 text-red-500 hover:bg-red-100",
   user: "bg-sky-100 text-sky-600 hover:bg-sky-100",
 } as Record<Role, HTMLAttributes<HTMLElement>["className"]>;

@@ -6,34 +6,32 @@ import {
   Badge,
   Alert,
   BadgeJobApprove,
+  LayoutWithSidebar,
+  BadgeRoleUser,
+  BadgeUserApprove,
+  Lazyload,
 } from "@/components";
-import type { User, UserStatus } from "@/types/user";
+import type { User as UserType, UserStatus } from "@/types/user";
 import { USER_STATUS } from "@/constants";
 import { useCallback, useState, useTransition } from "react";
 import {
   cn,
   eq,
   mappingJobApproveLabel,
-  mappingRoleUserStyleClass,
   mappingWorkStyle,
   mappingWorkingStyleClass,
-  unPretty,
 } from "@/lib";
 import { useApproveUserHandler, useFetchHomeAdmin } from "@/hooks";
-import { useRouter } from "next/navigation";
-import type { Role } from "@/types";
+import { useRouter, useSearchParams } from "next/navigation";
+import { BriefcaseBusiness, User, Users } from "lucide-react";
+import { userStore } from "@/store";
 
 type PickedUser = Pick<
-  User,
+  UserType,
   "id" | "email" | "firstName" | "lastName" | "role"
 >;
 
 type RowData = PickedUser & { key: string; approve: UserStatus };
-
-type AdminPageProps = {
-  searchParams: { tab: "jobs" | "accounts" };
-  params: { role: "admin" };
-};
 
 const initial = {
   alertProps: {
@@ -47,20 +45,25 @@ const initial = {
   },
 };
 
-export default function AdminPage({ searchParams, params }: AdminPageProps) {
+export default function AdminPage() {
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab") as "jobs" | "accounts";
+
   const router = useRouter();
+
+  const { user } = userStore((store) => ({ user: store.user }));
 
   const {
     userQuery,
     jobQuery,
     state: { users, jobs },
-  } = useFetchHomeAdmin(searchParams.tab);
+  } = useFetchHomeAdmin(tabParam);
 
   const [alertApproveUser, setAlertApproveUser] = useState(initial.alertProps);
 
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
-  const selectedAccountsTab = eq(searchParams.tab, "accounts");
+  const selectedAccountsTab = eq(tabParam, "accounts");
 
   const alertError = useCallback(
     () =>
@@ -126,13 +129,13 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
     },
     {
       key: "firstName",
-      title: "Firstname",
+      title: "First Name",
       dataIndex: "firstName",
       width: "15%",
     },
     {
       key: "lastName",
-      title: "Lastname",
+      title: "Last Name",
       dataIndex: "lastName",
       width: "15%",
     },
@@ -141,16 +144,7 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
       title: "Role",
       dataIndex: "role",
       width: "16%",
-      render: (role: string) => (
-        <Badge
-          className={cn(
-            "w-[100px] flex justify-center uppercase",
-            mappingRoleUserStyleClass[unPretty(role) as Role]
-          )}
-        >
-          {role}
-        </Badge>
-      ),
+      render: (role: string) => <BadgeRoleUser role={role} />,
     },
     {
       key: "approve",
@@ -162,25 +156,10 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
 
         return (
           <div className="flex">
-            <Badge
-              datatype="approve-user"
+            <BadgeUserApprove
               onClick={() => handleOpenAlertApprove(data)}
-              className={cn(
-                "cursor-pointer w-[90px] flex justify-center",
-                eq(status, "approved")
-                  ? `bg-teal-500 text-white hover:bg-teal-600`
-                  : undefined
-              )}
-              variant={
-                eq(status, "rejected")
-                  ? "destructive"
-                  : eq(status, USER_STATUS.APPROVE)
-                  ? "secondary"
-                  : "outline"
-              }
-            >
-              {status}
-            </Badge>
+              status={status}
+            />
           </div>
         );
       },
@@ -270,20 +249,61 @@ export default function AdminPage({ searchParams, params }: AdminPageProps) {
   const loading = [userQuery.isFetching, jobQuery.isFetching].some(Boolean);
 
   return (
-    <div className="border w-full h-full">
-      <DataTable
-        loading={loading || pending}
-        name="accounts"
-        data={renderTableProps().data}
-        columns={renderTableProps().columns}
-        onRow={(cb) =>
-          selectedAccountsTab ? undefined : router.push(`/admin/job/${cb?.key}`)
-        }
-      />
-      <Alert
-        onOpenChange={() => setAlertApproveUser(initial.alertProps)}
-        {...alertApproveUser}
-      />
-    </div>
+    <LayoutWithSidebar
+      menu={[
+        {
+          items: [
+            {
+              label: "Accouts",
+              value: "accounts",
+              leftIcon: Users,
+              hide: user?.role && ["employer", "admin"].includes(user.role),
+              path: "/admin?tab=accounts",
+              active: eq(tabParam, "accounts"),
+            },
+            {
+              label: "Jobs",
+              value: "jobs",
+              leftIcon: BriefcaseBusiness,
+              path: "/admin?tab=jobs",
+              active: eq(tabParam, "jobs"),
+            },
+          ],
+        },
+        {
+          heading: "Setting",
+          items: [
+            {
+              label: "Profile",
+              value: "profile",
+              leftIcon: User,
+              disabled: true,
+            },
+          ],
+        },
+      ]}
+    >
+      <div className="w-full h-full">
+        <div className="px-[24px]">
+          <Lazyload>
+            <DataTable
+              loading={loading}
+              name="accounts"
+              data={renderTableProps().data}
+              columns={renderTableProps().columns}
+              onRow={(cb) =>
+                selectedAccountsTab
+                  ? undefined
+                  : router.push(`/admin/job/${cb?.key}`)
+              }
+            />
+          </Lazyload>
+        </div>
+        <Alert
+          onOpenChange={() => setAlertApproveUser(initial.alertProps)}
+          {...alertApproveUser}
+        />
+      </div>
+    </LayoutWithSidebar>
   );
 }

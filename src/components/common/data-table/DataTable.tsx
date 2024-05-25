@@ -1,6 +1,6 @@
 "use client";
 
-import { Show, Spinner, Table } from "@/components";
+import { Spinner, Table } from "@/components";
 import { isNumber, toPx } from "@/lib";
 
 type TData = (Record<string, any> & { key: string })[];
@@ -33,7 +33,7 @@ export default function DataTable({
   return (
     <Table.Table role={name}>
       <Table.TableHeader>
-        <Table.TableRow className="bg-slate-100">
+        <Table.TableRow className="bg-slate-100 hover:bg-slate-100">
           {columns.map((column) => (
             <Table.TableHead key={column.key} className="text-slate-700">
               {column.title}
@@ -51,7 +51,11 @@ export default function DataTable({
             const { key, ...rest } = data;
 
             return (
-              <Table.TableRow key={key} onClick={() => onRow?.(data)}>
+              <Table.TableRow
+                key={key}
+                onClick={() => onRow?.(data)}
+                className="border-gray-50 border-b-2"
+              >
                 {Object.keys(rest).map((cell, cellIdx) => {
                   const dataSource = dataSources.at(idx);
                   const column = columns.at(cellIdx);
@@ -78,10 +82,6 @@ export default function DataTable({
           })}
         </Table.TableBody>
       )}
-
-      <Show when={!loading}>
-        <Table.TableCaption>{`All data ${dataSources.length} total`}</Table.TableCaption>
-      </Show>
     </Table.Table>
   );
 }

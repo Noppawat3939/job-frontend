@@ -42,7 +42,7 @@ export default function BrandCompaniesSection() {
             <Image
               src={item.image}
               className={cn(
-                "rounded-md grayscale opacity-60 transition-opacity duration-200 hover:grayscale-0 hover:opacity-100",
+                "rounded-md grayscale opacity-60 transition-all duration-300 hover:grayscale-0 hover:opacity-100 hover:-translate-y-1",
                 `${item.key === "tiktok" && "bg-black"}`
               )}
               alt={item.key}

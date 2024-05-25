@@ -20,7 +20,7 @@ export default function Banner({ onClick }: BannerProps) {
             {"job"}
           </span>
         </h1>
-        <h1 className="animate-slidein500 text-[4rem] mt-[-25px] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-300/10 inline-block text-transparent bg-clip-text">
+        <h1 className="animate-slidein300 text-[4rem] mt-[-25px] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-300/10 inline-block text-transparent bg-clip-text">
           {"Easy and Fast."}
         </h1>
         <p

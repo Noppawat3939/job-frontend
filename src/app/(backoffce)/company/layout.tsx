@@ -46,7 +46,7 @@ export default function CompanyBackofficeLayout({
         aria-label="company-layout"
       >
         <div className="w-fit">
-          <SidebarMenu user={user} menus={menus} />
+          <SidebarMenu menus={menus} />
         </div>
         <div className="flex-1">{children}</div>
       </main>

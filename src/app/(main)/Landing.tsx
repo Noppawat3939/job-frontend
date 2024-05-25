@@ -3,6 +3,7 @@ import {
   BrandCompaniesSection as Brand,
   ListCategorySection as Categories,
   ListIndustrySection as Industries,
+  Lazyload,
 } from "@/components";
 import { QUERY_KEY } from "@/constants";
 import { publicService } from "@/services";
@@ -12,12 +13,12 @@ import type {
 } from "@/services/public";
 import { useQueries } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { Fragment } from "react";
 
 const SubscribeSection = dynamic(
   () => import("@/components/common/section/SubscribeByEmailSection")
 );
-
-import { useRouter } from "next/navigation";
 
 export default function Landing() {
   const router = useRouter();
@@ -49,22 +50,26 @@ export default function Landing() {
   const goToJobs = (param?: string) => router.push(`/jobs${param}`);
 
   return (
-    <section className="bg-grid">
-      <Banner
-        onClick={(keyword) => goToJobs(keyword ? `?keyword=${keyword}` : "")}
-      />
-      <Brand />
-      <Industries
-        data={industryData}
-        onClick={(industry) => goToJobs(`?industry=${industry}`)}
-        loading={loading}
-      />
-      <Categories
-        data={categoryData}
-        onClick={(category) => goToJobs(`?category=${category}`)}
-        loading={loading}
-      />
-      <SubscribeSection />
-    </section>
+    <Lazyload fallback={<Fragment />}>
+      <section className="bg-grid">
+        <Banner
+          onClick={(keyword) => goToJobs(keyword ? `?keyword=${keyword}` : "")}
+        />
+
+        <Brand />
+        <Industries
+          data={industryData}
+          onClick={(industry) => goToJobs(`?industry=${industry}`)}
+          loading={loading}
+        />
+        <Categories
+          data={categoryData}
+          onClick={(category) => goToJobs(`?category=${category}`)}
+          loading={loading}
+        />
+
+        <SubscribeSection />
+      </section>
+    </Lazyload>
   );
 }
