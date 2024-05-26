@@ -1,9 +1,18 @@
 "use client";
 
-import { Badge, Button, DataTable, FormInput, Show } from "@/components";
+import {
+  Badge,
+  BadgeJobApprove,
+  Button,
+  DataTable,
+  FormInput,
+  LayoutWithSidebar,
+  Show,
+} from "@/components";
 import { DATE_FORMAT, QUERY_KEY } from "@/constants";
 import {
   cn,
+  eq,
   formatDate,
   formatPrice,
   isUndifined,
@@ -15,11 +24,14 @@ import {
 import { companyService } from "@/services";
 import type { Job } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { BriefcaseBusiness, FileText, Plus } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function CompanyPage() {
+  const pathname = usePathname();
+
   const [jobDetails, setJobDetails] = useState<Job | undefined>();
 
   const { data: jobs, isLoading } = useQuery({
@@ -44,59 +56,68 @@ export default function CompanyPage() {
   };
 
   return (
-    <div className="overflow-y-auto max-h-[90vh]">
-      <div className="flex justify-between p-2">
-        <FormInput disabled placeholder="Search keyword" />
-        <Button size="sm" asChild>
-          <Link href={"/company/new"} referrerPolicy="no-referrer">
-            <Plus className="w-3 h-3 mr-2" />
-            {"Create new job"}
-          </Link>
-        </Button>
-      </div>
-      <section className="flex">
-        <div aria-label="jobs-list" className="flex-1">
-          <DataTable
-            loading={isLoading}
-            name="companyJobs"
-            data={mappedCompanyJobs ?? []}
-            onRow={(data) => handleSelectJob(Number(data?.key))}
-            columns={[
-              { key: "position", dataIndex: "position", title: "Position" },
-              { key: "job_type", dataIndex: "jobType", title: "Job type" },
-              { key: "style", dataIndex: "style", title: "Work style" },
-              { key: "salary", dataIndex: "salary", title: "Salary" },
-              { key: "createdAt", dataIndex: "createdAt", title: "Created at" },
-              {
-                key: "status",
-                dataIndex: "status",
-                title: "Status",
-                render: (status) => (
-                  <Badge
-                    className={cn(
-                      "w-[130px] flex justify-center uppercase",
-                      mappingApproveStyleClass[status]
-                    )}
-                  >
-                    {status}
-                  </Badge>
-                ),
-              },
-            ]}
-          />
+    <LayoutWithSidebar
+      menu={[
+        {
+          items: [
+            {
+              label: "Jobs",
+              value: "jobs",
+              path: "/company",
+              active: eq(pathname, "/company"),
+              leftIcon: BriefcaseBusiness,
+            },
+            {
+              label: "Job applied",
+              value: "jop applied",
+              path: "/company/applied",
+              leftIcon: FileText,
+              active: eq(pathname, "/company/applied"),
+            },
+          ],
+        },
+      ]}
+    >
+      <div className="overflow-y-auto max-h-[90vh]">
+        <div className="flex justify-between p-2">
+          <FormInput disabled placeholder="Search keyword" />
+          <Button variant={"purple-shadow"} size="sm" asChild>
+            <Link href={"/company/new"} referrerPolicy="no-referrer">
+              <Plus className="w-3 h-3 mr-2" />
+              {"Create new job"}
+            </Link>
+          </Button>
         </div>
-        <Show when={!isUndifined(jobDetails?.position)}>
-          <div
-            aria-label="job-details"
-            className="flex bg-slate-50 overflow-y-auto py-2 px-4 flex-[0.6] h-[calc(100vh-120px)]"
-          >
-            {/* <JobDetailCard
-              {...jobDetails}
-              onClose={() => setJobDetails(undefined)}
-            /> */}
+        <section className="flex">
+          <div aria-label="jobs-list" className="flex-1 px-4">
+            <DataTable
+              loading={isLoading}
+              name="companyJobs"
+              data={mappedCompanyJobs ?? []}
+              onRow={(data) => handleSelectJob(Number(data?.key))}
+              columns={[
+                { key: "position", dataIndex: "position", title: "Position" },
+                { key: "job_type", dataIndex: "jobType", title: "Job type" },
+                { key: "style", dataIndex: "style", title: "Work style" },
+                { key: "salary", dataIndex: "salary", title: "Salary" },
+                {
+                  key: "createdAt",
+                  dataIndex: "createdAt",
+                  title: "Created at",
+                },
+                {
+                  key: "status",
+                  dataIndex: "status",
+                  title: "Status",
+                  render: (status) => (
+                    <BadgeJobApprove status={status} text={status} />
+                  ),
+                },
+              ]}
+            />
           </div>
-        </Show>
-      </section>
-    </div>
+        </section>
+      </div>
+    </LayoutWithSidebar>
   );
 }

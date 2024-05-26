@@ -11,7 +11,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { publicService } from "@/services";
 import { formatNumber, mappingFormFields, numOnly } from "@/lib";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { useHandleForm } from "@/hooks";
 
 type CreatedField = keyof typeof initial;
@@ -30,6 +30,7 @@ type CreateJobFormProps = {
   onSubmit: (data: CreateNewJobSchema) => void;
   loading?: boolean;
   resetWhen?: boolean;
+  onCancel: () => void;
 };
 
 const initial = {
@@ -63,6 +64,7 @@ export default function CreateJobForm({
   onSubmit,
   loading,
   resetWhen,
+  onCancel,
 }: CreateJobFormProps) {
   const { data: categories } = useQuery({
     queryKey: [QUERY_KEY.GET_JOB_CATEGORIES],
@@ -70,6 +72,8 @@ export default function CreateJobForm({
     select: ({ data }) =>
       data.sort((a, b) => a.category_name.localeCompare(b.category_name)),
   });
+
+  const [isPending, startTransition] = useTransition();
 
   const [createValues, setCreateValues] = useState(initial);
 
@@ -230,13 +234,20 @@ export default function CreateJobForm({
       </div>
 
       <div className="mt-6 p-4 flex justify-center space-x-3">
-        <Button type="reset" variant="outline" className="w-[150px]">
+        <Button
+          type="reset"
+          variant="outline"
+          className="w-[150px]"
+          onClick={() => startTransition(onCancel)}
+          loading={isPending}
+        >
           {"Cancel"}
         </Button>
         <Button
           loading={pending || loading}
           className="bg-sky-400 hover:bg-sky-500 w-[150px]"
           type="submit"
+          variant="sky-shadow"
         >
           {"Create"}
         </Button>

@@ -19,6 +19,8 @@ import {
   MapPin,
   BarChart4,
 } from "lucide-react";
+import { ClassValue } from "clsx";
+import { UserStatus } from "@/types/user";
 
 export const mappingWorkStyle = {
   on_site: "onsite",
@@ -55,12 +57,6 @@ export const mappingFormFields = {
   salaryMax: "salary max",
 };
 
-export const mappingRolePath = {
-  admin: "admin",
-  super_admin: "admin",
-  employer: "employer",
-} as Record<Role, Role>;
-
 export const mappingJobApproveLabel = {
   approve: "approved",
   reject: "rejected",
@@ -75,10 +71,12 @@ export const mappingWorkingStyleClass = {
 } as Record<string, HTMLAttributes<HTMLElement>["className"]>;
 
 export const mappingApproveStyleClass = {
-  approve: "bg-green-100 text-green-600 hover:bg-green-200",
-  reject: "bg-red-100 text-red-600 hover:bg-red-200",
-  "un-approve": "bg-purple-100 text-purple-600 hover:bg-purple-200",
-} as Record<JobStatus, HTMLAttributes<HTMLElement>["className"]>;
+  approved: "text-teal-500 border-teal-300",
+  approve: "text-teal-500 border-teal-300",
+  "un-approve": "text-gray-600",
+  rejected: "border-red-400 text-red-500 border-red-300",
+  reject: "border-red-400 text-red-500 border-red-300",
+} as Record<UserStatus | JobStatus, ClassValue>;
 
 export const mappingRoleUserStyleClass = {
   super_admin: "bg-pink-200 text-pink-500 hover:bg-pink-200",

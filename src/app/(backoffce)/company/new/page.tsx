@@ -5,10 +5,13 @@ import { formatPrice, mappingJobExp } from "@/lib";
 import { CreateNewJobSchema } from "@/schemas";
 import { jobService } from "@/services";
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CreateNewJobPage() {
   const { toast } = useToast();
+
+  const rotuer = useRouter();
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationFn: jobService.createJob,
@@ -133,15 +136,18 @@ export default function CreateNewJobPage() {
 
   const handlePreviewData = (data: CreateNewJobSchema) => mutate(data);
 
+  const onCancelForm = () => rotuer.push("/company", { scroll: false });
+
   return (
     <div className="h-full p-4">
       <div className="">
-        <h1 className="text-3xl">{"Create a new job"}</h1>
+        <h1 className="text-3xl font-medium">{"Create a new job"}</h1>
         <div className="mt-3 px-3 h-[calc(100vh-160px)] overflow-y-scroll">
           <CreateJobForm
             onSubmit={handlePreviewData}
             loading={isPending}
             resetWhen={isSuccess}
+            onCancel={onCancelForm}
           />
         </div>
       </div>

@@ -23,6 +23,8 @@ const buttonVariants = cva(
           "transition-all duration-200 bg-gradient-to-r from-purple-600 via-purple-500 to-pink-400 text-white hover:from-pink-500 hover:via-purple-500 hover:to-sky-400",
         ["purple-shadow"]:
           "bg-purple-600 text-white transition-all duration-200 shadow-md shadow-violet-300 hover:bg-purple-700 hover:text-slate-50",
+        ["sky-shadow"]:
+          "bg-sky-600 text-white transition-all duration-200 shadow-md shadow-sky-300 hover:bg-sky-700 hover:shadow-xl hover:shadow-sky-200",
       },
       size: {
         default: "h-10 px-4 py-2",
