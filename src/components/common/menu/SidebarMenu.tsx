@@ -4,7 +4,7 @@ import { type LucideIcon, ChevronRight, ChevronLeft } from "lucide-react";
 import { Avatar, Button, Command, Show } from "@/components";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import { cn } from "@/lib";
+import { cn, eq } from "@/lib";
 import { collapseSidebarStore, userStore } from "@/store";
 import { ClassValue } from "clsx";
 
@@ -27,6 +27,8 @@ export default function SidebarMenu({ menus, className }: SidebarMenuProps) {
   const { push } = useRouter();
 
   const { user } = userStore((s) => ({ user: s.user }));
+
+  const isCompanyRole = eq(user?.role, "employer");
 
   const { collapse, toggleCollapse } = collapseSidebarStore();
 
@@ -55,7 +57,12 @@ export default function SidebarMenu({ menus, className }: SidebarMenuProps) {
         className
       )}
     >
-      <div className="border-b border-violet-200 pb-3">
+      <div
+        className={cn(
+          "border-b  pb-3",
+          isCompanyRole ? "border-pink-200" : "border-violet-200"
+        )}
+      >
         <Button
           className="w-full flex justify-start text-slate-800 hover:bg-transparent"
           variant="ghost"
@@ -98,7 +105,12 @@ export default function SidebarMenu({ menus, className }: SidebarMenuProps) {
                       item.disabled
                         ? "opacity-20 !cursor-default !hover:bg-transparent"
                         : item.active
-                        ? "text-violet-500 font-medium bg-violet-50 hover:bg-violet-200 hover:text-violet-600"
+                        ? cn(
+                            " font-medium ",
+                            isCompanyRole
+                              ? "text-pink-500 bg-pink-50 hover:bg-pink-200 hover:text-pink-600"
+                              : "text-violet-500 bg-violet-50 hover:bg-violet-200 hover:text-violet-600"
+                          )
                         : "text-slate-400 opacity-70"
                     } flex items-center text-sm my-2 w-full p-2 cursor-pointer rounded-md hover:bg-slate-50 hover:text-slate-500 transition-all duration-200`}
                   >

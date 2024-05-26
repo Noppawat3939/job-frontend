@@ -1,9 +1,12 @@
-import { Suspense } from "react";
+"use client";
+
+import { Lazyload } from "@/components";
+import Applied from "./Applied";
 
 export default function JobsAppliedPage() {
   return (
-    <Suspense>
-      <div>JobsAppliedPage</div>
-    </Suspense>
+    <Lazyload>
+      <Applied />
+    </Lazyload>
   );
 }

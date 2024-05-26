@@ -40,5 +40,6 @@ export const URL = {
   },
   COMPANY: {
     GET_JOBS: "/company/list",
+    GET_JOBS_APPIED: "/company/list/applied",
   },
 } as const;

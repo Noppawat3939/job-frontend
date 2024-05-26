@@ -2,7 +2,7 @@
 
 import type { JobStatus, RolePageParam } from "@/types";
 import { jobService } from "@/services";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Alert,
   BadgeJobApprove,
@@ -30,6 +30,12 @@ import Link from "next/link";
 import { useApproveJobHandler } from "@/hooks";
 import { userStore } from "@/store";
 
+type ApproveAction = {
+  status: JobStatus;
+  variant: ButtonProps["variant"];
+  hide?: boolean;
+};
+
 type AdminJobPageProps = {
   params: { id: string; role: RolePageParam };
 };
@@ -48,6 +54,8 @@ const initial = {
 export default function AdminJobPage({ params }: AdminJobPageProps) {
   const { id } = params;
 
+  const queryClient = useQueryClient();
+
   const {
     data: job,
     isFetching,
@@ -62,6 +70,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
   const { user } = userStore();
 
   const isSuperAdmin = eq(user?.role, "super_admin");
+  const isAdmin = eq(user?.role, "admin");
 
   const alertError = useCallback(
     () =>
@@ -74,7 +83,10 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
     []
   );
 
-  const { handle } = useApproveJobHandler(() => refetch(), alertError);
+  const { handle } = useApproveJobHandler(() => {
+    refetch();
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY.GET_JOBS] });
+  }, alertError);
 
   const [pending, startTransition] = useTransition();
 
@@ -124,7 +136,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
 
   const memorizedDetailsJob = useMemo(() => mappingJobDetail(job), [job]);
 
-  const displayApproveJobBtn = useMemo(() => {
+  const displayApproveJobBtn: ApproveAction[] = useMemo(() => {
     if (isNull(job?.active) || isUndifined(job?.active))
       return [
         { status: JOB_STATUS.APPROVE, variant: "default" },
@@ -137,12 +149,9 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
       ];
     return [
       { status: JOB_STATUS.APPROVE, variant: "default" },
-      { status: JOB_STATUS.UN_APPROVE, variant: "outline" },
+      { status: JOB_STATUS.UN_APPROVE, variant: "outline", hide: isAdmin },
     ];
-  }, [job?.active]) as Array<{
-    status: JobStatus;
-    variant: ButtonProps["variant"];
-  }>;
+  }, [job?.active, isAdmin]);
 
   return (
     <div>
@@ -159,21 +168,24 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
               {"Back"}
             </Link>
           </Button>
-          <Show when={isSuperAdmin}>
-            <div className={"flex space-x-2"}>
-              {displayApproveJobBtn.map((btn, i) => (
-                <Button
-                  variant={btn.variant}
-                  size="sm"
-                  key={`approve_btn_${i}`}
-                  onClick={() => onOpenAlert(btn.status)}
-                  className="capitalize w-[100px] text-sm"
-                >
-                  {btn.status.replace("-", " ")}
-                </Button>
-              ))}
-            </div>
-          </Show>
+
+          <div className={"flex space-x-2"}>
+            <Show when={isAdmin ? !job?.active : isSuperAdmin}>
+              {displayApproveJobBtn
+                .filter((btn) => !btn.hide)
+                .map((btn, i) => (
+                  <Button
+                    variant={btn.variant}
+                    size="sm"
+                    key={`approve_btn_${i}`}
+                    onClick={() => onOpenAlert(btn.status)}
+                    className="capitalize w-[100px] text-sm"
+                  >
+                    {btn?.status?.replace("-", " ")}
+                  </Button>
+                ))}
+            </Show>
+          </div>
         </div>
       )}
       {isFetching || pending ? (
@@ -192,7 +204,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
               text={mappingJobApproveLabel[mappingJobApprove(job?.active)]}
             />
           </div>
-          <h3 className="text-sky-500 opacity-70 text-lg font-medium max-md:text-[15px]">
+          <h3 className="text-pink-500 opacity-70 text-lg font-medium max-md:text-[15px]">
             {job?.company}
           </h3>
           <br />

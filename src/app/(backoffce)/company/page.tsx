@@ -1,38 +1,37 @@
 "use client";
 
 import {
-  Badge,
   BadgeJobApprove,
   Button,
   DataTable,
   FormInput,
+  JobDetailCard,
   LayoutWithSidebar,
   Show,
 } from "@/components";
 import { DATE_FORMAT, QUERY_KEY } from "@/constants";
 import {
-  cn,
-  eq,
   formatDate,
   formatPrice,
-  isUndifined,
-  mappingApproveStyleClass,
+  generateMenusSidebar,
+  isNull,
   mappingJobApprove,
   mappingJobType,
   mappingWorkStyle,
 } from "@/lib";
 import { companyService } from "@/services";
-import type { Job } from "@/types";
+import type { Job, Nullable } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { BriefcaseBusiness, FileText, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 export default function CompanyPage() {
   const pathname = usePathname();
+  const ref = useRef<HTMLDivElement>(null);
 
-  const [jobDetails, setJobDetails] = useState<Job | undefined>();
+  const [jobDetails, setJobDetails] = useState<Nullable<Job>>(null);
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: [QUERY_KEY.GET_JOBS_BY_COMPANY],
@@ -51,35 +50,18 @@ export default function CompanyPage() {
   }));
 
   const handleSelectJob = (jobId: number) => {
-    const found = jobs?.find((job) => job.id === jobId);
-    setJobDetails(found);
+    const found = jobs?.find((job) => job.id === jobId) || null;
+
+    setJobDetails((prev) => (prev && prev.id === found?.id ? null : found));
+    ref.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const menu = useMemo(() => generateMenusSidebar(pathname), [pathname]);
+
   return (
-    <LayoutWithSidebar
-      menu={[
-        {
-          items: [
-            {
-              label: "Jobs",
-              value: "jobs",
-              path: "/company",
-              active: eq(pathname, "/company"),
-              leftIcon: BriefcaseBusiness,
-            },
-            {
-              label: "Job applied",
-              value: "jop applied",
-              path: "/company/applied",
-              leftIcon: FileText,
-              active: eq(pathname, "/company/applied"),
-            },
-          ],
-        },
-      ]}
-    >
+    <LayoutWithSidebar menu={menu.companyMenus}>
       <div className="overflow-y-auto max-h-[90vh]">
-        <div className="flex justify-between p-2">
+        <div className="z-10 flex justify-between py-3 px-4 sticky top-0 bg-white">
           <FormInput disabled placeholder="Search keyword" />
           <Button variant={"purple-shadow"} size="sm" asChild>
             <Link href={"/company/new"} referrerPolicy="no-referrer">
@@ -88,7 +70,7 @@ export default function CompanyPage() {
             </Link>
           </Button>
         </div>
-        <section className="flex">
+        <section className="flex" ref={ref}>
           <div aria-label="jobs-list" className="flex-1 px-4">
             <DataTable
               loading={isLoading}
@@ -117,6 +99,9 @@ export default function CompanyPage() {
             />
           </div>
         </section>
+        <Show when={!isNull(jobDetails)}>
+          <JobDetailCard hideApply hideFavorite {...jobDetails} />
+        </Show>
       </div>
     </LayoutWithSidebar>
   );

@@ -1,7 +1,6 @@
 import { type SelectProps } from "@radix-ui/react-select";
 import { Label, Select, Show } from "@/components";
-import { Fragment } from "react";
-import { noSpace } from "@/lib";
+import { cn, isUndifined, noSpace } from "@/lib";
 
 export type SelectItemProps = {
   items: { label: string; value: string }[];
@@ -9,6 +8,7 @@ export type SelectItemProps = {
   className?: string;
   onChange?: SelectProps["onValueChange"];
   label?: string;
+  verticel?: boolean;
 } & Omit<SelectProps, "onValueChange">;
 
 export default function SelectItem({
@@ -17,11 +17,12 @@ export default function SelectItem({
   className,
   onChange,
   label,
+  verticel,
   ...rest
 }: SelectItemProps) {
   return (
-    <Fragment>
-      <Show when={label !== undefined}>
+    <div className={cn("flex flex-1", verticel ? "flex-col" : "flex-row")}>
+      <Show when={!isUndifined(label)}>
         <Label
           htmlFor={noSpace(String(label)?.toLowerCase())}
           className="capitalize text-gray-700 text-xs font-normal"
@@ -41,6 +42,6 @@ export default function SelectItem({
           ))}
         </Select.SelectContent>
       </Select.Select>
-    </Fragment>
+    </div>
   );
 }

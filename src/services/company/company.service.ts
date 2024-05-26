@@ -14,3 +14,10 @@ export const fetchCompanyJobs = async () => {
   );
   return data;
 };
+
+export const fetchJobsApplied = async () => {
+  const { data } = await serivce.get(COMPANY.GET_JOBS_APPIED);
+  getTokenWithHeaders();
+
+  return data;
+};

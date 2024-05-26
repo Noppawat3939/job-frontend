@@ -1,13 +1,20 @@
+import { ServiceErrorResponse } from "./../../types/common/common.type";
 import type { DecodedToken } from "@/types";
 import { useTransition } from "react";
-import { isUndifined, reloadPage } from "@/lib";
+import { isUndifined } from "@/lib";
 import { authService } from "@/services";
 import { useMutation } from "@tanstack/react-query";
 import { setCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
+import { AxiosError } from "axios";
+import { useToast } from "@/components";
+import { useRouter } from "next/navigation";
 
 export default function useHandleSignin() {
   const [, startTransition] = useTransition();
+  const { toast } = useToast();
+
+  const router = useRouter();
 
   const signinWithGoogle = useMutation({
     mutationFn: authService.getUrlSigninWithSocial,
@@ -24,6 +31,12 @@ export default function useHandleSignin() {
   const siginWithCompany = useMutation({
     mutationFn: authService.signinWithCompany,
     onSuccess: ({ data: token }) => handleLoginned(token),
+    onError: (e) => {
+      const err = e as AxiosError;
+      const errorResp = err.response as ServiceErrorResponse;
+
+      handleLoginFailed(errorResp);
+    },
   });
 
   const handleLoginned = (token: string) => {
@@ -31,7 +44,15 @@ export default function useHandleSignin() {
     const expires = new Date(Number(exp) * 1000);
 
     setCookie("token", token, { expires });
-    startTransition(reloadPage);
+    startTransition(router.refresh);
+  };
+
+  const handleLoginFailed = (error: ServiceErrorResponse) => {
+    toast({
+      title: error.data.message,
+      duration: 1500,
+      variant: "destructive",
+    });
   };
 
   const isPending = [

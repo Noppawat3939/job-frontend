@@ -26,7 +26,7 @@ export default function BadgeJobApprove({
       aria-label={`job_approve_status_${status}`}
       variant={"outline"}
       className={cn(
-        "w-[100px] flex justify-center items-center gap-2",
+        "w-[110px] flex justify-center items-center gap-2",
         className,
         mappingApproveStyleClass[
           status as keyof typeof mappingApproveStyleClass

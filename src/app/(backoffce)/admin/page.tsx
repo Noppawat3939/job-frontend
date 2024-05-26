@@ -10,20 +10,25 @@ import {
   BadgeRoleUser,
   BadgeUserApprove,
   Lazyload,
+  SelectItem,
+  Show,
+  Button,
 } from "@/components";
 import type { User as UserType, UserStatus } from "@/types/user";
-import { USER_STATUS } from "@/constants";
-import { useCallback, useState, useTransition } from "react";
+import { JOB_STATUS, ROLE, USER_STATUS } from "@/constants";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import {
   cn,
   eq,
+  generateMenusSidebar,
+  isUndifined,
   mappingJobApproveLabel,
   mappingWorkStyle,
   mappingWorkingStyleClass,
 } from "@/lib";
 import { useApproveUserHandler, useFetchHomeAdmin } from "@/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BriefcaseBusiness, User, Users } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import { userStore } from "@/store";
 
 type PickedUser = Pick<
@@ -32,6 +37,8 @@ type PickedUser = Pick<
 >;
 
 type RowData = PickedUser & { key: string; approve: UserStatus };
+
+type FilterKey = "company" | "role" | "user_status" | "job_status";
 
 const initial = {
   alertProps: {
@@ -60,10 +67,19 @@ export default function AdminPage() {
   } = useFetchHomeAdmin(tabParam);
 
   const [alertApproveUser, setAlertApproveUser] = useState(initial.alertProps);
+  const [filterParams, setFilterParams] = useState<Map<FilterKey, string>>(
+    new Map()
+  );
 
   const [, startTransition] = useTransition();
 
   const selectedAccountsTab = eq(tabParam, "accounts");
+
+  const handleFilterChange = useCallback(
+    (key: FilterKey, value: string) =>
+      setFilterParams((prevMap) => new Map(prevMap.set(key, value))),
+    []
+  );
 
   const alertError = useCallback(
     () =>
@@ -240,50 +256,150 @@ export default function AdminPage() {
   ];
 
   const renderTableProps = () => {
-    if (selectedAccountsTab)
-      return { columns: accountColumns, data: users as DataTableProps["data"] };
+    if (selectedAccountsTab) {
+      const hasFiltered = ["role", "user_status"].some((key) =>
+        filterParams.has(key as FilterKey)
+      );
 
-    return { columns: jobColumns, data: jobs as DataTableProps["data"] };
+      const filterdAll = ["role", "user_status"].every((key) =>
+        filterParams.has(key as FilterKey)
+      );
+
+      const filteredData = filterdAll
+        ? users?.filter(
+            (user) =>
+              eq(user.approve, filterParams.get("user_status")) &&
+              eq(user.role, filterParams.get("role"))
+          )
+        : hasFiltered
+        ? users?.filter(
+            (user) =>
+              eq(user.role, filterParams.get("role")) ||
+              eq(user.approve, filterParams.get("user_status"))
+          )
+        : (users as DataTableProps["data"]);
+
+      return {
+        columns: accountColumns,
+        data: filteredData || [],
+      };
+    } else {
+      const filterdAll = ["company", "job_status"].every((key) =>
+        filterParams.has(key as FilterKey)
+      );
+
+      const hasFiltered = ["company", "job_status"].some((key) =>
+        filterParams.has(key as FilterKey)
+      );
+      const filteredData = filterdAll
+        ? jobs?.filter(
+            (job) =>
+              eq(job.active, filterParams.get("job_status")) &&
+              eq(job.company, filterParams.get("company"))
+          )
+        : hasFiltered
+        ? jobs?.filter(
+            (job) =>
+              eq(filterParams.get("company"), job.company) ||
+              eq(job.active, filterParams.get("job_status"))
+          )
+        : (jobs as DataTableProps["data"]);
+
+      return { columns: jobColumns, data: filteredData || [] };
+    }
+  };
+
+  const renderFilterItems = () => {
+    const roleOptions = ROLE.map((value) => ({ label: value, value }));
+
+    const companyOptions = !isUndifined(jobQuery.data?.data)
+      ? //@ts-ignore
+        [...new Set(jobQuery!.data!.data.map((d) => d.company))].map(
+          (value) => ({ label: value, value })
+        )
+      : [];
+
+    const approveOptions = selectedAccountsTab
+      ? Object.values(USER_STATUS).map((value) => ({ label: value, value }))
+      : Object.values(JOB_STATUS).map((value) => ({ label: value, value }));
+
+    return (
+      <div className="flex w-full space-x-[36px] justify-between items-end">
+        <div className="flex flex-[.7] space-x-2 w-full">
+          <Show when={selectedAccountsTab}>
+            <SelectItem
+              verticel
+              items={roleOptions}
+              label="Role"
+              value={
+                isUndifined(filterParams.get("role"))
+                  ? ""
+                  : filterParams.get("role")
+              }
+              onChange={(role) => handleFilterChange("role", role)}
+            />
+          </Show>
+          <Show when={!selectedAccountsTab}>
+            <SelectItem
+              verticel
+              items={companyOptions}
+              label="Company"
+              value={
+                isUndifined(filterParams.get("company"))
+                  ? ""
+                  : filterParams.get("company")
+              }
+              onChange={(company) => handleFilterChange("company", company)}
+            />
+          </Show>
+          <SelectItem
+            items={approveOptions}
+            verticel
+            label={`${selectedAccountsTab ? "User" : "Job"} Approve`}
+            value={
+              selectedAccountsTab
+                ? isUndifined(filterParams.get("user_status"))
+                  ? ""
+                  : filterParams.get("user_status")
+                : isUndifined(filterParams.get("job_status"))
+                ? ""
+                : filterParams.get("job_status")
+            }
+            onChange={(status) =>
+              selectedAccountsTab
+                ? handleFilterChange("user_status", status)
+                : handleFilterChange("job_status", status)
+            }
+          />
+        </div>
+        <div className="flex space-x-2 flex-[.2]">
+          <Button
+            variant={"purple-shadow"}
+            disabled={filterParams.size === 0}
+            className="w-full"
+            onClick={() => setFilterParams(new Map())}
+          >
+            <ListFilter className="w-4 h-4 mr-2" />
+            {"Clear"}
+          </Button>
+        </div>
+      </div>
+    );
   };
 
   const loading = [userQuery.isFetching, jobQuery.isFetching].some(Boolean);
 
+  const menu = useMemo(
+    () => generateMenusSidebar(tabParam, user),
+    [user, tabParam]
+  );
+
   return (
-    <LayoutWithSidebar
-      menu={[
-        {
-          items: [
-            {
-              label: "Accouts",
-              value: "accounts",
-              leftIcon: Users,
-              hide: user?.role && ["employer", "admin"].includes(user.role),
-              path: "/admin?tab=accounts",
-              active: eq(tabParam, "accounts"),
-            },
-            {
-              label: "Jobs",
-              value: "jobs",
-              leftIcon: BriefcaseBusiness,
-              path: "/admin?tab=jobs",
-              active: eq(tabParam, "jobs"),
-            },
-          ],
-        },
-        {
-          heading: "Setting",
-          items: [
-            {
-              label: "Profile",
-              value: "profile",
-              leftIcon: User,
-              disabled: true,
-            },
-          ],
-        },
-      ]}
-    >
+    <LayoutWithSidebar menu={menu.adminMenus}>
       <div className="w-full h-full">
+        <div className="flex space-x-2 bg-white sticky top-0 z-10 py-3 px-4">
+          {renderFilterItems()}
+        </div>
         <div className="px-[24px]">
           <Lazyload>
             <DataTable
