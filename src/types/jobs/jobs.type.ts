@@ -73,3 +73,25 @@ export type FavoriteJob = {
   jobId: number;
   userId: number;
 };
+
+export type CompanyJobsApplied = Pick<
+  AppliedJob,
+  "id" | "applicationDate" | "applicationStatus"
+> & {
+  job: Pick<
+    Job,
+    | "id"
+    | "position"
+    | "category"
+    | "salary"
+    | "style"
+    | "experienceLevel"
+    | "location"
+    | "jobDescriptions"
+    | "jobType"
+    | "qualifications"
+    | "urgent"
+  >;
+} & {
+  user: Pick<User, "id" | "email" | "firstName" | "lastName" | "userProfile">;
+};

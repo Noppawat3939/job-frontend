@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  type DataTableProps,
   DataTable,
   Badge,
   Alert,
@@ -277,7 +276,7 @@ export default function AdminPage() {
               eq(user.role, filterParams.get("role")) ||
               eq(user.approve, filterParams.get("user_status"))
           )
-        : (users as DataTableProps["data"]);
+        : users;
 
       return {
         columns: accountColumns,
@@ -303,7 +302,7 @@ export default function AdminPage() {
               eq(filterParams.get("company"), job.company) ||
               eq(job.active, filterParams.get("job_status"))
           )
-        : (jobs as DataTableProps["data"]);
+        : jobs;
 
       return { columns: jobColumns, data: filteredData || [] };
     }
@@ -406,7 +405,13 @@ export default function AdminPage() {
               loading={loading}
               name="accounts"
               data={renderTableProps().data}
-              columns={renderTableProps().columns}
+              columns={
+                renderTableProps().columns as {
+                  key: string;
+                  dataIndex: any;
+                  title: string;
+                }[]
+              }
               onRow={(cb) =>
                 selectedAccountsTab
                   ? undefined

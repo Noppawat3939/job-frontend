@@ -5,31 +5,33 @@ import { isNumber, toPx } from "@/lib";
 
 type TData = (Record<string, any> & { key: string })[];
 
-export type DataTableProps = {
+type TColumns<T extends TData> = {
+  key: string;
+  title: string;
+  dataIndex: keyof T[number];
+  width?: number | string;
+  render?: <V extends string, R, I extends number>(
+    value: V,
+    record: R,
+    index: I
+  ) => JSX.Element;
+}[];
+
+export type DataTableProps<T extends TData> = {
+  data: TData & T;
   name: string;
-  data: TData;
   loading?: boolean;
-  columns: {
-    key: string;
-    title: string;
-    dataIndex: string;
-    width?: number | string;
-    render?: <V extends string, R, I extends number>(
-      value: V,
-      record: R,
-      index: I
-    ) => JSX.Element;
-  }[];
+  columns: TColumns<T>;
   onRow?: (data?: TData[number]) => void;
 };
 
-export default function DataTable({
+export default function DataTable<D extends TData>({
+  data: dataSources,
   name,
-  data: dataSources = [],
   columns,
   loading,
   onRow,
-}: Readonly<DataTableProps>) {
+}: DataTableProps<D>) {
   return (
     <Table.Table role={name}>
       <Table.TableHeader>
@@ -47,7 +49,7 @@ export default function DataTable({
         </Table.TableCaption>
       ) : (
         <Table.TableBody>
-          {dataSources?.map((data, idx) => {
+          {(dataSources || [])?.map((data, idx) => {
             const { key, ...rest } = data;
 
             return (

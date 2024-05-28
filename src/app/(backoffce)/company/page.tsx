@@ -41,7 +41,7 @@ export default function CompanyPage() {
 
   const mappedCompanyJobs = jobs?.map((job) => ({
     key: String(job.id),
-    postion: job.position,
+    position: job.position,
     jobType: mappingJobType[job.jobType],
     style: mappingWorkStyle[job.style],
     salary: formatPrice(job.salary),
