@@ -312,8 +312,7 @@ export default function AdminPage() {
     const roleOptions = ROLE.map((value) => ({ label: value, value }));
 
     const companyOptions = !isUndifined(jobQuery.data?.data)
-      ? //@ts-ignore
-        [...new Set(jobQuery!.data!.data.map((d) => d.company))].map(
+      ? [...new Set(jobQuery!.data!.data.map((d) => d.company))].map(
           (value) => ({ label: value, value })
         )
       : [];

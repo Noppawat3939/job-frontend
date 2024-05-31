@@ -16,5 +16,6 @@ export const QUERY_KEY = {
   GET_JOB_CATEGORIES: "job-categories",
   GET_JOBS_BY_COMPANY: "company-jobs",
   GET_JOBS_APPLIED: "jobs-applied",
+  GET_JOB_APPLIED: "job-applied",
   GET_JOBS_FAVORITED: "jobs-favorited",
 } as const;

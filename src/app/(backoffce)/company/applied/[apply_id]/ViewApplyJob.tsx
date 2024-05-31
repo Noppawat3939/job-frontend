@@ -1,4 +1,5 @@
 import { LayoutWithSidebar } from "@/components";
+import { QUERY_KEY } from "@/constants";
 import { generateMenusSidebar, isUndifined } from "@/lib";
 import { companyService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
@@ -14,8 +15,8 @@ export default function ViewApplyJob() {
     [pathname]
   );
 
-  const { data } = useQuery({
-    queryKey: ["job-applied"],
+  useQuery({
+    queryKey: [QUERY_KEY.GET_JOB_APPLIED],
     queryFn: () => companyService.fetchJobAppliedById(Number(params.apply_id)),
     enabled: !isUndifined(params.apply_id),
     select: ({ data }) => data,
