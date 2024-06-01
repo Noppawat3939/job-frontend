@@ -12,7 +12,6 @@ export const URL = {
   PUBLIC: {
     GET_INDUSTRUES: "/public/industry",
     GET_PROVINCES: "/public/province",
-    GET_JOBS: "/public/job/list",
     GET_JOB: "/public/job/:id",
     GET_JOB_CATEGORIES: "/public/job-categories",
   },

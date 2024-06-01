@@ -38,6 +38,20 @@ export type Job = {
 
 export type JobStatus = "approve" | "reject" | "un-approve";
 
+export type JobWithCompany = Job & {
+  company: Partial<
+    Pick<
+      User,
+      | "id"
+      | "userProfile"
+      | "companyName"
+      | "companyHistory"
+      | "industry"
+      | "companyProfile"
+    >
+  >;
+};
+
 export type JobCategory = {
   id: number;
   category_key: string;
@@ -56,16 +70,6 @@ export type AppliedJob = {
 
 export type OmittedJob<K extends keyof Job> = Omit<Job, K>;
 export type OmmitedAppliedJob<K extends keyof AppliedJob> = Omit<AppliedJob, K>;
-
-export type PublicJobs = OmittedJob<
-  | "companyProfile"
-  | "contracts"
-  | "transports"
-  | "jobDescriptions"
-  | "benefits"
-  | "qualifications"
-  | "company"
-> & { company: Pick<User, "id" | "companyName" | "userProfile"> };
 
 export type FavoriteJob = {
   favoriteDate: string;

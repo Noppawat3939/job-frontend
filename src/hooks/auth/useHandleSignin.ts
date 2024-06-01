@@ -40,10 +40,16 @@ export default function useHandleSignin() {
   });
 
   const handleLoginned = (token: string) => {
-    const { exp } = jwtDecode(token) as DecodedToken;
+    const { exp, role } = jwtDecode(token) as DecodedToken;
     const expires = new Date(Number(exp) * 1000);
 
     setCookie("token", token, { expires });
+
+    if (role === "employer") {
+      router.push("/company");
+      startTransition(router.refresh);
+    }
+
     startTransition(router.refresh);
   };
 

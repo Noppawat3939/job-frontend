@@ -140,7 +140,7 @@ export default function Navbar({ user }: NavbarProps) {
             {"Jobify"}
           </div>
         </Link>
-        <Show when={isShowFilter && isMainPath}>
+        {/* <Show when={isShowFilter && isMainPath}>
           <div className="flex bg-white border p-1 rounded-lg mx-2">
             <Button size="sm" variant="ghost">
               {"filter V"}
@@ -149,7 +149,7 @@ export default function Navbar({ user }: NavbarProps) {
               {"filter V"}
             </Button>
           </div>
-        </Show>
+        </Show> */}
 
         <div className="flex items-baseline ml-auto space-x-4">
           <Show when={!isUndifined(user)}>

@@ -1,22 +1,21 @@
 "use client";
 
-import { Lazyload, Spinner } from "@/components";
+import { Lazyload } from "@/components";
 import Jobs from "./Jobs";
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEY } from "@/constants";
-import { publicService } from "@/services";
+import { jobService } from "@/services";
 
 export default function JobsPage() {
-  const { data: jobs, isFetching } = useQuery({
+  const { data: jobs, isLoading } = useQuery({
     queryKey: [QUERY_KEY.GET_JOBS],
-    queryFn: publicService.getPublicJobs,
+    queryFn: jobService.fetchJobs,
     select: ({ data }) => data,
   });
 
   return (
     <Lazyload>
-      {isFetching && <Spinner />}
-      <Jobs jobs={jobs} />
+      <Jobs jobs={jobs} loading={isLoading} />
     </Lazyload>
   );
 }

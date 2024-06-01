@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import dayjs, { OpUnitType, QUnitType } from "dayjs";
 import { TDate } from "@/types";
 import { getCookie } from "cookies-next";
+import { AxiosRequestConfig } from "axios";
 
 require("dayjs/locale/th");
 
@@ -73,6 +74,10 @@ export const getTokenWithHeaders = () =>
       }
     : undefined;
 
+export const apikeyHeaders: AxiosRequestConfig<unknown> = {
+  headers: { ["api-key"]: String(process.env.NEXT_PUBLIC_API_KEY) },
+};
+
 export const pretty = (text: string) => text.replaceAll("_", " ");
 
 export const unPretty = (text: string) => text.replaceAll(" ", "_");
@@ -86,4 +91,4 @@ export const scrollToTop = () =>
   document.scrollingElement?.scrollTo({ top: 0, behavior: "smooth" });
 
 export const isEmptyArray = (arr?: unknown[]) =>
-  arr && (arr.length === 0 || !arr?.[0]);
+  arr && (eq(arr.length, 0) || !arr?.[0]);

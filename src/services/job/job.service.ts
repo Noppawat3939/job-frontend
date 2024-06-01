@@ -8,7 +8,7 @@ import type {
 } from "@/types";
 import { service } from "..";
 import { URL } from "@/constants";
-import { getTokenWithHeaders } from "@/lib";
+import { apikeyHeaders, getTokenWithHeaders } from "@/lib";
 import { CreateNewJobSchema } from "@/schemas";
 
 const { JOB } = URL;
@@ -32,10 +32,12 @@ export type JobsFavoritedResponse = ServiceResponse<{
 }>;
 
 export const fetchJobs = async () => {
-  const { data } = await service.get<JobsResponse>(
-    JOB.GET_JOBS,
-    getTokenWithHeaders()
-  );
+  const { data } = await service.get<JobsResponse>(JOB.GET_JOBS, {
+    headers: {
+      ...apikeyHeaders["headers"],
+      ...getTokenWithHeaders()?.["headers"],
+    },
+  });
   return data;
 };
 

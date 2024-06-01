@@ -3,6 +3,8 @@ import {
   Card,
   ContentLayout,
   JobDetailCard,
+  JobPreviewLoader,
+  Lazyload,
   Show,
   Spinner,
   useToast,
@@ -11,17 +13,18 @@ import { QUERY_KEY } from "@/constants";
 import { diffTime, eq, formatPrice } from "@/lib";
 import { jobService, publicService } from "@/services";
 import { useSigninDialog, userStore } from "@/store";
-import { Job, Nullable, PublicJobs, ServiceErrorResponse } from "@/types";
+import { Job, JobWithCompany, Nullable, ServiceErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { BriefcaseBusiness } from "lucide-react";
 import { useState } from "react";
 
 type JobsProps = {
-  jobs?: PublicJobs[];
+  jobs?: JobWithCompany[];
+  loading: boolean;
 };
 
-export default function Jobs({ jobs }: JobsProps) {
+export default function Jobs({ jobs, loading }: JobsProps) {
   const { user } = userStore();
   const { setOpen } = useSigninDialog();
   const { toast } = useToast();
@@ -85,54 +88,66 @@ export default function Jobs({ jobs }: JobsProps) {
       <div className="flex space-x-4 max-h-[calc(100dvh-100px)] h-full">
         <div className="flex flex-[.4] overflow-y-auto">
           <div className="flex flex-col gap-y-3 w-full">
-            {jobs?.map((job) => {
-              const jobPostedDay = diffTime(job.createdAt, undefined, "day");
+            {loading
+              ? Array.from({ length: 5 })
+                  .fill("")
+                  .map((_, i) => <JobPreviewLoader key={`loader_${i}`} />)
+              : jobs?.map((job) => {
+                  const jobPostedDay = diffTime(
+                    job.createdAt,
+                    undefined,
+                    "day"
+                  );
 
-              return (
-                <Card.Card
-                  className="cursor-pointer"
-                  onClick={() =>
-                    ((selectJob && selectJob.id !== job.id) || !selectJob) &&
-                    getJobById(job.id)
-                  }
-                  key={job.id}
-                >
-                  <Card.CardHeader className="flex-row gap-2 items-center">
-                    <picture>
-                      <img
-                        loading="lazy"
-                        alt="profile"
-                        className="w-[60px] h-[60px] rounded-full object-cover"
-                        src={job.company.userProfile}
-                      />
-                    </picture>
+                  return (
+                    <Card.Card
+                      className="cursor-pointer"
+                      onClick={() =>
+                        ((selectJob && selectJob.id !== job.id) ||
+                          !selectJob) &&
+                        getJobById(job.id)
+                      }
+                      key={job.id}
+                    >
+                      <Card.CardHeader className="flex-row gap-2 items-center">
+                        <picture>
+                          <img
+                            loading="lazy"
+                            alt="profile"
+                            className="w-[48px] h-[48px] rounded-full object-cover"
+                            src={job.company.userProfile}
+                          />
+                        </picture>
 
-                    <div className="flex flex-col relative w-full">
-                      <Card.CardTitle className="text-xl font-medium">
-                        {job.position}
-                      </Card.CardTitle>
-                      <Card.CardDescription>
-                        {job.company.companyName}
-                      </Card.CardDescription>
-                    </div>
-                  </Card.CardHeader>
-                  <Card.CardContent>
-                    <ul className="flex-col flex gap-y-2">
-                      <p aria-label="location">{job.location}</p>
-                      <p aria-label="salary">{formatPrice(job.salary)}</p>
-                      <BadgeWorkStyle value={job.style} />
-                    </ul>
-                  </Card.CardContent>
-                  <Card.CardFooter>
-                    <p aria-label="posted-at" className="text-sm text-gray-600">
-                      {eq(jobPostedDay, 0)
-                        ? "today"
-                        : `${jobPostedDay} days ago`}
-                    </p>
-                  </Card.CardFooter>
-                </Card.Card>
-              );
-            })}
+                        <div className="flex flex-col relative w-full">
+                          <Card.CardTitle className="text-xl font-medium">
+                            {job.position}
+                          </Card.CardTitle>
+                          <Card.CardDescription>
+                            {job.company.companyName}
+                          </Card.CardDescription>
+                        </div>
+                      </Card.CardHeader>
+                      <Card.CardContent>
+                        <ul className="flex-col flex gap-y-2">
+                          <p aria-label="location">{job.location}</p>
+                          <p aria-label="salary">{formatPrice(job.salary)}</p>
+                          <BadgeWorkStyle value={job.style} />
+                        </ul>
+                      </Card.CardContent>
+                      <Card.CardFooter>
+                        <p
+                          aria-label="posted-at"
+                          className="text-sm text-gray-600"
+                        >
+                          {eq(jobPostedDay, 0)
+                            ? "today"
+                            : `${jobPostedDay} days ago`}
+                        </p>
+                      </Card.CardFooter>
+                    </Card.Card>
+                  );
+                })}
           </div>
         </div>
         <div className="flex flex-[.6]">
