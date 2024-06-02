@@ -56,7 +56,7 @@ export const formatPrice = (value: number[], fallback?: string) => {
 };
 
 export const formatDate = (date?: string | Date | number, format?: string) =>
-  dayjs(date).locale(TH).format(format);
+  date ? dayjs(date).locale(TH).format(format) : "";
 
 export const isUndifined = <T>(value: T) => eq(value, undefined);
 export const isNull = <T>(value: T) => eq(value, null);

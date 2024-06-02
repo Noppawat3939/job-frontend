@@ -1,4 +1,4 @@
-import { ApplicationStatus, Button, Card, Show } from "@/components";
+import { BadgeApplicationStatus, Button, Card, Show } from "@/components";
 import { cn, eq, formatDate, isUndifined } from "@/lib";
 import { AppliedJob, Job } from "@/types";
 import { HTMLAttributes } from "react";
@@ -75,7 +75,7 @@ export default function MyJobCard({
           )}
         >
           {isApply && !isUndifined(applicationStatus) && (
-            <ApplicationStatus status={applicationStatus!} />
+            <BadgeApplicationStatus status={applicationStatus!} />
           )}
           <div className="flex">
             {isApply && applicationStatus === "applied" && (

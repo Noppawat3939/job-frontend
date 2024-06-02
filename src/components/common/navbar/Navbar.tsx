@@ -115,7 +115,7 @@ export default function Navbar({ user }: NavbarProps) {
         )}
       >
         <Link
-          href="/"
+          href={user?.role === "employer" ? "/company" : "/"}
           className={cn(
             "flex items-center hover:opacity-90 bg-white",
             isMainPath && "border rounded-lg shadow-sm pl-1 pr-2 py-1"

@@ -1,5 +1,5 @@
 import { type MouseEventHandler, type ReactNode } from "react";
-import { Badge, Button, Card, Label, Show } from "@/components";
+import { Badge, Button, Card, Label, Show, Skeleton } from "@/components";
 import {
   cn,
   eq,
@@ -21,6 +21,7 @@ type JobDetailCardProps = Partial<Job> & {
   onFavorite?: (jobId: number) => void;
   hideApply?: boolean;
   hideFavorite?: boolean;
+  loading?: boolean;
 };
 
 export default function JobDetailCard({
@@ -42,6 +43,7 @@ export default function JobDetailCard({
   favoritedJob,
   hideApply = false,
   hideFavorite = false,
+  loading = false,
 }: JobDetailCardProps) {
   const mappedDetails: { key: string; label: string; value: ReactNode }[] = [
     {
@@ -212,7 +214,11 @@ export default function JobDetailCard({
             <Label className="text-foreground text-md max-w-[200px] w-full">
               {detail.label}
             </Label>
-            <span className="max-w-[500px] w-full">{detail.value}</span>
+            {loading ? (
+              <Skeleton className="w-full max-w-[500px] h-[20px]" />
+            ) : (
+              <span className="max-w-[500px] w-full">{detail.value}</span>
+            )}
           </div>
         ))}
       </Card.CardContent>

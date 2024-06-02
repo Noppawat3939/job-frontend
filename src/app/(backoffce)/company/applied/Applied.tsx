@@ -1,7 +1,12 @@
-import { Badge, DataTable, LayoutWithSidebar } from "@/components";
+import {
+  BadgeApplicationStatus,
+  DataTable,
+  LayoutWithSidebar,
+} from "@/components";
 import { DATE_FORMAT, QUERY_KEY } from "@/constants";
 import { formatDate, generateMenusSidebar } from "@/lib";
 import { companyService } from "@/services";
+import { ApplicationStatus as Status } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -72,7 +77,9 @@ export default function Applied() {
                 key: "status",
                 dataIndex: "status",
                 title: "Status",
-                render: (status) => <Badge variant="secondary">{status}</Badge>,
+                render: (status) => (
+                  <BadgeApplicationStatus status={status as Status} />
+                ),
               },
             ]}
           />

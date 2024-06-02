@@ -6,7 +6,9 @@ type ApplicationStatusProps = {
   status: ApplicationStatus;
 };
 
-export default function ApplicationStatus({ status }: ApplicationStatusProps) {
+export default function BadgeApplicationStatus({
+  status,
+}: ApplicationStatusProps) {
   return (
     <Badge
       variant="secondary"
