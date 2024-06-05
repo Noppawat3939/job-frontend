@@ -3,11 +3,13 @@
 import { Lazyload, PageLoader } from "@/components";
 import { goToHome } from "@/lib";
 import { userStore } from "@/store";
+import { getCookie } from "cookies-next";
 import {
   type PropsWithChildren,
   useState,
   useEffect,
   useTransition,
+  useLayoutEffect,
 } from "react";
 
 type UserLayoutProps = Readonly<PropsWithChildren>;
@@ -17,17 +19,15 @@ export default function UserLayout({ children }: UserLayoutProps) {
   const [, startTransition] = useTransition();
   const { user } = userStore((s) => ({ user: s.user }));
 
-  useEffect(() => {
-    if (user && ["user"].includes(user.role)) {
+  useLayoutEffect(() => {
+    if ((user && ["user"].includes(user.role)) || getCookie("token")) {
       setLoading(false);
     } else {
       setLoading(true);
       startTransition(goToHome);
     }
 
-    return () => {
-      console.clear();
-    };
+    return () => console.clear();
   }, [user]);
 
   return (

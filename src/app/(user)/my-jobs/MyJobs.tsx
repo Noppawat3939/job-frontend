@@ -75,7 +75,7 @@ export default function MyJobs({
             applicationDate={job.applicationDate}
             applicationStatus={job.applicationStatus}
             cancelledDate={job.cancelledDate}
-            onCancel={(jobId) => onCancelApplied(String(jobId))}
+            onCancel={() => onCancelApplied(String(job.id))}
             onClick={() => {
               ref.current?.lastElementChild?.scrollIntoView({
                 behavior: "smooth",

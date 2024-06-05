@@ -1,4 +1,4 @@
-import { type MouseEventHandler, type ReactNode } from "react";
+import { useTransition, type MouseEventHandler, type ReactNode } from "react";
 import { Badge, Button, Card, Label, Show, Skeleton } from "@/components";
 import {
   cn,
@@ -45,6 +45,8 @@ export default function JobDetailCard({
   hideFavorite = false,
   loading = false,
 }: JobDetailCardProps) {
+  const [pending, startTransition] = useTransition();
+
   const mappedDetails: { key: string; label: string; value: ReactNode }[] = [
     {
       key: "category",
@@ -179,8 +181,11 @@ export default function JobDetailCard({
               <Button
                 size="sm"
                 variant="purple-shadow"
+                loading={pending}
                 onClick={() =>
-                  applied ? null : id && !hideApply && onApply?.(id)
+                  applied
+                    ? null
+                    : id && !hideApply && startTransition(() => onApply?.(id))
                 }
                 role="apply"
                 disabled={applied}
