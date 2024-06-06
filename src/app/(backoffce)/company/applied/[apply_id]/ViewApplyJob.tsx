@@ -5,18 +5,24 @@ import {
   Card,
   JobDetailCard,
   LayoutWithSidebar,
+  SelectItem,
+  Show,
   Skeleton,
+  toast,
 } from "@/components";
 import { DATE_FORMAT, QUERY_KEY } from "@/constants";
 import { formatDate, generateMenusSidebar, isUndifined } from "@/lib";
 import { companyService } from "@/services";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams, usePathname } from "next/navigation";
 import { ReactNode, useMemo, useState } from "react";
 import Profile from "@/assets/profile-user.svg";
 import Image from "next/image";
+import { ApplicationStatus, Nullable, ServiceErrorResponse } from "@/types";
+import { AxiosError } from "axios";
 
 const initialDialogState = {
+  active: null,
   open: false,
   title: "",
   onOk: () => null,
@@ -32,18 +38,43 @@ export default function ViewApplyJob() {
     title: string;
     onOk: <A>(arg?: A) => void;
     onCancel: <A>(arg?: A) => void;
+    active: Nullable<"update" | "reject">;
   }>(initialDialogState);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const { companyMenus: menu } = useMemo(
     () => generateMenusSidebar(pathname),
     [pathname]
   );
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: [QUERY_KEY.GET_JOB_APPLIED],
     queryFn: () => companyService.fetchJobAppliedById(Number(params.apply_id)),
     enabled: !isUndifined(params.apply_id),
     select: ({ data }) => data,
+  });
+
+  const { mutate: updateApplicationStatus } = useMutation({
+    mutationFn: companyService.updateApplicationStatus,
+    onSuccess: () => {
+      toast({
+        title: "Updated application is successfully",
+        duration: 1500,
+        variant: "success",
+      });
+      refetch();
+    },
+    onError: (e) => {
+      const err = e as AxiosError;
+
+      const error = err.response as ServiceErrorResponse;
+
+      toast({
+        title: error.data.message,
+        variant: "destructive",
+        duration: 1500,
+      });
+    },
   });
 
   const userData: { key: string; label: string; value?: ReactNode }[] = [
@@ -67,25 +98,59 @@ export default function ViewApplyJob() {
     },
   ];
 
-  const handleDialog = (active: "update" | "reject") => {
+  const handleDialog = (
+    active: "update" | "reject",
+    status?: ApplicationStatus
+  ) => {
     setAlertUpdateStatusDialog((prev) => {
       if (active === "update")
         return {
           ...prev,
-          title: `Are you sure update ?`,
+          active,
+          title: `Are you sure update application to ${status} ?`,
           open: true,
           onCancel: () => {
+            setSelectedStatus("");
             setAlertUpdateStatusDialog(initialDialogState);
           },
+          onOk: () =>
+            status && updateApplicationStatus({ id: params.apply_id, status }),
         };
 
       return {
         ...prev,
+        active,
         open: true,
-        title: `Are you sure reject application?`,
+        title: "Are you sure reject application?",
+        onCancel: () => {
+          setSelectedStatus("");
+          setAlertUpdateStatusDialog(initialDialogState);
+        },
+        onOk: () =>
+          updateApplicationStatus({ id: params.apply_id, status: "rejected" }),
       };
     });
   };
+
+  const statusOptions = useMemo(() => {
+    const mappingStatus = {
+      applied: [{ label: "reviewing", value: "reviewing" }],
+      reviewing: [
+        { label: "interviewing", value: "interviewing" },
+        { label: "offering", value: "offering" },
+        { label: "offered", value: "offered" },
+      ],
+      interviewing: [
+        { label: "offering", value: "offering" },
+        { label: "offered", value: "offered" },
+      ],
+      offering: [{ label: "offered", value: "offered" }],
+    } as Record<
+      ApplicationStatus,
+      { label: ApplicationStatus; value: ApplicationStatus }[]
+    >;
+    return data ? mappingStatus?.[data?.applicationStatus] : [];
+  }, [data]);
 
   return (
     <LayoutWithSidebar menu={menu}>
@@ -97,20 +162,32 @@ export default function ViewApplyJob() {
                 <Card.CardTitle className="text-slate-700">
                   {"Candidate Profile"}
                 </Card.CardTitle>
-                <div className="flex space-x-2">
-                  <Button
-                    onClick={() => handleDialog("update")}
-                    variant="sky-shadow"
-                  >
-                    {"Update status"}
-                  </Button>
-                  <Button
-                    onClick={() => handleDialog("reject")}
-                    variant={"destructive-outline"}
-                  >
-                    {"Reject application"}
-                  </Button>
-                </div>
+                <Show
+                  when={
+                    data &&
+                    !["rejected", "offered"].includes(data?.applicationStatus)
+                  }
+                >
+                  <div className="flex space-x-2">
+                    <SelectItem
+                      className="w-[180px]"
+                      placeholder={"Update status"}
+                      verticel
+                      value={selectedStatus}
+                      items={statusOptions || []}
+                      onChange={(value) => {
+                        setSelectedStatus(value);
+                        handleDialog("update", value as ApplicationStatus);
+                      }}
+                    />
+                    <Button
+                      onClick={() => handleDialog("reject")}
+                      variant={"destructive-outline"}
+                    >
+                      {"Reject application"}
+                    </Button>
+                  </div>
+                </Show>
               </div>
             </Card.CardHeader>
             <Card.CardContent>
@@ -167,9 +244,20 @@ export default function ViewApplyJob() {
       </div>
 
       <Alert
-        onOpenChange={(open) =>
-          setAlertUpdateStatusDialog((prev) => ({ ...prev, open }))
-        }
+        onOpenChange={(open) => {
+          if (selectedStatus) {
+            setSelectedStatus("");
+          }
+
+          setAlertUpdateStatusDialog((prev) => ({ ...prev, open }));
+        }}
+        okText={"Confirm"}
+        okButtonProps={{
+          variant:
+            alertUpdateStatatusDialog.active === "update"
+              ? "default"
+              : "destructive",
+        }}
         {...alertUpdateStatatusDialog}
       />
     </LayoutWithSidebar>

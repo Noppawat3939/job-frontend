@@ -1,7 +1,13 @@
 import { URL } from "@/constants";
 import serivce from "../api";
 import { getTokenWithHeaders } from "@/lib";
-import type { CompanyJobsApplied, Job, ServiceResponse } from "@/types";
+import type {
+  ApplicationStatus,
+  AppliedJob,
+  CompanyJobsApplied,
+  Job,
+  ServiceResponse,
+} from "@/types";
 
 const { COMPANY } = URL;
 
@@ -13,6 +19,7 @@ type GetCompanyJobsAppliedResponse = ServiceResponse<{
 type GetCompanyJobAppliedByIdResponse = ServiceResponse<{
   data: CompanyJobsApplied;
 }>;
+type UpdateApplicationStatusResponse = ServiceResponse<{ data: AppliedJob }>;
 
 export const fetchCompanyJobs = async () => {
   const { data } = await serivce.get<GetCompanyJobsResponse>(
@@ -35,6 +42,21 @@ export const fetchJobsApplied = async () => {
 export const fetchJobAppliedById = async (id: number) => {
   const { data } = await serivce.get<GetCompanyJobAppliedByIdResponse>(
     COMPANY.GET_JOB_APPIED.replace(":id", String(id)),
+    getTokenWithHeaders()
+  );
+  return data;
+};
+
+export const updateApplicationStatus = async ({
+  id,
+  status,
+}: {
+  id: string | number;
+  status: ApplicationStatus;
+}) => {
+  const { data } = await serivce.post<UpdateApplicationStatusResponse>(
+    COMPANY.UPDATE_APPLICATION_STATUS.replace(":id", String(id)),
+    { status },
     getTokenWithHeaders()
   );
   return data;
