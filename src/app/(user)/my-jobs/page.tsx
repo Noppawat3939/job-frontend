@@ -81,18 +81,18 @@ export default function MyJobsPage() {
         {
           items: [
             {
-              label: "Job Favorite",
-              value: "job-favorite",
-              path: "/my-jobs?tab=favorite",
-              leftIcon: Heart,
-              active: eq(tabParam, "favorite"),
-            },
-            {
               label: "Job Apply history",
               value: "job-apply-history",
               path: "/my-jobs?tab=apply",
               leftIcon: History,
               active: eq(tabParam, "apply"),
+            },
+            {
+              label: "Job Favorite",
+              value: "job-favorite",
+              path: "/my-jobs?tab=favorite",
+              leftIcon: Heart,
+              active: eq(tabParam, "favorite"),
             },
           ],
         },

@@ -193,3 +193,9 @@ export const mappingHightlightJob = (job?: Job) => {
 
   return hightlight;
 };
+
+export const redirectWithRole = {
+  employer: "/company",
+  super_admin: "/admin?tab=accounts",
+  admin: "/admin?tab=jobs",
+} as Record<Role, string>;

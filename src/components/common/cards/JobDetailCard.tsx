@@ -147,7 +147,7 @@ export default function JobDetailCard({
   const applied = eq(applicationStatus, "applied");
 
   return (
-    <Card.Card className="flex-1 border-0">
+    <Card.Card>
       <Card.CardHeader>
         <Card.CardTitle
           aria-label="position"

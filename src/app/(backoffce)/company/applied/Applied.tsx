@@ -24,6 +24,7 @@ export default function Applied() {
     queryKey: [QUERY_KEY.GET_JOBS_APPLIED],
     queryFn: companyService.fetchJobsApplied,
     select: ({ data }) => data,
+    staleTime: 0,
   });
 
   return (

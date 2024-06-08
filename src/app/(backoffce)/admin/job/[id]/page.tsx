@@ -205,7 +205,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
             />
           </div>
           <h3 className="text-pink-500 opacity-70 text-lg font-medium max-md:text-[15px]">
-            {job?.company}
+            {job?.company?.companyName}
           </h3>
           <br />
           <div className="flex flex-col space-y-1 mb-3">

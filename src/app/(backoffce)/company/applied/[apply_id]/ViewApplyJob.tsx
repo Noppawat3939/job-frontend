@@ -14,12 +14,13 @@ import { DATE_FORMAT, QUERY_KEY } from "@/constants";
 import { formatDate, generateMenusSidebar, isUndifined } from "@/lib";
 import { companyService } from "@/services";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { ReactNode, useMemo, useState } from "react";
 import Profile from "@/assets/profile-user.svg";
 import Image from "next/image";
 import { ApplicationStatus, Nullable, ServiceErrorResponse } from "@/types";
 import { AxiosError } from "axios";
+import { ChevronLeft } from "lucide-react";
 
 const initialDialogState = {
   active: null,
@@ -32,6 +33,7 @@ const initialDialogState = {
 export default function ViewApplyJob() {
   const pathname = usePathname();
   const params = useParams() as { apply_id: string };
+  const router = useRouter();
 
   const [alertUpdateStatatusDialog, setAlertUpdateStatusDialog] = useState<{
     open: boolean;
@@ -48,7 +50,7 @@ export default function ViewApplyJob() {
   );
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: [QUERY_KEY.GET_JOB_APPLIED],
+    queryKey: [QUERY_KEY.GET_JOB_APPLIED, params.apply_id],
     queryFn: () => companyService.fetchJobAppliedById(Number(params.apply_id)),
     enabled: !isUndifined(params.apply_id),
     select: ({ data }) => data,
@@ -159,9 +161,19 @@ export default function ViewApplyJob() {
           <Card.Card className="border-0">
             <Card.CardHeader>
               <div className="flex justify-between">
-                <Card.CardTitle className="text-slate-700">
-                  {"Candidate Profile"}
-                </Card.CardTitle>
+                <div className="flex items-baseline space-x-2">
+                  <Button
+                    role="back"
+                    onClick={router.back}
+                    size="icon"
+                    variant="link"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </Button>
+                  <Card.CardTitle className="text-slate-700">
+                    {"Candidate Profile"}
+                  </Card.CardTitle>
+                </div>
                 <Show
                   when={
                     data &&

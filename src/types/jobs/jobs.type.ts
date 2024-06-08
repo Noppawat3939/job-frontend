@@ -4,7 +4,7 @@ import {
   JOB_EXP_LEVEL,
   APPLICATION_STATUS,
 } from "@/constants";
-import { User } from "../user";
+import type { User } from "../user";
 
 export type WorkingStyle = (typeof WORK_STYLES)[number];
 export type JobType = (typeof JOB_TYPE)[number];
@@ -43,20 +43,6 @@ export type Job = {
 };
 
 export type JobStatus = "approve" | "reject" | "un-approve";
-
-export type JobWithCompany = Job & {
-  company: Partial<
-    Pick<
-      User,
-      | "id"
-      | "userProfile"
-      | "companyName"
-      | "companyHistory"
-      | "industry"
-      | "companyProfile"
-    >
-  >;
-};
 
 export type JobCategory = {
   id: number;

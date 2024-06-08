@@ -1,7 +1,7 @@
 import { ServiceErrorResponse } from "./../../types/common/common.type";
 import type { DecodedToken, Role } from "@/types";
 import { useTransition } from "react";
-import { isUndifined } from "@/lib";
+import { isUndifined, redirectWithRole } from "@/lib";
 import { authService } from "@/services";
 import { useMutation } from "@tanstack/react-query";
 import { setCookie } from "cookies-next";
@@ -51,9 +51,7 @@ export default function useHandleSignin() {
     }
 
     const roleRedirectPath = {
-      employer: "/company",
-      super_admin: "/admin?tab=accounts",
-      admin: "/admin?tab=jobs",
+      ...redirectWithRole,
       user: "/",
     } as Record<Role, string>;
 

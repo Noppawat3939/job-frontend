@@ -5,7 +5,6 @@ import {
   ContentLayout,
   JobDetailCard,
   JobPreviewLoader,
-  Lazyload,
   Show,
   Spinner,
   useToast,
@@ -15,7 +14,7 @@ import { useToggle } from "@/hooks";
 import { diffTime, eq, formatPrice } from "@/lib";
 import { jobService, publicService } from "@/services";
 import { useSigninDialog, userStore } from "@/store";
-import { Job, JobWithCompany, Nullable, ServiceErrorResponse } from "@/types";
+import { Job, Nullable, ServiceErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { BriefcaseBusiness } from "lucide-react";
@@ -54,7 +53,6 @@ export default function Jobs({ jobs, loading }: JobsProps) {
     onSuccess: ({ message }) => {
       if (message) {
         selectJob && getJobById(selectJob.id);
-
         setOpenJobAppliedModal(true);
       }
     },
@@ -133,7 +131,7 @@ export default function Jobs({ jobs, loading }: JobsProps) {
                             <img
                               loading="lazy"
                               alt="profile"
-                              className="w-[48px] h-[48px] rounded-full object-cover"
+                              className="w-[40px] h-[40px] rounded-full object-cover"
                               src={job.company?.userProfile}
                             />
                           </picture>
@@ -196,11 +194,13 @@ export default function Jobs({ jobs, loading }: JobsProps) {
             </Show>
 
             {!isPending && selectJob && (
-              <JobDetailCard
-                {...selectJob}
-                onApply={handleApply}
-                onFavorite={handleFavorite}
-              />
+              <div className="flex-1 h-full">
+                <JobDetailCard
+                  {...selectJob}
+                  onApply={handleApply}
+                  onFavorite={handleFavorite}
+                />
+              </div>
             )}
           </div>
         </div>
