@@ -40,8 +40,11 @@ export default function SelectItem({
           <Select.SelectValue placeholder={placeholder} />
         </Select.SelectTrigger>
         <Select.SelectContent>
-          {items.map((item) => (
-            <Select.SelectItem value={item.value} key={item.value}>
+          {items.map((item, idx) => (
+            <Select.SelectItem
+              value={item.value}
+              key={`key_${item.value}_${idx}`}
+            >
               {item.label}
             </Select.SelectItem>
           ))}

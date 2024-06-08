@@ -29,7 +29,7 @@ export default function MainLayout({ children }: Readonly<PropsWithChildren>) {
     <main
       role="main-layout"
       suppressHydrationWarning
-      className="min-h-screen bg-gradient-to-b from-white to-slate-50"
+      className="min-h-screen h-max bg-gradient-to-b from-white to-slate-50"
     >
       <Navbar user={user} />
       {children}

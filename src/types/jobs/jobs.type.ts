@@ -14,7 +14,6 @@ export type ApplicationStatus = (typeof APPLICATION_STATUS)[number];
 export type Job = {
   id: number;
   position: string;
-  company: string;
   createdAt: string;
   active?: boolean;
   updatedAt?: string;
@@ -34,6 +33,13 @@ export type Job = {
   category: string;
   applicationStatus?: ApplicationStatus;
   favoritedJob?: boolean;
+  company?: {
+    companyHistory?: string;
+    companyName: string;
+    id: number;
+    companyProfile?: string;
+    userProfile?: string;
+  };
 };
 
 export type JobStatus = "approve" | "reject" | "un-approve";

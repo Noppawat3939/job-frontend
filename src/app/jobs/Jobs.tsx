@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { Fragment, useState, useTransition } from "react";
 
 type JobsProps = {
-  jobs?: JobWithCompany[];
+  jobs?: Job[];
   loading: boolean;
 };
 
@@ -104,7 +104,7 @@ export default function Jobs({ jobs, loading }: JobsProps) {
   return (
     <Fragment>
       <ContentLayout>
-        <div className="flex space-x-4 max-h-[calc(100dvh-100px)] h-full">
+        <div className="flex space-x-4 h-full">
           <div className="flex flex-[.4] overflow-y-auto">
             <div className="flex flex-col gap-y-3 w-full">
               {loading
@@ -134,7 +134,7 @@ export default function Jobs({ jobs, loading }: JobsProps) {
                               loading="lazy"
                               alt="profile"
                               className="w-[48px] h-[48px] rounded-full object-cover"
-                              src={job.company.userProfile}
+                              src={job.company?.userProfile}
                             />
                           </picture>
 
@@ -143,7 +143,7 @@ export default function Jobs({ jobs, loading }: JobsProps) {
                               {job.position}
                             </Card.CardTitle>
                             <Card.CardDescription>
-                              {job.company.companyName}
+                              {job?.company?.companyName}
                             </Card.CardDescription>
                           </div>
                         </Card.CardHeader>

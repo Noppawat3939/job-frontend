@@ -159,7 +159,7 @@ export default function JobDetailCard({
               className="text-[15px] font-normal text-pink-600 capitalize"
               aria-label="company-name"
             >
-              {company}
+              {company?.companyName}
             </h3>
           </span>
           <div className="flex space-x-4">

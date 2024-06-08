@@ -353,9 +353,12 @@ export default function AdminPage() {
     const roleOptions = ROLE.map((value) => ({ label: value, value }));
 
     const companyOptions = !isUndifined(jobQuery.data?.data)
-      ? [...new Set(jobQuery!.data!.data.map((d) => d.company))].map(
-          (value) => ({ label: value, value })
-        )
+      ? [
+          ...new Set(jobQuery!.data!.data.map((d) => d.company?.companyName)),
+        ].map((value) => ({
+          label: value || "",
+          value: value || "",
+        }))
       : [];
 
     const approveOptions = selectedAccountsTab

@@ -53,7 +53,7 @@ export default function useHandleSignin() {
     const roleRedirectPath = {
       employer: "/company",
       super_admin: "/admin?tab=accounts",
-      admin: "/admin?tab=accounts",
+      admin: "/admin?tab=jobs",
       user: "/",
     } as Record<Role, string>;
 

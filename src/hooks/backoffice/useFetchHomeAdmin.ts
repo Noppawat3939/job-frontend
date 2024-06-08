@@ -63,7 +63,7 @@ export default function useFetchHomeAdmin(
 
   const mappedJobs = jobQuery.data?.data.map((job) => ({
     key: String(job.id),
-    company: job.company,
+    company: job.company?.companyName,
     position: job.position,
     fulltime: mappingJobType[job.jobType],
     active: mappingJobApprove(job.active),

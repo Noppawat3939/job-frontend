@@ -13,6 +13,7 @@ import { userStore } from "@/store";
 import { LogOut } from "lucide-react";
 import AppLogo from "../../../../public/favicon.ico";
 import Image from "next/image";
+import { Role } from "@/types";
 
 type NavbarProps = { user?: User };
 
@@ -104,6 +105,12 @@ export default function Navbar({ user }: NavbarProps) {
     [pathname]
   );
 
+  const redirectWithLogo = {
+    employer: "/company",
+    admin: "/admin?tab=jobs",
+    super_admin: "/admin?tab=accounts",
+  } as Record<Role, string>;
+
   return (
     <Fragment>
       <nav
@@ -115,12 +122,13 @@ export default function Navbar({ user }: NavbarProps) {
         )}
       >
         <Link
-          href={user?.role === "employer" ? "/company" : "/"}
+          href={(user && redirectWithLogo?.[user?.role]) || "/"}
           className={cn(
             "flex items-center hover:opacity-90 bg-white",
             isMainPath && "border rounded-lg shadow-sm pl-1 pr-2 py-1"
           )}
           aria-label="app-logo-link"
+          shallow={!user || user.role === "user"}
         >
           <div
             className={cn(

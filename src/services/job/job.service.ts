@@ -13,7 +13,10 @@ import { CreateNewJobSchema } from "@/schemas";
 
 const { JOB } = URL;
 
-type JobsResponse = ServiceResponse<{ data: Job[]; total: number }>;
+type JobsResponse = ServiceResponse<{
+  data: Job[];
+  total: number;
+}>;
 type JobResponse = ServiceResponse<{ data: Job }>;
 type JobApproveResponse = ServiceResponse<undefined>;
 type JobCreatedResponse = ServiceResponse<{ data: Job }>;
