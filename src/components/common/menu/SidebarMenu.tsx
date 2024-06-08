@@ -69,7 +69,7 @@ export default function SidebarMenu({ menus, className }: SidebarMenuProps) {
         >
           <Avatar.Avatar className={cn("w-7 h-7", !collapse ? "mr-2" : "")}>
             <Avatar.AvatarImage src={user?.userProfile} />
-            <Avatar.AvatarFallback className="bg-sky-400 text-white">
+            <Avatar.AvatarFallback className="bg-gradient-to-tl from-sky-300 via-sky-500 to-pink-500 text-white">
               {displayName.fallbackImage.toUpperCase()}
             </Avatar.AvatarFallback>
           </Avatar.Avatar>

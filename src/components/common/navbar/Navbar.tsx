@@ -110,7 +110,7 @@ export default function Navbar({ user }: NavbarProps) {
         className={cn(
           "sticky top-0 z-10 rounded-b-xl mx-auto flex items-center",
           shouldBlurNavbar
-            ? "max-w-[1250px] p-5 backdrop-blur-sm border-b border-gray-50/55"
+            ? "max-w-[1250px] p-5 bg-white/40 backdrop-blur-md"
             : "w-full bg-white py-5 px-[50px]"
         )}
       >

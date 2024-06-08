@@ -12,6 +12,8 @@ import {
   SelectItem,
   Show,
   Button,
+  SignupAdminDialog,
+  Avatar,
 } from "@/components";
 import type { User as UserType, UserStatus } from "@/types/user";
 import { JOB_STATUS, ROLE, USER_STATUS } from "@/constants";
@@ -24,8 +26,9 @@ import {
   mappingJobApproveLabel,
   mappingWorkStyle,
   mappingWorkingStyleClass,
+  unPretty,
 } from "@/lib";
-import { useApproveUserHandler, useFetchHomeAdmin } from "@/hooks";
+import { useApproveUserHandler, useFetchHomeAdmin, useToggle } from "@/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 import { userStore } from "@/store";
@@ -70,6 +73,10 @@ export default function AdminPage() {
     new Map()
   );
 
+  const {
+    state: { active: openSignupAdmin },
+    handle: { setToggle: onOpenSignupAdminChange },
+  } = useToggle();
   const [, startTransition] = useTransition();
 
   const selectedAccountsTab = eq(tabParam, "accounts");
@@ -137,28 +144,59 @@ export default function AdminPage() {
 
   const accountColumns = [
     {
+      key: "profile",
+      title: "Profile",
+      dataIndex: "profile",
+      width: "5%",
+      render: (
+        url: string,
+        row: {
+          key: string;
+          profile?: string;
+          email: string;
+          firstName?: string;
+          lastName?: string;
+          role: string;
+          approve: string;
+        }
+      ) => (
+        <Avatar.Avatar>
+          <Avatar.AvatarImage
+            src={url}
+            className="object-cover"
+            loading={"lazy"}
+          />
+          <Avatar.AvatarFallback className="bg-gradient-to-tl from-sky-300 via-sky-500 to-pink-500 text-white">
+            {`${row.firstName?.charAt(0).toUpperCase() || ""}${
+              row.lastName?.charAt(0).toUpperCase() || ""
+            }`}
+          </Avatar.AvatarFallback>
+        </Avatar.Avatar>
+      ),
+    },
+    {
       key: "email",
       title: "Email",
       dataIndex: "email",
-      width: "20%",
+      width: "18%",
     },
     {
       key: "firstName",
       title: "First Name",
       dataIndex: "firstName",
-      width: "15%",
+      width: "18%",
     },
     {
       key: "lastName",
       title: "Last Name",
       dataIndex: "lastName",
-      width: "15%",
+      width: "18%",
     },
     {
       key: "role",
       title: "Role",
       dataIndex: "role",
-      width: "16%",
+      width: "14%",
       render: (role: string) => <BadgeRoleUser role={role} />,
     },
     {
@@ -168,11 +206,14 @@ export default function AdminPage() {
       width: "14%",
       render: (value: string, data: any) => {
         const status = value as UserStatus;
+        if (data?.email === user?.email) return <></>;
 
         return (
           <div className="flex">
             <BadgeUserApprove
-              onClick={() => handleOpenAlertApprove(data)}
+              onClick={() =>
+                data?.email !== user?.email && handleOpenAlertApprove(data)
+              }
               status={status}
             />
           </div>
@@ -267,13 +308,13 @@ export default function AdminPage() {
       const filteredData = filterdAll
         ? users?.filter(
             (user) =>
-              eq(user.approve, filterParams.get("user_status")) &&
+              eq(unPretty(user.approve), filterParams.get("user_status")) &&
               eq(user.role, filterParams.get("role"))
           )
         : hasFiltered
         ? users?.filter(
             (user) =>
-              eq(user.role, filterParams.get("role")) ||
+              eq(unPretty(user.role), filterParams.get("role")) ||
               eq(user.approve, filterParams.get("user_status"))
           )
         : users;
@@ -372,13 +413,19 @@ export default function AdminPage() {
         </div>
         <div className="flex space-x-2 flex-[.2]">
           <Button
-            variant={"purple-shadow"}
+            variant={"outline"}
             disabled={filterParams.size === 0}
             className="w-full"
             onClick={() => setFilterParams(new Map())}
           >
             <ListFilter className="w-4 h-4 mr-2" />
             {"Clear"}
+          </Button>
+          <Button
+            variant={"purple-shadow"}
+            onClick={() => onOpenSignupAdminChange(true)}
+          >
+            {"Add new account"}
           </Button>
         </div>
       </div>
@@ -422,6 +469,14 @@ export default function AdminPage() {
         <Alert
           onOpenChange={() => setAlertApproveUser(initial.alertProps)}
           {...alertApproveUser}
+        />
+        <SignupAdminDialog
+          onOpenChange={onOpenSignupAdminChange}
+          open={openSignupAdmin}
+          callbackSuccess={() => {
+            userQuery.refetch();
+            onOpenSignupAdminChange(false);
+          }}
         />
       </div>
     </LayoutWithSidebar>

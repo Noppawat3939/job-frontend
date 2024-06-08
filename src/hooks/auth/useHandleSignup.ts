@@ -7,13 +7,19 @@ import { AxiosError } from "axios";
 import { redirect } from "next/navigation";
 import { useTransition } from "react";
 
-export default function useHandleSignup() {
+type UseHandleSignupParams = {
+  onSignupWithAdmin: {
+    success?: () => void;
+  };
+};
+
+export default function useHandleSignup(params?: UseHandleSignupParams) {
   const { toast } = useToast();
 
   const [, startTransition] = useTransition();
 
   const handleSignuped = (message?: string | null) => {
-    toast({ title: message || "Success", duration: 2000 });
+    toast({ title: message || "Success", duration: 1500 });
 
     startTransition(() => redirect("/login"));
   };
@@ -22,7 +28,7 @@ export default function useHandleSignup() {
     toast({
       title: message || "Error",
       variant: "destructive",
-      duration: 2000,
+      duration: 1500,
     });
   };
 
@@ -41,10 +47,12 @@ export default function useHandleSignup() {
 
   const signupWithAdmin = useMutation({
     mutationFn: authService.signupWithAdmin,
+    onSuccess: () => params?.onSignupWithAdmin?.success?.(),
   });
 
   const signupWithCompany = useMutation({
     mutationFn: authService.signupWithCompany,
+    onSuccess: ({ message }) => handleSignuped(message),
   });
 
   const signinWithGoogle = useMutation({

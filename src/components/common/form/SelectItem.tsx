@@ -21,7 +21,12 @@ export default function SelectItem({
   ...rest
 }: SelectItemProps) {
   return (
-    <div className={cn("flex flex-1", verticel ? "flex-col" : "flex-row")}>
+    <div
+      className={cn(
+        "flex flex-1",
+        verticel ? "flex-col space-y-1" : "flex-row"
+      )}
+    >
       <Show when={!isUndifined(label)}>
         <Label
           htmlFor={noSpace(String(label)?.toLowerCase())}

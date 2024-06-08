@@ -10,6 +10,7 @@ import serivce from "../api";
 import { URL } from "@/constants";
 import { ServiceResponse } from "@/types";
 import { isUndifined } from "@/lib";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 const { AUTH } = URL;
 
@@ -22,7 +23,9 @@ type OmmitedUserSignup = Omit<SignupUserSchema, "fullName"> & {
   lastName: string;
 };
 
-export const signupWithAdmin = async (body: SignupUserSchema) => {
+export const signupWithAdmin = async (
+  body: OmmitedUserSignup & { autoApprove?: CheckedState }
+) => {
   const { data } = await serivce.post(AUTH.SIGNUP_ADMIN, body);
   return data;
 };

@@ -1,5 +1,5 @@
 import { ServiceErrorResponse } from "./../../types/common/common.type";
-import type { DecodedToken } from "@/types";
+import type { DecodedToken, Role } from "@/types";
 import { useTransition } from "react";
 import { isUndifined } from "@/lib";
 import { authService } from "@/services";
@@ -50,6 +50,18 @@ export default function useHandleSignin() {
       startTransition(router.refresh);
     }
 
+    const roleRedirectPath = {
+      employer: "/company",
+      super_admin: "/admin?tab=accounts",
+      admin: "/admin?tab=accounts",
+      user: "/",
+    } as Record<Role, string>;
+
+    redirectAfterLoginned(roleRedirectPath[role]);
+  };
+
+  const redirectAfterLoginned = (path: string) => {
+    router.push(path);
     startTransition(router.refresh);
   };
 

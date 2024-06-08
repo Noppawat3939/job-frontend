@@ -21,3 +21,4 @@ export { Form } from "./form";
 export { Slider } from "./slider";
 export { Textarea } from "./textarea";
 export { Toaster } from "./toaster";
+export { Checkbox } from "./checkbox";

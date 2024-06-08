@@ -49,6 +49,7 @@ export default function useFetchHomeAdmin(
 
   const mappedUser = userQuery.data?.data.map((user) => ({
     key: String(user.id),
+    profile: user.userProfile,
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
