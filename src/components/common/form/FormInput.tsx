@@ -1,12 +1,10 @@
 import { type InputProps } from "@/components/ui/input";
 import { Input, Label, Show } from "@/components";
 import { cn, isUndifined, noSpace } from "@/lib";
-import { ClassValue } from "clsx";
 
 export type FormInputProps = {
   label?: string;
   error?: string | string[];
-  labelClass?: ClassValue;
 } & InputProps;
 
 export default function FormInput({
@@ -18,7 +16,6 @@ export default function FormInput({
   className,
   name,
   error,
-  labelClass,
   ...rest
 }: FormInputProps) {
   return (
@@ -26,10 +23,7 @@ export default function FormInput({
       <Show when={!isUndifined(label)}>
         <Label
           htmlFor={noSpace(String(label)?.toLowerCase())}
-          className={cn(
-            "capitalize text-gray-700 text-xs font-normal",
-            labelClass
-          )}
+          className={"capitalize text-gray-700 text-xs font-normal"}
         >
           {label}
         </Label>

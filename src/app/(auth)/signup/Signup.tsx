@@ -51,7 +51,6 @@ export default function Signup() {
     >
       <SignupSeciton
         onSignupWithGoogle={() => handle.googleSignup(GOOGLE_KEY)}
-        // onSignupWithUser={handle.userSignup}
         onSignupWithUser={(data) => {
           handleVerifyEmail(data.email);
           setSignupData(data);
