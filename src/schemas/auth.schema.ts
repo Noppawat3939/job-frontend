@@ -8,7 +8,9 @@ import {
   industryCompanySchema,
   lastNameSchema,
   newPasswordSchema,
+  oobCodeSchema,
   passwordSchema,
+  verifyCodeSchema,
 } from "./schemas";
 import { eq } from "@/lib";
 
@@ -25,6 +27,8 @@ export const signupUserSchema = z
     email: emailSchema.create,
     password: passwordSchema.create,
     confirmPassword: confirmPasswordSchema.create,
+    oobCode: oobCodeSchema.common,
+    verifyCode: verifyCodeSchema.common,
   })
   .refine((field) => eq(field.password, field.confirmPassword), {
     message: "Password and confirm password not match",

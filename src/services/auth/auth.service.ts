@@ -23,6 +23,8 @@ type OmmitedUserSignup = Omit<SignupUserSchema, "fullName"> & {
   lastName: string;
 };
 
+type VerifyEmailResponse = ServiceResponse<{ data: { oob_code: string } }>;
+
 export const signupWithAdmin = async (
   body: OmmitedUserSignup & { autoApprove?: CheckedState }
 ) => {
@@ -78,5 +80,14 @@ export const getUrlSigninWithSocial = async (apiKey: string) => {
       },
     }
   );
+  return data;
+};
+
+export const verifyEmail = async ({
+  email,
+}: Pick<SignupUserSchema, "email">) => {
+  const { data } = await serivce.post<VerifyEmailResponse>(AUTH.VERIFY_EMAIL, {
+    email,
+  });
   return data;
 };

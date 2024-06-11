@@ -3273,6 +3273,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"input-otp@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "input-otp@npm:1.2.4"
+  peerDependencies:
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+  checksum: 10c0/bb2cd158cb244da6e807f791261a77a6184de19580af4afba6cc1ea5ff69e675d401537f8186dd6eab7985748e8e2f0ae67c3a7edfbffe963dda029679ee2d8d
+  languageName: node
+  linkType: hard
+
 "internal-slot@npm:^1.0.7":
   version: 1.0.7
   resolution: "internal-slot@npm:1.0.7"
@@ -3643,6 +3653,7 @@ __metadata:
     dayjs: "npm:^1.11.10"
     eslint: "npm:^8"
     eslint-config-next: "npm:14.1.4"
+    input-otp: "npm:^1.2.4"
     jwt-decode: "npm:^4.0.0"
     lucide-react: "npm:^0.363.0"
     next: "npm:14.1.4"

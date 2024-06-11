@@ -8,6 +8,7 @@ export * as Dialog from "./dialog";
 export * as Popover from "./popover";
 export * as Radio from "./radio-group";
 export * as Scroll from "./scroll-area";
+export * as Otp from "./input-otp";
 
 export * from "./use-toast";
 

@@ -181,3 +181,11 @@ export const experienceLevelSchema = {
     })
     .optional(),
 };
+
+export const verifyCodeSchema = {
+  common: z.string().optional(),
+};
+
+export const oobCodeSchema = {
+  common: z.string().optional(),
+};

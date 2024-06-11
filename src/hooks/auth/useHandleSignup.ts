@@ -61,6 +61,10 @@ export default function useHandleSignup(params?: UseHandleSignupParams) {
       !isUndifined(window) && window.open(url, "_blank"),
   });
 
+  const signupVerifyEmail = useMutation({
+    mutationFn: authService.verifyEmail,
+  });
+
   const isPending = [
     signupWithUser.isPending,
     signupWithCompany.isPending,
@@ -73,6 +77,7 @@ export default function useHandleSignup(params?: UseHandleSignupParams) {
     companySignup: signupWithCompany.mutate,
     adminSignup: signupWithAdmin.mutate,
     googleSignup: signinWithGoogle.mutate,
+    verifyEmail: signupVerifyEmail.mutateAsync,
     isPending,
   };
 }

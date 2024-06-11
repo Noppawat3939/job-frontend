@@ -1,4 +1,4 @@
-import { ReactNode, type MouseEventHandler } from "react";
+import type { ReactNode, MouseEventHandler, PropsWithChildren } from "react";
 import { Button } from "@/components";
 import {
   AlertDialog,
@@ -25,7 +25,7 @@ type AlertProps = {
   closeable?: boolean;
   okButtonProps?: ButtonProps;
   cancelButtonProps?: ButtonProps;
-};
+} & PropsWithChildren;
 
 export default function Alert({
   open,
@@ -41,6 +41,7 @@ export default function Alert({
   closeable = true,
   okButtonProps,
   cancelButtonProps,
+  children,
 }: AlertProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -62,6 +63,7 @@ export default function Alert({
             <AlertDialogDescription>{description}</AlertDialogDescription>
           )}
         </AlertDialogHeader>
+        {children && children}
         <AlertDialogFooter>
           {!hideCancel && (
             <Button

@@ -8,6 +8,7 @@ export const URL = {
     FORGOT_PASSWORD: "/auth/forgotpassword",
     FORGOT_PASSWORD_COMPANY: "/auth/forgotpassword/company",
     GET_URL_SIGNIN_SOCIAL: "auth/signin/social/url",
+    VERIFY_EMAIL: "auth/signup/verify-email",
   },
   PUBLIC: {
     GET_INDUSTRUES: "/public/industry",
