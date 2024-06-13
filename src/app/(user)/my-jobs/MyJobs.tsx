@@ -48,20 +48,19 @@ export default function MyJobs({
           isFavorite ? jobsFavorited?.length : jobsApplied?.length
         }  jobs)`}</h1>
       </div>
-
       <Show when={isFavorite}>
         {jobsFavorited?.map((job) => (
           <MyJobCard
-            key={`my_job_${job.id}_${tab}`}
+            key={`my_job_${job?.id}_${tab}`}
             type="favorite"
-            job={job.job}
-            favoritedDate={job.favoriteDate}
+            job={job?.job}
+            favoritedDate={job?.favoriteDate}
             onCancel={(jobId) => onCancelFavorited(String(jobId))}
             onClick={() => {
               ref.current?.lastElementChild?.scrollIntoView({
                 behavior: "smooth",
               });
-              setPreviewJob(job.job);
+              setPreviewJob(job?.job);
             }}
           />
         ))}

@@ -1,10 +1,12 @@
 import { scrollToTop } from "@/lib";
 import { usePathname } from "next/navigation";
 
+const PATHS = ["/", "/jobs", "/signup", "/my-resume/list"];
+
 export default function Footer() {
   const pathname = usePathname();
 
-  const shouldHide = pathname && !["/", "/jobs", "/signup"].includes(pathname);
+  const shouldHide = pathname && !PATHS.includes(pathname);
 
   if (shouldHide) return null;
 

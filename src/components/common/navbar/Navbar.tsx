@@ -29,12 +29,12 @@ export default function Navbar({ user }: NavbarProps) {
   const isLoginPath = eq(pathname, "/login");
   const isSignupPath = eq(pathname, "/signup");
 
-  const [isShowFilter, setIsShowFilter] = useState(false);
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
 
   const handleScroll = () => {
     const { scrollY } = window;
 
-    setIsShowFilter(scrollY > 200 ? true : false);
+    setIsScrollingDown(scrollY > 200 ? true : false);
   };
 
   useEffect(() => {
@@ -68,6 +68,12 @@ export default function Navbar({ user }: NavbarProps) {
           href: "/jobs",
           label: "Find jobs",
           hide: ["/jobs"].includes(pathname),
+        },
+        {
+          key: "myResumes",
+          label: "My Resume",
+          href: "/my-resume/list",
+          hide: ["/my-resume/list"].includes(pathname),
         },
         {
           key: "myJobs",
@@ -148,7 +154,8 @@ export default function Navbar({ user }: NavbarProps) {
             {"Jobify"}
           </div>
         </Link>
-        {/* <Show when={isShowFilter && isMainPath}>
+
+        {/* <Show when={isScrollingDown && isMainPath}>
           <div className="flex bg-white border p-1 rounded-lg mx-2">
             <Button size="sm" variant="ghost">
               {"filter V"}
@@ -158,6 +165,14 @@ export default function Navbar({ user }: NavbarProps) {
             </Button>
           </div>
         </Show> */}
+
+        <Show when={isScrollingDown && ["/my-resume/list"].includes(pathname)}>
+          <div className="flex bg-white border  ml-[30px] justify-center p-1 rounded-lg mx-2">
+            <Button asChild size="sm" variant="ghost">
+              <Link href={"/pricing"}>{"Pricing"}</Link>
+            </Button>
+          </div>
+        </Show>
 
         <div className="flex items-baseline ml-auto space-x-4">
           <Show when={!isUndifined(user)}>

@@ -3660,6 +3660,7 @@ __metadata:
     postcss: "npm:^8"
     react: "npm:^18"
     react-dom: "npm:^18"
+    react-fast-marquee: "npm:^1.6.4"
     react-hook-form: "npm:^7.51.2"
     sharp: "npm:^0.33.3"
     tailwind-merge: "npm:^2.2.2"
@@ -4572,6 +4573,16 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 10c0/66dfc5f93e13d0674e78ef41f92ed21dfb80f9c4ac4ac25a4b51046d41d4d2186abc915b897f69d3d0ebbffe6184e7c5876f2af26bfa956f179225d921be713a
+  languageName: node
+  linkType: hard
+
+"react-fast-marquee@npm:^1.6.4":
+  version: 1.6.4
+  resolution: "react-fast-marquee@npm:1.6.4"
+  peerDependencies:
+    react: ">= 16.8.0 || 18.0.0"
+    react-dom: ">= 16.8.0 || 18.0.0"
+  checksum: 10c0/bee73a9467d0d6556bbb33538b7e008a4b0a7355e457b6d57511eacc5d103a21e49fb7928ed7fd964e4b53469a7d1ca6d6944b5d527abe7048cde3a1483215b3
   languageName: node
   linkType: hard
 

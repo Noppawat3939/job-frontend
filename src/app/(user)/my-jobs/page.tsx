@@ -5,6 +5,7 @@ import {
   LayoutWithSidebar,
   NoContentSection,
   Show,
+  useToast,
 } from "@/components";
 import { QUERY_KEY } from "@/constants";
 import { useChangeTitleWindow } from "@/hooks";
@@ -16,12 +17,14 @@ import MyJobs from "./MyJobs";
 import { useSearchParams } from "next/navigation";
 import { JobsAppliedResponse, JobsFavoritedResponse } from "@/services/job";
 
-const mockLoader = Array.from({ length: 5 }).fill("");
+const fakeLoader = Array.from({ length: 5 }).fill("");
 
 export default function MyJobsPage() {
   const searchParam = useSearchParams();
 
   const tabParam = searchParam.get("tab") as "favorite" | "apply" | undefined;
+
+  const { toast } = useToast();
 
   useChangeTitleWindow(`My jobs - ${tabParam} | jobify.com`);
 
@@ -56,6 +59,15 @@ export default function MyJobsPage() {
   const { mutate: cancelApplied } = useMutation({
     mutationFn: jobService.cancelAppliedJob,
     onSuccess: () => refetchApplied(),
+    onError: () => {
+      toast({
+        title: "Somting went wrong",
+        variant: "destructive",
+        duration: 1500,
+      });
+
+      refetchApplied();
+    },
   });
 
   const { mutate: favoriteJob } = useMutation({
@@ -123,7 +135,7 @@ export default function MyJobsPage() {
           }
         >
           <div className="flex flex-col space-y-3">
-            {mockLoader.map((_, i) => (
+            {fakeLoader.map((_, i) => (
               <JobPreviewLoader key={`loader_${i}`} />
             ))}
           </div>
