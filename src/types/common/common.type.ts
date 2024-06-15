@@ -35,3 +35,10 @@ export type Province = {
   name: Record<"th" | "en", string>;
   code: string;
 };
+
+export type Testimonial = {
+  id: number;
+  fullName: string;
+  profile: string;
+  message: string;
+};

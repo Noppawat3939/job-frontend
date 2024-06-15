@@ -1,26 +1,34 @@
+import { Avatar, Card } from "@/components";
+import { Testimonial } from "@/types";
 import Marquee from "react-fast-marquee";
+import DefaultProfile from "@/assets/profile-user.svg";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function MyResumeList() {
+type MyResumeListProps = {
+  testimonials: Testimonial[];
+};
+
+export default function MyResumeList({ testimonials }: MyResumeListProps) {
   return (
-    <main className="h-auto pb-[6rem]">
+    <main className="h-auto flex flex-col gap-4 pb-[6rem]">
       <section className="h-[360px] flex items-center justify-center">
         <h1 className="text-5xl text-slate-800 font-semibold max-w-md mx-auto text-center">
           {"Find design resume in seconds."}
         </h1>
       </section>
       <div>
-        <Marquee className="gap-4 flex" autoFill gradient>
+        <Marquee className="gap-6 flex" autoFill gradient>
           {[1, 2].map((num) => (
-            <div
-              key={num}
-              className="border-2 mx-3 rounded-lg bg-slate-100 w-[280px] h-[400px]"
-            >
-              mock template
-            </div>
+            <Link key={num} href={`/my-resume/${num}`}>
+              <div className="border-2 mx-3 transition-all duration-150 rounded-lg w-[280px] h-[400px] flex justify-center items-center bg-black/10 hover:bg-slate-100">
+                {"mock template"}
+              </div>
+            </Link>
           ))}
         </Marquee>
       </div>
-      <section className="h-[360px] flex justify-center items-center ">
+      <section className="h-[360px] flex justify-center items-center">
         <h1 className="text-5xl font-semibold text-slate-800">
           {"From inspiration to creation."}
         </h1>
@@ -38,6 +46,46 @@ export default function MyResumeList() {
                 Laborum, vero?`}
               </p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex max-w-5xl mx-auto flex-col justify-center items-center">
+        <div className="h-[360px] flex items-center">
+          <h1 className="text-5xl font-semibold text-slate-800">
+            {"What our users are saying."}
+          </h1>
+        </div>
+        <br />
+        <div className="grid grid-cols-3 gap-6 ">
+          {testimonials.map((item) => (
+            <Card.Card
+              key={`testimonial_${item.id}`}
+              className="rounded-2xl bg-transparent"
+            >
+              <Card.CardHeader>
+                <div className="flex gap-4 items-center">
+                  <Avatar.Avatar>
+                    <Avatar.AvatarImage
+                      loading="lazy"
+                      className="object-cover"
+                      src={item.profile}
+                    />
+                    <Avatar.AvatarFallback>
+                      <Image
+                        src={DefaultProfile}
+                        alt="def-profile"
+                        className="w-[40px] h-[40px] rounded-full object-cover"
+                      />
+                    </Avatar.AvatarFallback>
+                  </Avatar.Avatar>
+                  <h3 className="font-medium">{item.fullName}</h3>
+                </div>
+              </Card.CardHeader>
+              <Card.CardContent>
+                <p className="text-slate-700 text-[14px]">{item.message}</p>
+              </Card.CardContent>
+            </Card.Card>
           ))}
         </div>
       </section>

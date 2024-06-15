@@ -1,7 +1,12 @@
-import { type AxiosRequestConfig } from "axios";
 import { URL } from "@/constants";
 import serivce from "../api";
-import type { Job, JobCategory, Province, ServiceResponse } from "@/types";
+import type {
+  Job,
+  JobCategory,
+  Province,
+  ServiceResponse,
+  Testimonial,
+} from "@/types";
 import { apikeyHeaders } from "@/lib";
 
 const { PUBLIC } = URL;
@@ -20,6 +25,11 @@ export type GetIndustriesResponse = ServiceResponse<{
 export type GetProvinceResponse = ServiceResponse<{
   total: number;
   data: Province[];
+}>;
+
+export type GetTestimonailsResponse = ServiceResponse<{
+  total: number;
+  data: Testimonial[];
 }>;
 
 export const getProvinces = async () => {
@@ -49,6 +59,14 @@ export const getPublicJob = async (id: string | number) => {
 export const getJobCategories = async () => {
   const { data } = await serivce.get<GetJobCategoriesResponse>(
     PUBLIC.GET_JOB_CATEGORIES,
+    apikeyHeaders
+  );
+  return data;
+};
+
+export const getTestimonails = async () => {
+  const { data } = await serivce.get<GetTestimonailsResponse>(
+    PUBLIC.GET_TESTIMONIALS,
     apikeyHeaders
   );
   return data;
