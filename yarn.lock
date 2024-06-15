@@ -2205,6 +2205,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "date-fns@npm:3.6.0"
+  checksum: 10c0/0b5fb981590ef2f8e5a3ba6cd6d77faece0ea7f7158948f2eaae7bbb7c80a8f63ae30b01236c2923cf89bb3719c33aeb150c715ea4fe4e86e37dcf06bed42fb6
+  languageName: node
+  linkType: hard
+
 "dayjs@npm:^1.11.10":
   version: 1.11.10
   resolution: "dayjs@npm:1.11.10"
@@ -3672,6 +3679,7 @@ __metadata:
     clsx: "npm:^2.1.0"
     cmdk: "npm:^1.0.0"
     cookies-next: "npm:^4.1.1"
+    date-fns: "npm:^3.6.0"
     dayjs: "npm:^1.11.10"
     eslint: "npm:^8"
     eslint-config-next: "npm:14.1.4"
@@ -3681,6 +3689,7 @@ __metadata:
     next: "npm:14.1.4"
     postcss: "npm:^8"
     react: "npm:^18"
+    react-day-picker: "npm:^8.10.1"
     react-dom: "npm:^18"
     react-fast-marquee: "npm:^1.6.4"
     react-hook-form: "npm:^7.51.2"
@@ -4583,6 +4592,16 @@ __metadata:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: 10c0/900a93d3cdae3acd7d16f642c29a642aea32c2026446151f0778c62ac089d4b8e6c986811076e1ae180a694cedf077d453a11b58ff0a865629a4f82ab558e102
+  languageName: node
+  linkType: hard
+
+"react-day-picker@npm:^8.10.1":
+  version: 8.10.1
+  resolution: "react-day-picker@npm:8.10.1"
+  peerDependencies:
+    date-fns: ^2.28.0 || ^3.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 10c0/a0ff28c4b61b3882e6a825b19e5679e2fdf3256cf1be8eb0a0c028949815c1ae5a6561474c2c19d231c010c8e0e0b654d3a322610881e0655abca05a2e03d9df
   languageName: node
   linkType: hard
 

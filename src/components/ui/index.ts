@@ -16,6 +16,7 @@ export { Button } from "./button";
 export { Input } from "./input";
 export { Separator } from "./separator";
 export { Badge } from "./badge";
+export { Calendar } from "./calendar";
 export { Label } from "./label";
 export { Skeleton } from "./skeleton";
 export { Form } from "./form";

@@ -1,5 +1,5 @@
 import { Avatar, Card } from "@/components";
-import { Testimonial } from "@/types";
+import { ResumeTemplate, Testimonial } from "@/types";
 import Marquee from "react-fast-marquee";
 import DefaultProfile from "@/assets/profile-user.svg";
 import Image from "next/image";
@@ -7,9 +7,13 @@ import Link from "next/link";
 
 type MyResumeListProps = {
   testimonials: Testimonial[];
+  templates: ResumeTemplate[];
 };
 
-export default function MyResumeList({ testimonials }: MyResumeListProps) {
+export default function MyResumeList({
+  testimonials,
+  templates,
+}: MyResumeListProps) {
   return (
     <main className="h-auto flex flex-col gap-4 pb-[6rem]">
       <section className="h-[360px] flex items-center justify-center">
@@ -18,12 +22,23 @@ export default function MyResumeList({ testimonials }: MyResumeListProps) {
         </h1>
       </section>
       <div>
-        <Marquee className="gap-6 flex" autoFill gradient>
-          {[1, 2].map((num) => (
-            <Link key={num} href={`/my-resume/${num}`}>
-              <div className="border-2 mx-3 transition-all duration-150 rounded-lg w-[280px] h-[400px] flex justify-center items-center bg-black/10 hover:bg-slate-100">
-                {"mock template"}
-              </div>
+        <Marquee
+          pauseOnHover
+          className="gap-6 flex"
+          autoFill
+          gradient
+          speed={50}
+        >
+          {templates.map((item) => (
+            <Link key={item.id} href={`/my-resume/${item.id}`}>
+              <picture className="transition-all duration-150 hover:opacity-60">
+                <img
+                  src={item.image}
+                  alt="ex_templarte"
+                  loading="lazy"
+                  className="rounded-2xl mx-6 border"
+                />
+              </picture>
             </Link>
           ))}
         </Marquee>

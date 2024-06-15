@@ -45,4 +45,7 @@ export const URL = {
     GET_JOB_APPIED: "/company/list/applied/:id",
     UPDATE_APPLICATION_STATUS: "/user-job/application/update/:id",
   },
+  DOCUMENT: {
+    GET_RESUME_TEMPLATES: "/user-resume/templates",
+  },
 } as const;

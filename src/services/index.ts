@@ -5,3 +5,4 @@ export * as publicService from "./public";
 export * as userService from "./user";
 export * as jobService from "./job";
 export * as companyService from "./company";
+export * as docsService from "./document";

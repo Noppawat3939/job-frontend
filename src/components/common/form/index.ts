@@ -5,3 +5,4 @@ export { default as CreateJobForm } from "./CreateJobForm";
 export { default as MultiInputForm } from "./MultiInputForm";
 export { default as FormSelectItem } from "./FormSelectItem";
 export { default as ResumeForm } from "./ResumeForm";
+export { default as DatePickerForm } from "./DatePickerForm";
