@@ -189,3 +189,26 @@ export const verifyCodeSchema = {
 export const oobCodeSchema = {
   common: z.string().optional(),
 };
+
+export const aboutMeSchema = {
+  common: z.string().optional(),
+};
+
+export const resumeEducationSchema = {
+  common: z.object({
+    institute: z.string().optional(),
+    major: z.string().optional(),
+    startDate: z.string().optional().nullable(),
+    endDate: z.string().optional().nullable(),
+    projects: z.string().optional(),
+  }),
+};
+
+export const resumeWorkExpirenceSchema = {
+  common: z.object({
+    position: z.string().optional(),
+    startDate: z.string().optional().nullable(),
+    endDate: z.string().optional().nullable(),
+    responsible: z.string().optional(),
+  }),
+};

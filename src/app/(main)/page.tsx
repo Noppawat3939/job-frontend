@@ -5,6 +5,7 @@ import Landing from "./Landing";
 import { userStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { redirectWithRole } from "@/lib";
+import { Fragment } from "react";
 
 export default function MainPage() {
   const { user } = userStore((store) => ({ user: store.user }));
@@ -14,7 +15,7 @@ export default function MainPage() {
     return router.push(redirectWithRole?.[user?.role]);
 
   return (
-    <Lazyload>
+    <Lazyload fallback={<Fragment />}>
       <Landing />
     </Lazyload>
   );

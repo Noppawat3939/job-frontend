@@ -1,7 +1,6 @@
 import { Button, Calendar, Label, Popover, Show } from "@/components";
 import { cn, formatDate, isUndifined } from "@/lib";
 import { ClassValue } from "clsx";
-import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -11,7 +10,11 @@ type DatePickerFormProps = {
   format?: string;
   placeholder?: string;
   onChange?: (date?: Date) => void;
+  name?: string;
+  value?: Date;
 };
+
+const FORMAT = "DD/MM/YYYY";
 
 export default function DatePickerForm({
   label,
@@ -19,8 +22,10 @@ export default function DatePickerForm({
   format,
   placeholder,
   onChange,
+  name,
+  value,
 }: DatePickerFormProps) {
-  const [date, setDate] = useState<Date | undefined>();
+  const [date, setDate] = useState<Date | undefined>(value);
 
   return (
     <div className={cn("flex flex-col space-y-1", className)}>
@@ -29,14 +34,14 @@ export default function DatePickerForm({
       </Show>
 
       <Popover.Popover>
-        <Popover.PopoverTrigger asChild>
+        <Popover.PopoverTrigger asChild name={name}>
           <Button
             variant={"outline"}
             className={cn("justify-start text-left font-normal", className)}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? (
-              formatDate(date, format || "DD/MM/YYYY")
+            {value || date ? (
+              formatDate(value || date, format || FORMAT)
             ) : (
               <span className="text-muted-foreground">{placeholder || ""}</span>
             )}

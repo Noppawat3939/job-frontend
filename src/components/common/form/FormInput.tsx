@@ -34,6 +34,7 @@ export default function FormInput({
           placeholder={placeholder}
           value={value}
           type={type}
+          name={name}
           disabled={rest.disabled}
           className={cn(
             "placeholder:font-normal placeholder:opacity-70 focus-visible:ring-transparent",
