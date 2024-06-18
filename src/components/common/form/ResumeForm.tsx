@@ -101,13 +101,14 @@ export default function ResumeForm() {
 
   const getProgressValue = (
     data: Record<string, any> | Record<string, unknown>[]
-  ) => {
+  ): number => {
     if (Array.isArray(data)) {
-      data.reduce((acc, item) => {
+      const sum = data.reduce((acc, item) => {
         if (typeof item === "string") return acc + 0;
 
         return acc + getProgressValue(item);
-      });
+      }, 0);
+      return sum;
     }
     return Object.values(data).reduce((acc, cur) => acc + (cur ? 1 : 0), 0);
   };
