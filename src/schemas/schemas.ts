@@ -1,4 +1,9 @@
-import { JOB_EXP_LEVEL, JOB_TYPE, WORK_STYLES } from "@/constants";
+import {
+  JOB_EXP_LEVEL,
+  JOB_TYPE,
+  RESUME_SOCICALS,
+  WORK_STYLES,
+} from "@/constants";
 import { z } from "zod";
 
 const PASSWORD = { MIN: 8, MAX: 20 };
@@ -211,4 +216,19 @@ export const resumeWorkExpirenceSchema = {
     endDate: z.string().optional().nullable(),
     responsible: z.string().optional(),
   }),
+};
+
+export const resumeSocialSchema = {
+  common: z.object({
+    social: z.enum(RESUME_SOCICALS).nullable(),
+    url: z.string().optional(),
+  }),
+};
+
+export const addressSchema = {
+  common: z.string().optional(),
+};
+
+export const phoneNumberSchema = {
+  common: z.string().optional(),
 };

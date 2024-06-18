@@ -60,3 +60,11 @@ export const CREATE_JOB_FIELDS = [
   "contracts",
   "transports",
 ] as const;
+
+export const RESUME_SOCICALS = [
+  "linkedIn",
+  "facebook",
+  "youtube",
+  "tiktok",
+  "github",
+] as const;

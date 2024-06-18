@@ -92,3 +92,6 @@ export const scrollToTop = () =>
 
 export const isEmptyArray = (arr?: unknown[]) =>
   arr && (eq(arr.length, 0) || !arr?.[0]);
+
+export const toPercent = (value: number, total: number) =>
+  (value / total) * 100;

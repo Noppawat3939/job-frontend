@@ -44,7 +44,7 @@ export default function MyJobCard({
           <div className="flex flex-col">
             {job.position}
             <Card.CardDescription className="font-medium" aria-label="company">
-              {job.company}
+              {job.company?.companyName}
             </Card.CardDescription>
           </div>
           <Show when={isApply}>
