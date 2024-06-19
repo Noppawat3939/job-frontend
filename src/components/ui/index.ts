@@ -9,6 +9,7 @@ export * as Popover from "./popover";
 export * as Radio from "./radio-group";
 export * as Scroll from "./scroll-area";
 export * as Otp from "./input-otp";
+export * as Accordion from "./accordion";
 
 export * from "./use-toast";
 

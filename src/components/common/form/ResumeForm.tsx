@@ -316,7 +316,7 @@ export default function ResumeForm() {
       <Fragment>
         <Header
           title={"What do you do?"}
-          disabled={generateFormsLength.workLength.length > 1}
+          disabled={generateFormsLength.workLength.length >= 1}
           onClick={() => {
             if (generateFormsLength.workLength.length < 1) {
               handleIncreaseSubFields("workLength");
@@ -420,7 +420,7 @@ export default function ResumeForm() {
               <h2 className="text-2xl font-semibold text-slate-700">
                 {"Social link"}
               </h2>
-              <Button type="button" size="sm" variant="outline">
+              <Button type="button" disabled size="sm" variant="outline">
                 {"Add social"}
               </Button>
             </div>
