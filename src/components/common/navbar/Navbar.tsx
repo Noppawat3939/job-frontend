@@ -70,10 +70,10 @@ export default function Navbar({ user }: NavbarProps) {
           hide: ["/jobs"].includes(pathname),
         },
         {
-          key: "myResumes",
-          label: "My Resume",
-          href: "/my-resume/list",
-          hide: ["/my-resume/list"].includes(pathname),
+          key: "resumeTemplate",
+          label: "Resume",
+          href: "/resume-template/list",
+          hide: ["/resume-template/list"].includes(pathname),
         },
         {
           key: "myJobs",

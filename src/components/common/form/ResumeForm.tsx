@@ -14,7 +14,8 @@ import type { ButtonProps } from "@/components/ui/button";
 import { useHandleForm } from "@/hooks";
 import { cn, eq, isUndifined, numOnly, scrollToTop, toPercent } from "@/lib";
 import { CreateResumeSchema, createResumeSchema } from "@/schemas";
-import { Nullable } from "@/types";
+import { useResumeStore } from "@/store";
+import type { Nullable } from "@/types";
 import { ClassValue } from "clsx";
 import { getCookie, setCookie } from "cookies-next";
 import dayjs from "dayjs";
@@ -29,22 +30,11 @@ import {
 export default function ResumeForm() {
   const [pending, startTransition] = useTransition();
 
+  const { setData, data } = useResumeStore();
+
   const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [initialized, setInitialized] = useState(false);
-  const [resumeValues, setResumeValues] = useState<CreateResumeSchema>({
-    firstName: "",
-    lastName: "",
-    about: "",
-    education: [
-      { institute: "", startDate: null, endDate: null, projects: "" },
-    ],
-    work: [{ position: "", startDate: null, endDate: null, responsible: "" }],
-    email: "",
-    address: "",
-    phone_number: "",
-    socials: [{ social: null, url: "" }],
-  });
   const [generateFormsLength, setGenerateFormLength] = useState<{
     educationLength: number[];
     workLength: number[];
@@ -59,22 +49,22 @@ export default function ResumeForm() {
         const parsed = JSON.parse(resumeCookie) as {
           subscriptionId: number;
           background: Pick<
-            typeof resumeValues,
+            typeof data,
             "firstName" | "lastName" | "about" | "education"
           >;
-          work: typeof resumeValues.work;
+          work: typeof data.work;
           contact: Pick<
-            typeof resumeValues,
+            typeof data,
             "email" | "address" | "phone_number" | "socials"
           >;
         };
 
-        setResumeValues((prev) => ({
-          ...prev,
+        setData({
+          ...data,
           ...parsed.background,
           work: parsed.work,
           ...parsed.contact,
-        }));
+        });
 
         const fields = {
           firstName: parsed.background.firstName,
@@ -119,43 +109,47 @@ export default function ResumeForm() {
 
   const { action } = useHandleForm<CreateResumeSchema>(
     createResumeSchema,
-    resumeValues,
+    data,
     (data) => {
       console.log(1, data);
     }
   );
 
-  const onFormChange = useCallback(
+  const onChange = useCallback(
     (
-      field?: keyof typeof resumeValues,
+      field?: keyof typeof data,
       value?: string,
       subField?:
-        | keyof (typeof resumeValues.education)[number]
-        | keyof (typeof resumeValues.work)[number]
-        | keyof (typeof resumeValues.socials)[number],
-      lengthAt?: number
+        | keyof (typeof data.education)[number]
+        | keyof (typeof data.work)[number]
+        | keyof (typeof data.socials)[number],
+      index?: number
     ) => {
-      if (field && lengthAt && subField && Array.isArray(resumeValues[field])) {
-        setResumeValues((prev) => {
-          const insetSubField = (prev[field] as Record<string, unknown>[]).map(
-            (val, idx) => {
-              if (idx + 1 === lengthAt) return { ...val, [subField]: value };
-
-              return val;
-            }
-          );
-
-          if (insetSubField) return { ...prev, [field]: insetSubField };
-
-          return prev;
-        });
+      if (field && !subField && !index) {
+        setData({ ...data, [field]: value });
       }
 
-      if (field && value && !subField && !lengthAt) {
-        setResumeValues((prev) => ({ ...prev, [field]: value }));
+      if (field && subField && index && Array.isArray(data[field])) {
+        let update;
+
+        const insertSubField = (data[field] as Record<string, unknown>[]).map(
+          (row, i) => {
+            if (i + 1 === index) return { ...row, [subField]: value };
+
+            return row;
+          }
+        );
+
+        if (insertSubField) {
+          update = { ...data, [field]: insertSubField };
+        } else {
+          update = data;
+        }
+
+        setData(update);
       }
     },
-    [resumeValues]
+    [data]
   );
 
   const handleIncreaseSubFields = useCallback(
@@ -183,19 +177,19 @@ export default function ResumeForm() {
               <FormInput
                 label="Fistname"
                 name="firstName"
-                value={resumeValues.firstName}
+                value={data.firstName}
                 onChange={({ target: { value } }) =>
-                  onFormChange("firstName", value)
+                  onChange("firstName", value)
                 }
                 className="flex-1"
               />
               <FormInput
                 label="Lastname"
                 className="flex-1"
-                value={resumeValues.lastName}
+                value={data.lastName}
                 name="lastName"
                 onChange={({ target: { value } }) =>
-                  onFormChange("lastName", value)
+                  onChange("lastName", value)
                 }
               />
             </div>
@@ -208,8 +202,8 @@ export default function ResumeForm() {
             <Textarea
               cols={1}
               name="about"
-              value={resumeValues.about}
-              onChange={({ target: { value } }) => onFormChange("about", value)}
+              value={data.about}
+              onChange={({ target: { value } }) => onChange("about", value)}
               className="resize-none h-[100px]"
             />
             <Header
@@ -233,18 +227,18 @@ export default function ResumeForm() {
                     label="University/College"
                     name="institute"
                     className="flex-1"
-                    value={resumeValues.education[i]?.institute}
+                    value={data.education[i]?.institute}
                     onChange={({ target: { value } }) =>
-                      onFormChange("education", value, "institute", num)
+                      onChange("education", value, "institute", num)
                     }
                   />
                   <FormInput
                     label="Major/Minor"
                     name="major"
-                    value={resumeValues.education[i]?.major}
+                    value={data.education[i]?.major}
                     className="flex-1"
                     onChange={({ target: { value } }) =>
-                      onFormChange("education", value, "major", num)
+                      onChange("education", value, "major", num)
                     }
                   />
                 </div>
@@ -253,10 +247,10 @@ export default function ResumeForm() {
                     className="flex-1"
                     label={"Start date"}
                     name="startDate"
-                    value={toDate(resumeValues.education[i].startDate)}
+                    value={toDate(data.education[i].startDate)}
                     placeholder={"Start date"}
                     onChange={(date) =>
-                      onFormChange(
+                      onChange(
                         "education",
                         date?.toISOString(),
                         "startDate",
@@ -269,14 +263,9 @@ export default function ResumeForm() {
                     label={"End date"}
                     placeholder={"End date"}
                     name="endDate"
-                    value={toDate(resumeValues.education[i].endDate)}
+                    value={toDate(data.education[i].endDate)}
                     onChange={(date) =>
-                      onFormChange(
-                        "education",
-                        date?.toISOString(),
-                        "endDate",
-                        num
-                      )
+                      onChange("education", date?.toISOString(), "endDate", num)
                     }
                   />
                 </div>
@@ -289,18 +278,16 @@ export default function ResumeForm() {
                   className="min-h-[120px] max-h-[300px]"
                   onKeyDown={({ key }) => {
                     if (key === "Enter") {
-                      const project = resumeValues.education.at(
-                        num - 1
-                      )?.projects;
+                      const project = data.education.at(num - 1)?.projects;
 
                       const value = `${project},`;
 
-                      onFormChange("education", value, "projects", num);
+                      onChange("education", value, "projects", num);
                     }
                   }}
-                  value={resumeValues.education[i].projects}
+                  value={data.education[i].projects}
                   onChange={({ target: { value } }) =>
-                    onFormChange("education", value, "projects", num)
+                    onChange("education", value, "projects", num)
                   }
                 />
               </Fragment>
@@ -332,9 +319,9 @@ export default function ResumeForm() {
                   label="Position"
                   className="flex-1"
                   name="position"
-                  value={resumeValues.work[i]?.position}
+                  value={data.work?.[i]?.position}
                   onChange={({ target: { value } }) =>
-                    onFormChange("work", value, "position", num)
+                    onChange("work", value, "position", num)
                   }
                 />
                 <div className="flex flex-1 space-x-1">
@@ -342,23 +329,18 @@ export default function ResumeForm() {
                     label="Start job"
                     className="w-full"
                     name="startDate"
-                    value={toDate(resumeValues.work[i]?.startDate)}
+                    value={toDate(data.work?.[i]?.startDate)}
                     onChange={(date) =>
-                      onFormChange(
-                        "work",
-                        date?.toISOString(),
-                        "startDate",
-                        num
-                      )
+                      onChange("work", date?.toISOString(), "startDate", num)
                     }
                   />
                   <DatePickerForm
                     label="End job"
                     className="w-full"
                     name="endDate"
-                    value={toDate(resumeValues.work[i]?.endDate)}
+                    value={toDate(data.work?.[i]?.endDate)}
                     onChange={(date) =>
-                      onFormChange("work", date?.toISOString(), "endDate", num)
+                      onChange("work", date?.toISOString(), "endDate", num)
                     }
                   />
                 </div>
@@ -369,20 +351,20 @@ export default function ResumeForm() {
               <Textarea
                 className="h-[280px] resize-none"
                 placeholder="Please enter to start a new line"
-                value={resumeValues.work[i]?.responsible}
+                value={data.work?.[i]?.responsible}
                 onKeyDown={({ key }) => {
                   if (key === "Enter") {
                     const responsible = `${
-                      resumeValues.work.at(num - 1)?.responsible
+                      data.work.at(num - 1)?.responsible
                     },`;
 
                     const value = `${responsible},`;
 
-                    onFormChange("work", value, "responsible", num);
+                    onChange("work", value, "responsible", num);
                   }
                 }}
                 onChange={({ target: { value } }) =>
-                  onFormChange("work", value, "responsible", num)
+                  onChange("work", value, "responsible", num)
                 }
               />
             </Fragment>
@@ -402,16 +384,16 @@ export default function ResumeForm() {
               label="Email"
               className="flex-1"
               type="email"
-              value={resumeValues.email}
-              onChange={({ target: { value } }) => onFormChange("email", value)}
+              value={data.email}
+              onChange={({ target: { value } }) => onChange("email", value)}
             />
             <FormInput
               label="Phone number"
               type="tel"
               className="flex-1"
-              value={resumeValues.phone_number}
+              value={data.phone_number}
               onChange={({ target: { value } }) =>
-                onFormChange("phone_number", numOnly(value))
+                onChange("phone_number", numOnly(value))
               }
             />
           </div>
@@ -435,16 +417,16 @@ export default function ResumeForm() {
                     { label: "Github", value: "github" },
                   ]}
                   onChange={(value) =>
-                    onFormChange("socials", value, "social", num)
+                    onChange("socials", value, "social", num)
                   }
-                  value={resumeValues.socials[i]?.social || ""}
+                  value={data.socials[i]?.social || ""}
                 />
                 <FormInput
                   label="Social url"
                   className="flex-1"
-                  value={resumeValues.socials[i]?.url}
+                  value={data.socials[i]?.url}
                   onChange={({ target: { value } }) =>
-                    onFormChange("socials", value, "url", num)
+                    onChange("socials", value, "url", num)
                   }
                 />
               </div>
@@ -455,16 +437,14 @@ export default function ResumeForm() {
             <Textarea
               className="min-h-[80px] max-h-[200px]"
               placeholder="Please enter to start a new line"
-              value={resumeValues.address}
+              value={data.address}
               onKeyDown={({ key }) => {
                 if (key === "Enter") {
-                  const address = `${resumeValues.address},`;
-                  onFormChange("address", address);
+                  const address = `${data.address},`;
+                  onChange("address", address);
                 }
               }}
-              onChange={({ target: { value } }) =>
-                onFormChange("address", value)
-              }
+              onChange={({ target: { value } }) => onChange("address", value)}
             />
           </div>
         </Card.CardContent>
@@ -487,17 +467,17 @@ export default function ResumeForm() {
     const update = {
       subscriptionId: 1,
       background: {
-        firstName: resumeValues.firstName,
-        lastName: resumeValues.lastName,
-        about: resumeValues.about,
-        education: resumeValues.education,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        about: data.about,
+        education: data.education,
       },
-      work: resumeValues.work,
+      work: data.work,
       contact: {
-        email: resumeValues.email,
-        phone_number: resumeValues.phone_number,
-        address: resumeValues.address,
-        socials: resumeValues.socials,
+        email: data.email,
+        phone_number: data.phone_number,
+        address: data.address,
+        socials: data.socials,
       },
     };
 
