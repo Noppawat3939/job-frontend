@@ -6,8 +6,11 @@ import {
   ResumeForm,
   ResumePreview,
 } from "@/components";
+import { useChangeTitleWindow } from "@/hooks";
 
 export default function ResumeTempletePage() {
+  useChangeTitleWindow("Create template | Jobify.co");
+
   return (
     <Lazyload>
       <ContentLayout className="bg-slate-200 rounded-md px-6 pt-4 pb-[3rem] h-full">

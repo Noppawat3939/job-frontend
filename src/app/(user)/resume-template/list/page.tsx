@@ -5,10 +5,13 @@ import { useQueries } from "@tanstack/react-query";
 import { docsService, publicService } from "@/services";
 import { GetTestimonailsResponse } from "@/services/public";
 import { QUERY_KEY } from "@/constants";
-import { GetResumeTemplatesResponse } from "@/services/document";
+import type { GetResumeTemplatesResponse } from "@/services/document";
 import ResumeList from "./ResumeList";
+import { useChangeTitleWindow } from "@/hooks";
 
 export default function MyResumeListPage() {
+  useChangeTitleWindow("Create template | Jobify.co");
+
   const [{ data: tesimonails }, { data: templates }] = useQueries({
     queries: [
       {

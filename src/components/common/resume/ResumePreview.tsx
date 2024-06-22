@@ -1,63 +1,155 @@
-import { Card, Show } from "@/components";
-import { formatDate, isNull } from "@/lib";
+import { Card, Show, Skeleton } from "@/components";
+import { cn, formatDate, isNull } from "@/lib";
 import { useResumeStore } from "@/store";
+import { ClassValue } from "clsx";
 import { Fragment } from "react";
 
 const FORMAT_DATE = "MMM YYYY";
+const regexUrl = /(https?:\/\/[^\s]+)/g;
 
 export default function ResumePreview() {
-  const { data } = useResumeStore();
+  const { data, theme } = useResumeStore();
 
-  const regexUrl = /(https?:\/\/[^\s]+)/g;
+  const Title = ({
+    text,
+    className,
+  }: {
+    text?: string;
+    className?: ClassValue;
+  }) => {
+    return (
+      <span>
+        {text ? (
+          <p
+            className={cn("text-lg text-foreground", className)}
+            style={{ color: theme.title ? theme.title : undefined }}
+          >
+            {text}
+          </p>
+        ) : (
+          <Skeleton className="w-full h-[18px]" />
+        )}
+      </span>
+    );
+  };
+
+  const SubTitle = ({
+    text,
+    className,
+  }: {
+    text?: string;
+    className?: ClassValue;
+  }) => {
+    return (
+      <span>
+        {text ? (
+          <p
+            className={cn("text-lg text-foreground", className)}
+            style={{ color: theme.subtitle ? theme.subtitle : undefined }}
+          >
+            {text}
+          </p>
+        ) : (
+          <Skeleton className="w-full h-[14px]" />
+        )}
+      </span>
+    );
+  };
+
+  const Paragraph = ({
+    text,
+    className,
+  }: {
+    text?: string;
+    className?: ClassValue;
+  }) => {
+    return (
+      <span>
+        {text ? (
+          <p
+            className={cn("text-[10px] text-slate-700", className)}
+            style={{ color: theme.paragraph ? theme.paragraph : undefined }}
+          >
+            {text}
+          </p>
+        ) : (
+          <Skeleton className="w-full h-[10px]" />
+        )}
+      </span>
+    );
+  };
 
   return (
     <Card.Card className="bg-white h-full w-full p-[20px]">
-      <Card.CardHeader className="px-[30px] pt-[30px] rounded-md bg-slate-300">
+      <Card.CardHeader
+        style={{ background: theme.background }}
+        className={cn(
+          "px-[30px] pt-[30px] rounded-md",
+          theme.background ? "" : "bg-slate-200"
+        )}
+      >
         <div className="flex justify-between items-start">
-          <Card.CardTitle className="font-normal text-2xl">{`${data.firstName} ${data.lastName}`}</Card.CardTitle>
+          <Card.CardTitle>
+            <Title
+              className="font-normal text-2xl text-slate-500"
+              text={`${data.firstName} ${data.lastName}`}
+            />
+          </Card.CardTitle>
           <Card.CardDescription aria-label="address">
-            {data.email && (
-              <p className="text-[10px]">{`Email: ${data.email}`}</p>
-            )}
+            {data.email && <Paragraph text={`Email: ${data.email}`} />}
             {data.phone_number && (
-              <p className="text-[10px]">{`Phone: ${data.phone_number}`}</p>
+              <Paragraph text={`Phone: ${data.phone_number}`} />
             )}
-            {data.address && (
-              <p className="text-[10px]">{`Address: ${data.address}`}</p>
-            )}
+            {data.address && <Paragraph text={`Address: ${data.address}`} />}
           </Card.CardDescription>
         </div>
       </Card.CardHeader>
       <Card.CardContent className="w-full flex flex-col gap-[16px] py-[10px] px-0 h-full">
         <section aria-label="profile">
-          <h2 className="text-lg font-medium">{"About me"}</h2>
-          <p className="text-sm">{data.about}</p>
+          <Title text={"About me"} className="text-lg font-medium" />
+          <Paragraph text={data.about} className="text-sm" />
         </section>
 
         <section aria-label="works">
-          <h2 className="text-xl font-medium">{"Career Experience"}</h2>
+          <Title className="text-xl font-medium" text={"Career Experience"} />
           {data.work?.map((item, i) => (
             <div className="my-1" key={`work_${item.company}_${i}`}>
               <header
                 aria-label="work-header"
                 className="flex justify-between items-baseline"
               >
-                <p className="text-sm">{`${data.work?.[i]?.position} at ${data.work?.[i]?.company}`}</p>
+                <SubTitle
+                  className="text-sm"
+                  text={`${data.work?.[i]?.position} at ${data.work?.[i]?.company}`}
+                />
 
-                <p className="text-sm">{`${formatDate(
-                  data.work?.[i]?.startDate,
-                  FORMAT_DATE
-                )} - ${
-                  data.work?.[i].currently
-                    ? "Currently"
-                    : formatDate(data.work?.[i]?.endDate, FORMAT_DATE)
-                }`}</p>
+                <Show
+                  when={
+                    !isNull(data.work?.[i]?.startDate) ||
+                    !isNull(data.work?.[i]?.endDate) ||
+                    !data.work?.[i].currently
+                  }
+                >
+                  <SubTitle
+                    className="text-sm"
+                    text={`${formatDate(
+                      data.work?.[i]?.startDate,
+                      FORMAT_DATE
+                    )} - ${
+                      data.work?.[i].currently
+                        ? "Currently"
+                        : formatDate(data.work?.[i]?.endDate, FORMAT_DATE)
+                    }`}
+                  />
+                </Show>
               </header>
               <div className="flex flex-col space-y-1">
                 {item.responsible?.split(",").map((task, i) => (
-                  <li className="text-xs" key={`tark_${item.position}_${i}`}>
-                    {task ||
-                      "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam, quidem?"}
+                  <li
+                    className="text-xs flex"
+                    key={`tark_${item.position}_${i}`}
+                  >
+                    <Paragraph text={task} />
                   </li>
                 ))}
               </div>
@@ -66,7 +158,7 @@ export default function ResumePreview() {
         </section>
 
         <section aria-label="educations">
-          <h2 className="text-xl font-medium">{"Education"}</h2>
+          <Title text={"Education"} className="text-xl font-medium" />
           {data.education.map((item, i) => (
             <div key={`education_${i}`}>
               <div className="flex flex-col">
@@ -74,23 +166,23 @@ export default function ResumePreview() {
                   className="flex justify-between items-baseline"
                   aria-label="education-header"
                 >
-                  <p aria-label="major_or_minor" className="text-sm">
-                    {item.major}
-                  </p>
+                  <SubTitle className="text-sm" text={item.major} />
 
                   <Show when={!isNull(item.startDate) && !isNull(item.endDate)}>
-                    <p aria-label="timeline" className="text-sm">{`${formatDate(
-                      item.startDate,
-                      FORMAT_DATE
-                    )} - ${formatDate(item.endDate, FORMAT_DATE)}`}</p>
+                    <SubTitle
+                      className="text-sm"
+                      text={`${formatDate(
+                        item.startDate,
+                        FORMAT_DATE
+                      )} - ${formatDate(item.endDate, FORMAT_DATE)}`}
+                    />
                   </Show>
                 </header>
-                <p aria-label="institute" className="text-sm">
-                  {item.institute}
-                </p>
+                <SubTitle className="text-sm" text={item.institute} />
+
                 <div className="flex flex-col space-y-1">
                   {item.projects?.split(",").map((project, i) => (
-                    <li className="text-xs" key={`education_project_${i}`}>
+                    <li className="text-xs flex" key={`education_project_${i}`}>
                       {regexUrl.test(project) ? (
                         <Fragment>
                           {project.split(regexUrl).map((text) => (
@@ -101,16 +193,16 @@ export default function ResumePreview() {
                               }
                               className={
                                 regexUrl.test(text)
-                                  ? "text-sky-500 underline cursor-pointer"
+                                  ? "underline cursor-pointer"
                                   : "text-inherit"
                               }
                             >
-                              {text}
+                              <Paragraph text={text} />
                             </span>
                           ))}
                         </Fragment>
                       ) : (
-                        project
+                        <Paragraph text={project} />
                       )}
                     </li>
                   ))}

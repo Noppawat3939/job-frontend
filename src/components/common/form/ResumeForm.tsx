@@ -35,7 +35,7 @@ import { HexColorPicker } from "react-colorful";
 export default function ResumeForm() {
   const [pending, startTransition] = useTransition();
 
-  const { setData, data } = useResumeStore();
+  const { setData, data, setTheme, theme, resetTheme } = useResumeStore();
 
   const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -45,13 +45,9 @@ export default function ResumeForm() {
     workLength: number[];
     socialLength: number[];
   }>({ educationLength: [1], workLength: [1], socialLength: [1] });
-  const [theme, setTheme] = useState({
-    background: "",
-    title: "",
-    paragraph: "",
-  });
   const [activeTheme, setActiveTheme] =
     useState<keyof typeof theme>("background");
+  const [defaultThemeColor, setDefaultThemeColor] = useState("");
 
   const initData = () => {
     try {
@@ -515,50 +511,122 @@ export default function ResumeForm() {
     });
   };
 
+  const autoTheme = [
+    {
+      name: "violet'",
+      background: "#ddd6fe",
+      title: "#5b21b6",
+      subtitle: "#a78bfa",
+      paragraph: "#334155",
+    },
+    {
+      name: "pink'",
+      background: "#fbcfe8",
+      title: "#be185d",
+      subtitle: "#f472b6",
+      paragraph: "#334155",
+    },
+    {
+      name: "sky'",
+      background: "#bae6fd",
+      title: "#0284c7",
+      subtitle: "#38bdf8",
+      paragraph: "#1e293b",
+    },
+    {
+      name: "emerald'",
+      background: "#a7f3d0",
+      title: "#059669",
+      subtitle: "#34d399",
+      paragraph: "#27272a",
+    },
+  ];
+
   return (
     <section className="flex flex-col gap-10">
       <div className="flex flex-col gap-3">
         <Progress value={progress} />
-        <Popover.Popover>
-          <Popover.PopoverTrigger asChild>
-            <Button className="w-[150px]" variant={"outline"}>
-              {"Theme"}
-              <Palette className="w-4 h-4 ml-2" />
-            </Button>
-          </Popover.PopoverTrigger>
-          <Popover.PopoverContent className="w-full">
-            <div className="flex space-x-4">
-              <HexColorPicker
-                className="min-w-[300px]"
-                color={"#CBD5E1"}
-                onChange={(color) =>
-                  setTheme((prev) => ({ ...prev, [activeTheme]: color }))
-                }
-              />
-              <Radio.RadioGroup
-                defaultValue="background"
-                className="flex-col gap-3 flex"
-                onValueChange={(value) =>
-                  setActiveTheme(value as typeof activeTheme)
-                }
-                value={activeTheme}
-              >
-                <div className="flex items-center space-x-2 min-w-[150px]">
-                  <Radio.RadioGroupItem value="background" id="background" />
-                  <Label htmlFor="background">{"Background"}</Label>
+        <div className="flex justify-between">
+          <div className="flex space-x-2">
+            <Popover.Popover>
+              <Popover.PopoverTrigger asChild>
+                <Button
+                  className="w-[150px] text-foreground"
+                  variant={"outline"}
+                >
+                  {"Custom Theme"}
+                  <Palette className="w-4 h-4 ml-1" />
+                </Button>
+              </Popover.PopoverTrigger>
+              <Popover.PopoverContent className="w-full">
+                <div className="flex space-x-4">
+                  <HexColorPicker
+                    className="min-w-[300px]"
+                    color={defaultThemeColor || "#CBD5E1"}
+                    onChange={(color) =>
+                      setTheme({ ...theme, [activeTheme]: color })
+                    }
+                  />
+                  <div className="flex flex-col gap-4">
+                    <Radio.RadioGroup
+                      defaultValue="background"
+                      className="flex-col gap-3 flex min-w-[150px]"
+                      onValueChange={(value) =>
+                        setActiveTheme(value as typeof activeTheme)
+                      }
+                      value={activeTheme}
+                    >
+                      {Object.keys(theme).map((t) => (
+                        <div
+                          key={`theme_option_${t}`}
+                          className="flex items-center space-x-2"
+                        >
+                          <Radio.RadioGroupItem value={t} id={t} />
+                          <Label
+                            className="text-slate-700 capitalize"
+                            htmlFor={t}
+                          >
+                            {t}
+                          </Label>
+                        </div>
+                      ))}
+                    </Radio.RadioGroup>
+                    <span className="border bg-white flex items-center space-x-2 p-2 w-fit rounded-lg">
+                      {autoTheme.map((color) => (
+                        <Button
+                          size="icon"
+                          onClick={() => {
+                            setDefaultThemeColor(color.background);
+
+                            setTheme({ ...theme, ...color });
+                          }}
+                          className={cn(
+                            "rounded-full w-5 h-5 hover:bg-current"
+                          )}
+                          style={{
+                            background: color.background,
+                          }}
+                          key={color.name}
+                        />
+                      ))}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Radio.RadioGroupItem value="title" id="title" />
-                  <Label htmlFor="title">{"Title text"}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Radio.RadioGroupItem value="paragraph" id="paragraph" />
-                  <Label htmlFor="paragraph">{"Paragraph"}</Label>
-                </div>
-              </Radio.RadioGroup>
-            </div>
-          </Popover.PopoverContent>
-        </Popover.Popover>
+              </Popover.PopoverContent>
+            </Popover.Popover>
+          </div>
+          <Button
+            disabled={Object.values(theme).every((v) => !v)}
+            variant={
+              Object.values(theme).every((v) => !v)
+                ? "outline"
+                : "destructive-outline"
+            }
+            onClick={resetTheme}
+          >
+            {"Reset theme"}
+          </Button>
+        </div>
       </div>
 
       <div className="w-full max-w-5xl mx-auto">

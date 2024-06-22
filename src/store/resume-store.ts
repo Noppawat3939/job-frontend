@@ -1,9 +1,17 @@
 import type { CreateResumeSchema } from "@/schemas";
 import { create } from "zustand";
 
+type ThemeTemplate = Record<
+  "background" | "title" | "subtitle" | "paragraph",
+  string
+>;
+
 type ResumeStore = {
   data: CreateResumeSchema;
   setData: (value: CreateResumeSchema) => void;
+  theme: ThemeTemplate;
+  setTheme: (theme: ThemeTemplate) => void;
+  resetTheme: () => void;
 };
 
 const initialData: CreateResumeSchema = {
@@ -27,7 +35,18 @@ const initialData: CreateResumeSchema = {
   socials: [{ social: null, url: "" }],
 };
 
-export const useResumeStore = create<ResumeStore>((set) => ({
+const initialTheme: ThemeTemplate = {
+  background: "",
+  paragraph: "",
+  title: "",
+  subtitle: "",
+};
+
+export const useResumeStore = create<ResumeStore>((set, get) => ({
   data: initialData,
   setData: (newData) => set({ data: newData }),
+  theme: initialTheme,
+  setTheme: (newTheme) =>
+    set(() => ({ theme: { ...get().theme, ...newTheme } })),
+  resetTheme: () => set({ theme: initialTheme }),
 }));
