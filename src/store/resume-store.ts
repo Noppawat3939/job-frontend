@@ -6,12 +6,21 @@ type ResumeStore = {
   setData: (value: CreateResumeSchema) => void;
 };
 
-const initialData = {
+const initialData: CreateResumeSchema = {
   firstName: "",
   lastName: "",
   about: "",
   education: [{ institute: "", startDate: null, endDate: null, projects: "" }],
-  work: [{ position: "", startDate: null, endDate: null, responsible: "" }],
+  work: [
+    {
+      position: "",
+      currently: false,
+      company: "",
+      startDate: null,
+      endDate: null,
+      responsible: "",
+    },
+  ],
   email: "",
   address: "",
   phone_number: "",

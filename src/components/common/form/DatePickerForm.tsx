@@ -1,4 +1,5 @@
 import { Button, Calendar, Label, Popover, Show } from "@/components";
+import { CalendarProps } from "@/components/ui/calendar";
 import { cn, formatDate, isUndifined } from "@/lib";
 import { ClassValue } from "clsx";
 import { CalendarIcon } from "lucide-react";
@@ -12,6 +13,7 @@ type DatePickerFormProps = {
   onChange?: (date?: Date) => void;
   name?: string;
   value?: Date;
+  disabled?: boolean;
 };
 
 const FORMAT = "DD/MM/YYYY";
@@ -24,6 +26,7 @@ export default function DatePickerForm({
   onChange,
   name,
   value,
+  disabled = false,
 }: DatePickerFormProps) {
   const [date, setDate] = useState<Date | undefined>(value);
 
@@ -34,9 +37,10 @@ export default function DatePickerForm({
       </Show>
 
       <Popover.Popover>
-        <Popover.PopoverTrigger asChild name={name}>
+        <Popover.PopoverTrigger asChild name={name} disabled={disabled}>
           <Button
             variant={"outline"}
+            disabled={disabled}
             className={cn("justify-start text-left font-normal", className)}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -51,6 +55,7 @@ export default function DatePickerForm({
           <Calendar
             mode="single"
             selected={date}
+            disabled={disabled}
             onSelect={(selected) => {
               setDate(selected);
               onChange?.(selected);

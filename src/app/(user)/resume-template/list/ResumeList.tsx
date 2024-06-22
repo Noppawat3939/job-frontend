@@ -89,7 +89,7 @@ export default function ResumeList({
                 />
               </picture>
               <Button asChild className=" absolute top-[50%]">
-                <Link href={`/resume/1`}>{"Continue"}</Link>
+                <Link href={`/resume-template/1`}>{"Continue"}</Link>
               </Button>
             </Card.CardContent>
           </Card.Card>

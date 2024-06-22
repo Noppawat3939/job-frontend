@@ -1,10 +1,13 @@
 import {
   Button,
   Card,
+  Checkbox,
   DatePickerForm,
   FormInput,
   Label,
+  Popover,
   Progress,
+  Radio,
   SelectItem,
   Show,
   Spinner,
@@ -19,6 +22,7 @@ import type { Nullable } from "@/types";
 import { ClassValue } from "clsx";
 import { getCookie, setCookie } from "cookies-next";
 import dayjs from "dayjs";
+import { Palette } from "lucide-react";
 import {
   Fragment,
   useCallback,
@@ -26,6 +30,7 @@ import {
   useState,
   useTransition,
 } from "react";
+import { HexColorPicker } from "react-colorful";
 
 export default function ResumeForm() {
   const [pending, startTransition] = useTransition();
@@ -40,6 +45,13 @@ export default function ResumeForm() {
     workLength: number[];
     socialLength: number[];
   }>({ educationLength: [1], workLength: [1], socialLength: [1] });
+  const [theme, setTheme] = useState({
+    background: "",
+    title: "",
+    paragraph: "",
+  });
+  const [activeTheme, setActiveTheme] =
+    useState<keyof typeof theme>("background");
 
   const initData = () => {
     try {
@@ -70,8 +82,7 @@ export default function ResumeForm() {
           firstName: parsed.background.firstName,
           lastName: parsed.background.lastName,
           position: parsed.work?.[0]?.position,
-          workStartDate: parsed.work?.[0]?.startDate,
-          workEndDate: parsed.work?.[0]?.endDate,
+          company: parsed.work?.[0]?.company,
           responsible: parsed.work?.[0]?.responsible,
           email: parsed.contact.email,
           phoneNumber: parsed.contact.phone_number,
@@ -105,6 +116,8 @@ export default function ResumeForm() {
 
   useEffect(() => {
     initData();
+
+    return () => console.clear();
   }, []);
 
   const { action } = useHandleForm<CreateResumeSchema>(
@@ -118,7 +131,7 @@ export default function ResumeForm() {
   const onChange = useCallback(
     (
       field?: keyof typeof data,
-      value?: string,
+      value?: string | boolean,
       subField?:
         | keyof (typeof data.education)[number]
         | keyof (typeof data.work)[number]
@@ -324,26 +337,44 @@ export default function ResumeForm() {
                     onChange("work", value, "position", num)
                   }
                 />
-                <div className="flex flex-1 space-x-1">
-                  <DatePickerForm
-                    label="Start job"
-                    className="w-full"
-                    name="startDate"
-                    value={toDate(data.work?.[i]?.startDate)}
-                    onChange={(date) =>
-                      onChange("work", date?.toISOString(), "startDate", num)
-                    }
-                  />
-                  <DatePickerForm
-                    label="End job"
-                    className="w-full"
-                    name="endDate"
-                    value={toDate(data.work?.[i]?.endDate)}
-                    onChange={(date) =>
-                      onChange("work", date?.toISOString(), "endDate", num)
-                    }
-                  />
-                </div>
+                <FormInput
+                  label="Company"
+                  name="company"
+                  className="flex-1"
+                  value={data.work?.[i].company}
+                  onChange={({ target: { value } }) =>
+                    onChange("work", value, "company", num)
+                  }
+                />
+              </div>
+              <div className="flex items-center flex-1 space-x-2">
+                <DatePickerForm
+                  label="Start job"
+                  className="w-full"
+                  name="startDate"
+                  value={toDate(data.work?.[i]?.startDate)}
+                  onChange={(date) =>
+                    onChange("work", date?.toISOString(), "startDate", num)
+                  }
+                />
+
+                <DatePickerForm
+                  label="End job"
+                  className="w-full"
+                  name="endDate"
+                  disabled={data.work?.[i]?.currently}
+                  value={toDate(data.work?.[i]?.endDate)}
+                  onChange={(date) =>
+                    onChange("work", date?.toISOString(), "endDate", num)
+                  }
+                />
+                <Checkbox
+                  label="Currently"
+                  checked={data.work?.[i]?.currently}
+                  onCheckedChange={(checked) =>
+                    onChange("work", checked, "currently", num)
+                  }
+                />
               </div>
               <Label className="text-gray-700 text-xs font-normal">
                 {"Responsible"}
@@ -354,12 +385,7 @@ export default function ResumeForm() {
                 value={data.work?.[i]?.responsible}
                 onKeyDown={({ key }) => {
                   if (key === "Enter") {
-                    const responsible = `${
-                      data.work.at(num - 1)?.responsible
-                    },`;
-
-                    const value = `${responsible},`;
-
+                    const value = `${data.work?.[i]?.responsible},`;
                     onChange("work", value, "responsible", num);
                   }
                 }}
@@ -491,7 +517,50 @@ export default function ResumeForm() {
 
   return (
     <section className="flex flex-col gap-10">
-      <Progress value={progress} />
+      <div className="flex flex-col gap-3">
+        <Progress value={progress} />
+        <Popover.Popover>
+          <Popover.PopoverTrigger asChild>
+            <Button className="w-[150px]" variant={"outline"}>
+              {"Theme"}
+              <Palette className="w-4 h-4 ml-2" />
+            </Button>
+          </Popover.PopoverTrigger>
+          <Popover.PopoverContent className="w-full">
+            <div className="flex space-x-4">
+              <HexColorPicker
+                className="min-w-[300px]"
+                color={"#CBD5E1"}
+                onChange={(color) =>
+                  setTheme((prev) => ({ ...prev, [activeTheme]: color }))
+                }
+              />
+              <Radio.RadioGroup
+                defaultValue="background"
+                className="flex-col gap-3 flex"
+                onValueChange={(value) =>
+                  setActiveTheme(value as typeof activeTheme)
+                }
+                value={activeTheme}
+              >
+                <div className="flex items-center space-x-2 min-w-[150px]">
+                  <Radio.RadioGroupItem value="background" id="background" />
+                  <Label htmlFor="background">{"Background"}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Radio.RadioGroupItem value="title" id="title" />
+                  <Label htmlFor="title">{"Title text"}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Radio.RadioGroupItem value="paragraph" id="paragraph" />
+                  <Label htmlFor="paragraph">{"Paragraph"}</Label>
+                </div>
+              </Radio.RadioGroup>
+            </div>
+          </Popover.PopoverContent>
+        </Popover.Popover>
+      </div>
+
       <div className="w-full max-w-5xl mx-auto">
         <Card.Card>
           {initialized ? (

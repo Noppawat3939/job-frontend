@@ -2,11 +2,9 @@ import { type ClassValue, clsx } from "clsx";
 import { redirect } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import dayjs, { OpUnitType, QUnitType } from "dayjs";
-import { TDate } from "@/types";
+import { Nullable, TDate } from "@/types";
 import { getCookie } from "cookies-next";
 import { AxiosRequestConfig } from "axios";
-
-require("dayjs/locale/th");
 
 const TH = "th";
 
@@ -55,8 +53,10 @@ export const formatPrice = (value: number[], fallback?: string) => {
   return fallback ?? "";
 };
 
-export const formatDate = (date?: string | Date | number, format?: string) =>
-  date ? dayjs(date).locale(TH).format(format) : "";
+export const formatDate = (
+  date?: Nullable<string | Date | number>,
+  format?: string
+) => (date ? dayjs(date).locale(TH).format(format) : "");
 
 export const isUndifined = <T>(value: T) => eq(value, undefined);
 export const isNull = <T>(value: T) => eq(value, null);

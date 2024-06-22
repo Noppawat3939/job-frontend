@@ -212,8 +212,10 @@ export const resumeEducationSchema = {
 export const resumeWorkExpirenceSchema = {
   common: z.object({
     position: z.string().optional(),
+    company: z.string().optional(),
     startDate: z.string().optional().nullable(),
     endDate: z.string().optional().nullable(),
+    currently: z.boolean().optional().default(false),
     responsible: z.string().optional(),
   }),
 };
