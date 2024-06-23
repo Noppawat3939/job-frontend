@@ -1,8 +1,7 @@
 "use client";
 
-import { Button, ContentLayout, Footer } from "@/components";
+import { Button, ContentLayout } from "@/components";
 import { QUERY_KEY } from "@/constants";
-import { isNull } from "@/lib";
 import { docsService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
