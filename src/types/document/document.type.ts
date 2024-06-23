@@ -4,6 +4,10 @@ import { Nullable } from "..";
 export interface ResumeTemplate {
   id: number;
   image: string;
+  backgroundColor?: string;
+  titleColor?: string;
+  subTitileColor?: string;
+  paragraphColor?: string;
 }
 
 interface Education {
@@ -55,4 +59,13 @@ export type CreateResume = {
   titleColorTemplate?: string;
   subTitileColorTemplate?: string;
   paragraphColorTemplate?: string;
+};
+
+export type UserResume = CreateResume & {
+  active: Nullable<boolean>;
+  id: number;
+  userId: number;
+  createdAt: string;
+  updatedAt: string;
+  template?: ResumeTemplate;
 };

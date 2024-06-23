@@ -19,4 +19,5 @@ export const QUERY_KEY = {
   GET_JOBS_FAVORITED: "jobs-favorited",
   GET_TESTIMONIALS: "testimonials",
   GET_RESUME_TEMPLATES: "resume-templates",
+  GET_USER_RESUMES: "user-resumes",
 } as const;

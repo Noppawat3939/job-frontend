@@ -1,16 +1,10 @@
-import { Alert, Avatar, Button, Card, Input } from "@/components";
-import {
-  Nullable,
-  ResumeCookieData,
-  ResumeTemplate,
-  Testimonial,
-} from "@/types";
+import { Alert, Avatar, Card, Input } from "@/components";
+import { Nullable, ResumeTemplate, Testimonial } from "@/types";
 import Marquee from "react-fast-marquee";
 import DefaultProfile from "@/assets/profile-user.svg";
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { getCookie, setCookie } from "cookies-next";
+import { useMemo, useState } from "react";
+import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import HowToCreateStep1 from "@/assets/shared/create-template-step1.svg";
 import HowToCreateStep2 from "@/assets/shared/create-template-step2.svg";
@@ -27,8 +21,6 @@ export default function ResumeList({
 }: ResumeListProps) {
   const router = useRouter();
 
-  const [resumeData, setResumeData] =
-    useState<Nullable<ResumeCookieData>>(null);
   const [templateTitle, setTemplateTitle] = useState("");
   const [alertCreateTemplate, setAlertCreateTemplate] = useState<{
     open: boolean;
@@ -37,14 +29,6 @@ export default function ResumeList({
     open: false,
     templateId: null,
   });
-
-  useEffect(() => {
-    const resume = getCookie("resume");
-
-    if (resume) {
-      setResumeData(JSON.parse(resume));
-    }
-  }, []);
 
   const howToCreate = useMemo(
     () => [
@@ -87,30 +71,6 @@ export default function ResumeList({
           ))}
         </Marquee>
       </div>
-      {resumeData && (
-        <section className="max-w-5xl pb-[5%] w-full mx-auto">
-          <div className="flex h-[140px] items-center">
-            <h1 className="text-start text-xl font-semibold">
-              {"Continue your design"}
-            </h1>
-          </div>
-          <Card.Card className="w-[240px] h-[300px]">
-            <Card.CardContent className="overflow-hidden w-full p-0 relative flex items-center justify-center h-full">
-              <picture className="w-full h-full">
-                <img
-                  src={templates.find((tem) => tem.id === 1)?.image}
-                  alt="ex_templarte"
-                  loading="lazy"
-                  className="object-contain w-full h-full opacity-65"
-                />
-              </picture>
-              <Button asChild className=" absolute top-[50%]">
-                <Link href={`/resume-template/1`}>{"Continue"}</Link>
-              </Button>
-            </Card.CardContent>
-          </Card.Card>
-        </section>
-      )}
       <Header title={"From inspiration to creation."} />
       <section className="max-w-6xl mx-auto">
         <div className="flex justify-between space-x-[20px]">

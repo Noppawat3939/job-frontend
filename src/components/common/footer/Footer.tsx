@@ -1,7 +1,7 @@
 import { scrollToTop } from "@/lib";
 import { usePathname } from "next/navigation";
 
-const PATHS = ["/", "/jobs", "/signup", "/my-resume/list"];
+const PATHS = ["/", "/jobs", "/signup", "/resume-template/list", "/my-resume"];
 
 export default function Footer() {
   const pathname = usePathname();

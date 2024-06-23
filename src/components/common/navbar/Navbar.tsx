@@ -64,19 +64,25 @@ export default function Navbar({ user }: NavbarProps) {
     if (eq(user?.role, "user"))
       return [
         {
-          key: "findJob",
+          key: "find_job",
           href: "/jobs",
           label: "Find jobs",
           hide: ["/jobs"].includes(pathname),
         },
         {
-          key: "resumeTemplate",
+          key: "resume_template",
           label: "Resume",
           href: "/resume-template/list",
           hide: ["/resume-template/list"].includes(pathname),
         },
         {
-          key: "myJobs",
+          key: "my_resume",
+          label: "My Resume",
+          href: "/my-resume",
+          hide: !["/resume-template/list"].includes(pathname),
+        },
+        {
+          key: "my_jobs",
           label: "My jobs",
           href: "/my-jobs?tab=apply",
           hide: ["/my-jobs"].includes(pathname),
