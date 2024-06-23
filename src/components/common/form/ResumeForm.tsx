@@ -14,15 +14,25 @@ import {
   Textarea,
 } from "@/components";
 import type { ButtonProps } from "@/components/ui/button";
+import { DEFAULT_THEME_TEMPLATE, RESUME_SOCICALS } from "@/constants";
 import { useHandleForm } from "@/hooks";
-import { cn, eq, isUndifined, numOnly, scrollToTop, toPercent } from "@/lib";
+import {
+  cn,
+  eq,
+  generateListNumber,
+  isUndifined,
+  numOnly,
+  scrollToTop,
+  toPercent,
+} from "@/lib";
 import { CreateResumeSchema, createResumeSchema } from "@/schemas";
 import { useResumeStore } from "@/store";
-import type { Nullable } from "@/types";
+import type { CreateResume, Nullable } from "@/types";
 import { ClassValue } from "clsx";
 import { getCookie, setCookie } from "cookies-next";
 import dayjs from "dayjs";
 import { Palette } from "lucide-react";
+import { useParams } from "next/navigation";
 import {
   Fragment,
   useCallback,
@@ -32,8 +42,14 @@ import {
 } from "react";
 import { HexColorPicker } from "react-colorful";
 
-export default function ResumeForm() {
+type ResumeFormProps = {
+  onSubmit: (data: CreateResume) => void;
+};
+
+export default function ResumeForm({ onSubmit }: ResumeFormProps) {
   const [pending, startTransition] = useTransition();
+
+  const params = useParams();
 
   const { setData, data, setTheme, theme, resetTheme } = useResumeStore();
 
@@ -72,6 +88,14 @@ export default function ResumeForm() {
           ...parsed.background,
           work: parsed.work,
           ...parsed.contact,
+        });
+
+        setGenerateFormLength({
+          workLength: generateListNumber(parsed.work.length),
+          educationLength: generateListNumber(
+            parsed.background.education.length
+          ),
+          socialLength: generateListNumber(parsed.contact.socials.length),
         });
 
         const fields = {
@@ -167,8 +191,25 @@ export default function ResumeForm() {
         ...prevForm,
         [subField]: [...prevForm[subField], prevForm[subField].length + 1],
       }));
+
+      if (subField === "workLength") {
+        setData({
+          ...data,
+          work: [
+            ...data.work,
+            {
+              position: "",
+              company: "",
+              currently: false,
+              startDate: null,
+              endDate: null,
+              responsible: "",
+            },
+          ],
+        });
+      }
     },
-    []
+    [data]
   );
 
   const toDate = useCallback(
@@ -312,14 +353,14 @@ export default function ResumeForm() {
       <Fragment>
         <Header
           title={"What do you do?"}
-          disabled={generateFormsLength.workLength.length >= 1}
           onClick={() => {
-            if (generateFormsLength.workLength.length < 1) {
+            if (generateFormsLength.workLength.length < 3) {
               handleIncreaseSubFields("workLength");
             }
           }}
           textBtn={"Add position"}
         />
+
         <Card.CardContent className="flex flex-col gap-[16px]">
           {generateFormsLength.workLength.map((num, i) => (
             <Fragment key={`work_form_section_${num}`}>
@@ -337,7 +378,7 @@ export default function ResumeForm() {
                   label="Company"
                   name="company"
                   className="flex-1"
-                  value={data.work?.[i].company}
+                  value={data.work?.[i]?.company}
                   onChange={({ target: { value } }) =>
                     onChange("work", value, "company", num)
                   }
@@ -353,7 +394,6 @@ export default function ResumeForm() {
                     onChange("work", date?.toISOString(), "startDate", num)
                   }
                 />
-
                 <DatePickerForm
                   label="End job"
                   className="w-full"
@@ -364,13 +404,15 @@ export default function ResumeForm() {
                     onChange("work", date?.toISOString(), "endDate", num)
                   }
                 />
-                <Checkbox
-                  label="Currently"
-                  checked={data.work?.[i]?.currently}
-                  onCheckedChange={(checked) =>
-                    onChange("work", checked, "currently", num)
-                  }
-                />
+                <Show when={i === 0}>
+                  <Checkbox
+                    label="Currently"
+                    checked={data.work?.[i]?.currently}
+                    onCheckedChange={(checked) =>
+                      onChange("work", checked, "currently", num)
+                    }
+                  />
+                </Show>
               </div>
               <Label className="text-gray-700 text-xs font-normal">
                 {"Responsible"}
@@ -389,6 +431,7 @@ export default function ResumeForm() {
                   onChange("work", value, "responsible", num)
                 }
               />
+              <hr className="border-slate-100" />
             </Fragment>
           ))}
         </Card.CardContent>
@@ -431,13 +474,10 @@ export default function ResumeForm() {
             {generateFormsLength.socialLength.map((num, i) => (
               <div key={`social_${i}`} className="flex space-x-4 items-end">
                 <SelectItem
-                  items={[
-                    { label: "Linked in", value: "linkedIn" },
-                    { label: "Facebook", value: "facebook" },
-                    { label: "Youtube", value: "youtube" },
-                    { label: "Tiktok", value: "tiktok" },
-                    { label: "Github", value: "github" },
-                  ]}
+                  items={RESUME_SOCICALS.map((social) => ({
+                    label: social,
+                    value: social,
+                  }))}
                   onChange={(value) =>
                     onChange("socials", value, "social", num)
                   }
@@ -474,20 +514,11 @@ export default function ResumeForm() {
     );
   };
 
-  const renderPreview = () => {
-    return (
-      <Fragment>
-        <Header title={"Preview your template"} />
-        <Card.CardContent className="max-w-[75%] mx-auto mb-4 min-h-[900px] bg-cyan-200"></Card.CardContent>
-      </Fragment>
-    );
-  };
-
   const handleUpdateCookie = () => {
     const expires = dayjs().add(7, "day").toDate();
 
     const update = {
-      subscriptionId: 1,
+      templateId: +params.template_id,
       background: {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -505,42 +536,23 @@ export default function ResumeForm() {
 
     setCookie("resume", JSON.stringify(update), { expires, sameSite: true });
 
+    if (step === 2) {
+      onSubmit({
+        templateData: JSON.stringify(data),
+        position: "mock",
+        templateId: +params.template_id,
+        backgroundColorTemplate: theme.background,
+        titleColorTemplate: theme.title,
+        subTitileColorTemplate: theme.subtitle,
+        paragraphColorTemplate: theme.paragraph,
+      });
+    }
+
     startTransition(() => {
-      setStep((prevStep) => (prevStep < 3 ? prevStep + 1 : 3));
+      setStep((prevStep) => (prevStep < 2 ? prevStep + 1 : 2));
       scrollToTop();
     });
   };
-
-  const autoTheme = [
-    {
-      name: "violet'",
-      background: "#ddd6fe",
-      title: "#5b21b6",
-      subtitle: "#a78bfa",
-      paragraph: "#334155",
-    },
-    {
-      name: "pink'",
-      background: "#fbcfe8",
-      title: "#be185d",
-      subtitle: "#f472b6",
-      paragraph: "#334155",
-    },
-    {
-      name: "sky'",
-      background: "#bae6fd",
-      title: "#0284c7",
-      subtitle: "#38bdf8",
-      paragraph: "#1e293b",
-    },
-    {
-      name: "emerald'",
-      background: "#a7f3d0",
-      title: "#059669",
-      subtitle: "#34d399",
-      paragraph: "#27272a",
-    },
-  ];
 
   return (
     <section className="flex flex-col gap-10">
@@ -592,7 +604,7 @@ export default function ResumeForm() {
                       ))}
                     </Radio.RadioGroup>
                     <span className="border bg-white flex items-center space-x-2 p-2 w-fit rounded-lg">
-                      {autoTheme.map((color) => (
+                      {DEFAULT_THEME_TEMPLATE.map((color) => (
                         <Button
                           size="icon"
                           onClick={() => {
@@ -636,7 +648,6 @@ export default function ResumeForm() {
               {eq(step, 0) && renderBackgroundForm()}
               {eq(step, 1) && renderWorkExpForm()}
               {eq(step, 2) && renderContactForm()}
-              {eq(step, 3) && renderPreview()}
               <Card.CardFooter className="flex space-x-4 justify-center">
                 <Button
                   variant="outline"
@@ -657,7 +668,7 @@ export default function ResumeForm() {
                   loading={pending}
                   onClick={handleUpdateCookie}
                 >
-                  {step >= 3 ? "Create resume" : "Next"}
+                  {step >= 2 ? "Create resume" : "Next"}
                 </Button>
               </Card.CardFooter>
             </form>

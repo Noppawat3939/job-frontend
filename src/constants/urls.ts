@@ -47,5 +47,6 @@ export const URL = {
   },
   DOCUMENT: {
     GET_RESUME_TEMPLATES: "/user-resume/templates",
+    CREATE_RESUME: "/user-job/resume",
   },
 } as const;

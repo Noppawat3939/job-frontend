@@ -155,18 +155,9 @@ export default function Navbar({ user }: NavbarProps) {
           </div>
         </Link>
 
-        {/* <Show when={isScrollingDown && isMainPath}>
-          <div className="flex bg-white border p-1 rounded-lg mx-2">
-            <Button size="sm" variant="ghost">
-              {"filter V"}
-            </Button>
-            <Button size="sm" variant="ghost">
-              {"filter V"}
-            </Button>
-          </div>
-        </Show> */}
-
-        <Show when={isScrollingDown && ["/my-resume/list"].includes(pathname)}>
+        <Show
+          when={isScrollingDown && ["/resume-template/list"].includes(pathname)}
+        >
           <div className="flex bg-white border  ml-[30px] justify-center p-1 rounded-lg mx-2">
             <Button asChild size="sm" variant="ghost">
               <Link href={"/pricing"}>{"Pricing"}</Link>

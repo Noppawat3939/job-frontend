@@ -21,11 +21,12 @@ interface Work {
   responsible: string;
 }
 
+export type ResumeSocial = keyof typeof RESUME_SOCICALS;
+
 interface Social {
-  social: Nullable<keyof typeof RESUME_SOCICALS>;
+  social: Nullable<ResumeSocial>;
   url: string;
 }
-
 interface Contact {
   email: string;
   phone_number: string;
@@ -44,4 +45,14 @@ export type ResumeCookieData = {
   };
   work: Work[];
   contact: Contact;
+};
+
+export type CreateResume = {
+  position: string;
+  templateId: number;
+  templateData: string;
+  backgroundColorTemplate?: string;
+  titleColorTemplate?: string;
+  subTitileColorTemplate?: string;
+  paragraphColorTemplate?: string;
 };

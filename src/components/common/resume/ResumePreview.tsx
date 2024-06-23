@@ -1,8 +1,10 @@
 import { Card, Show, Skeleton } from "@/components";
+import { RESUME_SOCICALS } from "@/constants";
 import { cn, formatDate, isNull } from "@/lib";
 import { useResumeStore } from "@/store";
 import { ClassValue } from "clsx";
-import { Fragment } from "react";
+import { Facebook, Github, Linkedin, Youtube } from "lucide-react";
+import { Fragment, ReactNode } from "react";
 
 const FORMAT_DATE = "MMM YYYY";
 const regexUrl = /(https?:\/\/[^\s]+)/g;
@@ -21,7 +23,7 @@ export default function ResumePreview() {
       <span>
         {text ? (
           <p
-            className={cn("text-lg text-foreground", className)}
+            className={cn("text-lg text-slate-500", className)}
             style={{ color: theme.title ? theme.title : undefined }}
           >
             {text}
@@ -44,7 +46,7 @@ export default function ResumePreview() {
       <span>
         {text ? (
           <p
-            className={cn("text-lg text-foreground", className)}
+            className={cn("text-lg text-slate-400", className)}
             style={{ color: theme.subtitle ? theme.subtitle : undefined }}
           >
             {text}
@@ -67,7 +69,7 @@ export default function ResumePreview() {
       <span>
         {text ? (
           <p
-            className={cn("text-[10px] text-slate-700", className)}
+            className={cn("text-[10px] text-foreground", className)}
             style={{ color: theme.paragraph ? theme.paragraph : undefined }}
           >
             {text}
@@ -78,6 +80,13 @@ export default function ResumePreview() {
       </span>
     );
   };
+
+  const renderSocialIcon = {
+    linkedIn: <Linkedin className="w-3 h-3" />,
+    facebook: <Facebook className="w-3 h-3" />,
+    youtube: <Youtube className="w-3 h-3" />,
+    github: <Github className="w-3 h-3" />,
+  } as Record<(typeof RESUME_SOCICALS)[number], ReactNode>;
 
   return (
     <Card.Card className="bg-white h-full w-full p-[20px]">
@@ -101,6 +110,17 @@ export default function ResumePreview() {
               <Paragraph text={`Phone: ${data.phone_number}`} />
             )}
             {data.address && <Paragraph text={`Address: ${data.address}`} />}
+            {data.socials?.[0]?.url &&
+              data.socials.map((social) => (
+                <a
+                  key={social.social}
+                  rel="noreferrer"
+                  target="_blank"
+                  href={social.url}
+                >
+                  {social.social && renderSocialIcon[social.social]}
+                </a>
+              ))}
           </Card.CardDescription>
         </div>
       </Card.CardHeader>

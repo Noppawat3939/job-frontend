@@ -95,3 +95,6 @@ export const isEmptyArray = (arr?: unknown[]) =>
 
 export const toPercent = (value: number, total: number) =>
   (value / total) * 100;
+
+export const generateListNumber = (n: number) =>
+  Array.from({ length: n }, (_, index) => index + 1);

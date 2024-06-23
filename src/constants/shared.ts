@@ -65,6 +65,5 @@ export const RESUME_SOCICALS = [
   "linkedIn",
   "facebook",
   "youtube",
-  "tiktok",
   "github",
 ] as const;

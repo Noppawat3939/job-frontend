@@ -9,9 +9,12 @@ import Marquee from "react-fast-marquee";
 import DefaultProfile from "@/assets/profile-user.svg";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getCookie, setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
+import HowToCreateStep1 from "@/assets/shared/create-template-step1.svg";
+import HowToCreateStep2 from "@/assets/shared/create-template-step2.svg";
+import HowToCreateStep3 from "@/assets/shared/create-template-step3.svg";
 
 type ResumeListProps = {
   testimonials: Testimonial[];
@@ -42,6 +45,19 @@ export default function ResumeList({
       setResumeData(JSON.parse(resume));
     }
   }, []);
+
+  const howToCreate = useMemo(
+    () => [
+      { key: "step_1", image: HowToCreateStep1, title: "Select your template" },
+      { key: "step_2", image: HowToCreateStep2, title: "Fill in detail" },
+      {
+        key: "step_3",
+        image: HowToCreateStep3,
+        title: "Submit and enjoy to new oppotunity",
+      },
+    ],
+    []
+  );
 
   return (
     <main className="h-auto flex flex-col gap-4 pb-[6rem]">
@@ -98,11 +114,15 @@ export default function ResumeList({
       <Header title={"From inspiration to creation."} />
       <section className="max-w-6xl mx-auto">
         <div className="flex justify-between space-x-[20px]">
-          {[1, 2, 3].map((num) => (
-            <div key={num} className="flex flex-col items-center gap-1">
-              <div className="w-[320px] rounded-2xl h-[320px] bg-slate-100" />
+          {howToCreate.map((item) => (
+            <div key={item.key} className="flex flex-col items-center gap-1">
+              <Image
+                src={item.image}
+                alt="step-create"
+                className="w-[320px] max-h-[160px]"
+              />
               <h3 className="text-slate-700 mt-4 text-center font-medium text-xl">
-                {"How to someing"}
+                {item.title}
               </h3>
               <p className="text-gray-400 max-w-[280px] font-normal text-center">
                 {` Lorem ipsum, dolor sit amet consectetur adipisicing elit.
