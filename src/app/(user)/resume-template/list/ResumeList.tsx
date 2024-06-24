@@ -1,5 +1,6 @@
+import type { Nullable, ResumeTemplate, Testimonial } from "@/types";
+
 import { Alert, Avatar, Card, Input } from "@/components";
-import { Nullable, ResumeTemplate, Testimonial } from "@/types";
 import Marquee from "react-fast-marquee";
 import DefaultProfile from "@/assets/profile-user.svg";
 import Image from "next/image";
@@ -65,7 +66,7 @@ export default function ResumeList({
                 src={item.image}
                 alt="ex_templarte"
                 loading="lazy"
-                className="rounded-2xl mx-6 border"
+                className="rounded-2xl mx-6 border max-w-[200px]"
               />
             </picture>
           ))}

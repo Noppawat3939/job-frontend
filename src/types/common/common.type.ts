@@ -42,3 +42,16 @@ export type Testimonial = {
   profile: string;
   message: string;
 };
+
+export type SubscribeDetail = {
+  id: number;
+  plan: string;
+  code_key: string;
+  title: string;
+  sub_title: string;
+  price: {
+    per_month: number;
+    per_year: number;
+  };
+  features: string[];
+};

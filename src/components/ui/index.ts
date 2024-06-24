@@ -26,3 +26,4 @@ export { Textarea } from "./textarea";
 export { Toaster } from "./toaster";
 export { Checkbox } from "./checkbox";
 export { Progress } from "./progress";
+export { Switch } from "./switch";

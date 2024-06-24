@@ -5,6 +5,7 @@ import type {
   JobCategory,
   Province,
   ServiceResponse,
+  SubscribeDetail,
   Testimonial,
 } from "@/types";
 import { apikeyHeaders } from "@/lib";
@@ -31,6 +32,8 @@ export type GetTestimonailsResponse = ServiceResponse<{
   total: number;
   data: Testimonial[];
 }>;
+
+type GetSubscribeResponse = ServiceResponse<{ data: SubscribeDetail[] }>;
 
 export const getProvinces = async () => {
   const { data } = await serivce.get<GetProvinceResponse>(
@@ -67,6 +70,14 @@ export const getJobCategories = async () => {
 export const getTestimonails = async () => {
   const { data } = await serivce.get<GetTestimonailsResponse>(
     PUBLIC.GET_TESTIMONIALS,
+    apikeyHeaders
+  );
+  return data;
+};
+
+export const getSubscribeDetail = async () => {
+  const { data } = await serivce.get<GetSubscribeResponse>(
+    PUBLIC.GET_SUBSCRIBE_DATA,
     apikeyHeaders
   );
   return data;

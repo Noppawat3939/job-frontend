@@ -16,6 +16,7 @@ export const URL = {
     GET_JOB: "/public/job/:id",
     GET_JOB_CATEGORIES: "/public/job-categories",
     GET_TESTIMONIALS: "/public/testimonials",
+    GET_SUBSCRIBE_DATA: "/public/subscribe",
   },
   USER: {
     GET_ME: "/user/me",

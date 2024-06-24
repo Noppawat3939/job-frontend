@@ -1,8 +1,25 @@
 "use client";
 
-import { Accordion as Acd, ContentLayout, PricingCard } from "@/components";
+import {
+  Accordion as Acd,
+  ContentLayout,
+  Label,
+  PricingCard,
+  Switch,
+} from "@/components";
+import { publicService } from "@/services";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function PricingPage() {
+  const { data } = useQuery({
+    queryKey: ["subscribe-detail"],
+    queryFn: publicService.getSubscribeDetail,
+    select: ({ data }) => data || [],
+  });
+
+  const [viewAnnual, setViewAnnual] = useState(false);
+
   const faqs = [
     {
       question: "What is jobify?",
@@ -20,18 +37,42 @@ export default function PricingPage() {
     <main className="bg-white h-auto">
       <ContentLayout>
         <section className="flex flex-col items-center justify-center h-[450px] gap-4">
-          <h1 className="animate-slidein300 text-6xl font-semibold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-500/80 inline-block text-transparent bg-clip-text">
-            {"Get unlimited access."}
-          </h1>
-          <p className=" animate-slidein500 text-xl font-medium">
-            {"Find the perfect plan"}
+          <span className="flex flex-col items-center">
+            <p className="animate-slidein300 text-slate-700 font-medium text-lg">
+              Pricing
+            </p>
+            <h1 className="animate-slidein300 font-sans text-6xl font-semibold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-500/80 inline-block text-transparent bg-clip-text">
+              {"Simple pricing for everyone."}
+            </h1>
+          </span>
+          <p className="animate-slidein500 max-w-5xl text-center text-xl font-medium text-slate-800 font-normal">
+            Choose an <b className="font-medium">affordable plan</b> that's
+            packed with the best features for engaging your audience, creating
+            customer loyalty, and driving sales.
           </p>
         </section>
-        <section className="flex justify-evenly gap-6 max-w-[1000px] mx-auto">
-          <PricingCard />
-          <PricingCard />
-          <PricingCard />
-        </section>
+        <div className="flex flex-col items-center gap-5">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="annual"
+              onCheckedChange={setViewAnnual}
+              checked={viewAnnual}
+            />
+
+            <Label htmlFor="annual">Annual</Label>
+          </div>
+          <section className="flex justify-evenly gap-6 max-w-[1000px] mx-auto">
+            {data
+              ?.sort((a, b) => b.id - a.id)
+              .map((item) => (
+                <PricingCard
+                  key={item.code_key}
+                  {...item}
+                  isViewAnnual={viewAnnual}
+                />
+              ))}
+          </section>
+        </div>
         <section className="py-[5%] max-w-[1000px] mx-auto">
           <h1 className="animate-slidein300 text-4xl font-semibold text-slate-700">
             {"Frequently asked questions"}
