@@ -52,13 +52,9 @@ export type ResumeCookieData = {
 };
 
 export type CreateResume = {
-  position: string;
+  templateTitle: string;
   templateId: number;
-  templateData: string;
-  backgroundColorTemplate?: string;
-  titleColorTemplate?: string;
-  subTitileColorTemplate?: string;
-  paragraphColorTemplate?: string;
+  templateData?: string;
 };
 
 export type UserResume = CreateResume & {

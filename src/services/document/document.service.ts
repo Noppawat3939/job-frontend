@@ -3,7 +3,6 @@ import { service } from "..";
 import { getTokenWithHeaders } from "@/lib";
 import type {
   CreateResume,
-  Nullable,
   ResumeTemplate,
   ServiceResponse,
   UserResume,
@@ -16,12 +15,7 @@ export type GetResumeTemplatesResponse = ServiceResponse<{
   total: number;
 }>;
 export type CreateResumeResponse = ServiceResponse<{
-  data: CreateResume & {
-    active: Nullable<boolean>;
-    userId: number;
-    createdAt: string;
-    updatedAt: string;
-  };
+  data: UserResume;
 }>;
 type GetUserResumes = ServiceResponse<{ data: UserResume[]; total: number }>;
 type GetUserResume = ServiceResponse<{ data: UserResume }>;

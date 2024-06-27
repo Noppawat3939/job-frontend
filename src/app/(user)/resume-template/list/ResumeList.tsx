@@ -1,15 +1,16 @@
 import type { Nullable, ResumeTemplate, Testimonial } from "@/types";
 
-import { Alert, Avatar, Card, Input } from "@/components";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Alert, Avatar, Card, Input, toast } from "@/components";
 import Marquee from "react-fast-marquee";
 import DefaultProfile from "@/assets/profile-user.svg";
 import Image from "next/image";
-import { useMemo, useState } from "react";
-import { setCookie } from "cookies-next";
-import { useRouter } from "next/navigation";
 import HowToCreateStep1 from "@/assets/shared/create-template-step1.svg";
 import HowToCreateStep2 from "@/assets/shared/create-template-step2.svg";
 import HowToCreateStep3 from "@/assets/shared/create-template-step3.svg";
+import { useMutation } from "@tanstack/react-query";
+import { docsService } from "@/services";
 
 type ResumeListProps = {
   testimonials: Testimonial[];
@@ -44,16 +45,35 @@ export default function ResumeList({
     []
   );
 
+  const { mutate: createResume, isPending } = useMutation({
+    mutationFn: docsService.createResume,
+    onSuccess: (res) => {
+      setAlertCreateTemplate({ open: false, templateId: null });
+
+      const resumeId = res.data.id;
+
+      router.push(`/resume-template/${resumeId}`);
+    },
+    onError: () => {
+      toast({
+        title: `Can't not create resume`,
+        content: "account has limited",
+        duration: 3000,
+        variant: "destructive",
+      });
+    },
+  });
+
   return (
     <main className="h-auto flex flex-col gap-4 pb-[6rem]">
       <Header title={"Find design resume in seconds."} />
       <div>
         <Marquee
-          pauseOnHover
           className="gap-6 flex"
+          play={!alertCreateTemplate.open}
           autoFill
           gradient
-          speed={50}
+          speed={25}
         >
           {templates.map((item) => (
             <picture
@@ -66,7 +86,7 @@ export default function ResumeList({
                 src={item.image}
                 alt="ex_templarte"
                 loading="lazy"
-                className="rounded-2xl mx-6 border max-w-[200px]"
+                className="rounded-2xl mx-6 border max-w-[200px] h-[280px]"
               />
             </picture>
           ))}
@@ -132,21 +152,30 @@ export default function ResumeList({
 
       <Alert
         title="What your resume title?"
-        onOpenChange={(open) =>
-          setAlertCreateTemplate({ open, templateId: null })
-        }
+        onOpenChange={(open) => {
+          if (templateTitle) {
+            setTemplateTitle("");
+          }
+
+          setAlertCreateTemplate({ open, templateId: null });
+        }}
         open={alertCreateTemplate.open}
         okText="Create resume"
         onCancel={() => {
           setTemplateTitle("");
           setAlertCreateTemplate({ open: false, templateId: null });
         }}
-        onOk={() => {
-          setCookie("resume", JSON.stringify([{ title: templateTitle }]));
-
-          router.push(`/resume-template/${alertCreateTemplate.templateId}`);
+        onOk={() =>
+          createResume({
+            templateTitle: templateTitle,
+            templateId: Number(alertCreateTemplate.templateId),
+          })
+        }
+        okButtonProps={{
+          variant: "primary",
+          disabled: !templateTitle.trim(),
+          loading: isPending,
         }}
-        okButtonProps={{ variant: "primary", disabled: !templateTitle.trim() }}
       >
         <Input
           onChange={({ target: { value } }) => setTemplateTitle(value)}

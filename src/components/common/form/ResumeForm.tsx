@@ -91,11 +91,11 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
         });
 
         setGenerateFormLength({
-          workLength: generateListNumber(parsed.work.length),
+          workLength: generateListNumber(parsed.work?.length),
           educationLength: generateListNumber(
-            parsed.background.education.length
+            parsed.background.education?.length
           ),
-          socialLength: generateListNumber(parsed.contact.socials.length),
+          socialLength: generateListNumber(parsed.contact.socials?.length),
         });
 
         const fields = {
@@ -516,42 +516,44 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
 
   const handleUpdateCookie = () => {
     const expires = dayjs().add(7, "day").toDate();
+    const resumeData = getCookie("resume");
 
-    const update = {
-      templateId: +params.template_id,
-      background: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        about: data.about,
-        education: data.education,
-      },
-      work: data.work,
-      contact: {
-        email: data.email,
-        phone_number: data.phone_number,
-        address: data.address,
-        socials: data.socials,
-      },
-    };
+    if (resumeData) {
+      const parsed: { templateTitle?: string } = JSON.parse(resumeData);
 
-    setCookie("resume", JSON.stringify(update), { expires, sameSite: true });
-
-    if (step === 2) {
-      onSubmit({
-        templateData: JSON.stringify(data),
-        position: "mock",
+      const update = {
+        templateTitle: parsed.templateTitle,
         templateId: +params.template_id,
-        backgroundColorTemplate: theme.background,
-        titleColorTemplate: theme.title,
-        subTitileColorTemplate: theme.subtitle,
-        paragraphColorTemplate: theme.paragraph,
+        background: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          about: data.about,
+          education: data.education,
+        },
+        work: data.work,
+        contact: {
+          email: data.email,
+          phone_number: data.phone_number,
+          address: data.address,
+          socials: data.socials,
+        },
+      };
+
+      setCookie("resume", JSON.stringify(update), { expires, sameSite: true });
+
+      if (step === 2) {
+        onSubmit({
+          templateData: JSON.stringify(data),
+          templateTitle: "mock",
+          templateId: +params.template_id,
+        });
+      }
+
+      startTransition(() => {
+        setStep((prevStep) => (prevStep < 2 ? prevStep + 1 : 2));
+        scrollToTop();
       });
     }
-
-    startTransition(() => {
-      setStep((prevStep) => (prevStep < 2 ? prevStep + 1 : 2));
-      scrollToTop();
-    });
   };
 
   return (
@@ -653,6 +655,7 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
                   variant="outline"
                   type="button"
                   className="w-[150px]"
+                  disabled={step === 0}
                   onClick={() => {
                     scrollToTop();
                     setStep((prevStep) => (prevStep <= 0 ? 0 : prevStep - 1));

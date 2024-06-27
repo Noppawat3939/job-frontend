@@ -14,6 +14,7 @@ import type { ServiceErrorResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import { Fragment } from "react";
 
 export default function ResumeTempletePage() {
   useChangeTitleWindow("Create template | Jobify.co");
@@ -46,13 +47,15 @@ export default function ResumeTempletePage() {
   };
 
   return (
-    <Lazyload>
-      <ContentLayout className="bg-slate-200 rounded-md px-6 pt-4 pb-[3rem] h-full">
+    <Fragment>
+      <ContentLayout className="bg-slate-200 rounded-md px-6 pt-4 pb-[3rem]">
         <div className="flex space-x-10">
-          <div className="flex-1">
-            <ResumeForm onSubmit={createResume} />
+          <div className="flex-[.5] overscroll-y-auto">
+            <Lazyload>
+              <ResumeForm onSubmit={createResume} />
+            </Lazyload>
           </div>
-          <div className="flex-1">
+          <div className="max-w-[600px] w-full border-4 border-red-500 fixed h-full max-h-[800px] right-[100px] top-[100px]">
             <ResumePreview />
           </div>
         </div>
@@ -67,6 +70,6 @@ export default function ResumeTempletePage() {
         onCancel={goToMyResume}
         okButtonProps={{ variant: "primary" }}
       />
-    </Lazyload>
+    </Fragment>
   );
 }
