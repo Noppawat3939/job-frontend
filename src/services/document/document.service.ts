@@ -53,3 +53,12 @@ export const getUserResumeById = async (id: number) => {
   );
   return data;
 };
+
+export const publicResume = async (id: number) => {
+  const { data } = await service.post<ServiceResponse>(
+    DOCUMENT.PUBLIC_RESUME.replace(":id", String(id)),
+    undefined,
+    getTokenWithHeaders()
+  );
+  return data;
+};

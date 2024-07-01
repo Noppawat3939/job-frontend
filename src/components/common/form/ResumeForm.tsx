@@ -18,7 +18,6 @@ import { DEFAULT_THEME_TEMPLATE, RESUME_SOCICALS } from "@/constants";
 import { useHandleForm } from "@/hooks";
 import {
   cn,
-  eq,
   generateListNumber,
   isUndifined,
   numOnly,
@@ -33,13 +32,7 @@ import { getCookie, setCookie } from "cookies-next";
 import dayjs from "dayjs";
 import { Palette } from "lucide-react";
 import { useParams } from "next/navigation";
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
 type ResumeFormProps = {
@@ -47,13 +40,10 @@ type ResumeFormProps = {
 };
 
 export default function ResumeForm({ onSubmit }: ResumeFormProps) {
-  const [pending, startTransition] = useTransition();
-
   const params = useParams();
 
   const { setData, data, setTheme, theme, resetTheme } = useResumeStore();
 
-  const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [initialized, setInitialized] = useState(false);
   const [generateFormsLength, setGenerateFormLength] = useState<{
@@ -515,8 +505,9 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
   };
 
   const handleUpdateCookie = () => {
-    const expires = dayjs().add(7, "day").toDate();
+    const expires = dayjs().add(1, "month").toDate();
     const resumeData = getCookie("resume");
+    scrollToTop();
 
     if (resumeData) {
       const parsed: { templateTitle?: string } = JSON.parse(resumeData);
@@ -541,23 +532,16 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
 
       setCookie("resume", JSON.stringify(update), { expires, sameSite: true });
 
-      if (step === 2) {
-        onSubmit({
-          templateData: JSON.stringify(data),
-          templateTitle: "mock",
-          templateId: +params.template_id,
-        });
-      }
-
-      startTransition(() => {
-        setStep((prevStep) => (prevStep < 2 ? prevStep + 1 : 2));
-        scrollToTop();
+      onSubmit({
+        templateData: JSON.stringify(data),
+        templateTitle: "mock",
+        templateId: +params.template_id,
       });
     }
   };
 
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-10 w-[50%] px-4 pt-[30px] pb-6">
       <div className="flex flex-col gap-3">
         <Progress value={progress} />
         <div className="flex justify-between">
@@ -647,20 +631,11 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
         <Card.Card>
           {initialized ? (
             <form action={action}>
-              {eq(step, 0) && renderBackgroundForm()}
-              {eq(step, 1) && renderWorkExpForm()}
-              {eq(step, 2) && renderContactForm()}
+              {renderBackgroundForm()}
+              {renderWorkExpForm()}
+              {renderContactForm()}
               <Card.CardFooter className="flex space-x-4 justify-center">
-                <Button
-                  variant="outline"
-                  type="button"
-                  className="w-[150px]"
-                  disabled={step === 0}
-                  onClick={() => {
-                    scrollToTop();
-                    setStep((prevStep) => (prevStep <= 0 ? 0 : prevStep - 1));
-                  }}
-                >
+                <Button variant="outline" type="button" className="w-[150px]">
                   {"Back"}
                 </Button>
                 <Button
@@ -668,10 +643,9 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
                   className="w-[150px]"
                   type="button"
                   role="next"
-                  loading={pending}
                   onClick={handleUpdateCookie}
                 >
-                  {step >= 2 ? "Create resume" : "Next"}
+                  {"Create resume"}
                 </Button>
               </Card.CardFooter>
             </form>

@@ -1,18 +1,32 @@
 "use client";
 
-import { Button, ContentLayout } from "@/components";
+import { Button, ContentLayout, Show, toast } from "@/components";
 import { QUERY_KEY } from "@/constants";
 import { docsService } from "@/services";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
 
 export default function MyResumePage() {
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: [QUERY_KEY.GET_USER_RESUMES],
     queryFn: docsService.getUserResume,
     select: ({ data }) => data,
+  });
+
+  const { mutate: publicResume, isPending } = useMutation({
+    mutationFn: docsService.publicResume,
+    onSuccess: (res) => {
+      refetch();
+      toast({ title: res.message ?? "Updated", variant: "success" });
+    },
+    onError: () =>
+      toast({
+        title: "Someting went wrong",
+        duration: 1500,
+        variant: "destructive",
+      }),
   });
 
   return (
@@ -42,13 +56,17 @@ export default function MyResumePage() {
                   </label>
                   <p aria-label="title">{item.templateTitle}</p>
                 </div>
-                <Button
-                  size="sm"
-                  aria-label="public-resume"
-                  variant={item.active ? "outline" : "purple-shadow"}
-                >
-                  {item.active ? "Private" : "Public"}
-                </Button>
+                <Show when={!item.active}>
+                  <Button
+                    size="sm"
+                    loading={isPending}
+                    aria-label="public-resume"
+                    variant={"purple-shadow"}
+                    onClick={() => publicResume(item.id)}
+                  >
+                    {"Public"}
+                  </Button>
+                </Show>
               </div>
             </div>
           ))

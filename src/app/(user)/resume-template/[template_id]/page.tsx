@@ -48,18 +48,16 @@ export default function ResumeTempletePage() {
 
   return (
     <Fragment>
-      <ContentLayout className="bg-slate-200 rounded-md px-6 pt-4 pb-[3rem]">
-        <div className="flex space-x-10">
-          <div className="flex-[.5] overscroll-y-auto">
-            <Lazyload>
-              <ResumeForm onSubmit={createResume} />
-            </Lazyload>
+      <section className="min-h-[calc(100vh-80px)] h-full">
+        <Lazyload>
+          <div className="flex overflow-y-auto">
+            <ResumeForm onSubmit={createResume} />
+            <div className="flex justify-center items-center fixed w-[50%] right-0 h-[calc(100vh-80px)] bg-slate-50">
+              <ResumePreview />
+            </div>
           </div>
-          <div className="max-w-[600px] w-full border-4 border-red-500 fixed h-full max-h-[800px] right-[100px] top-[100px]">
-            <ResumePreview />
-          </div>
-        </div>
-      </ContentLayout>
+        </Lazyload>
+      </section>
       <Alert
         open={openAlert}
         onOpenChange={setAlert}
