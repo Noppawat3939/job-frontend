@@ -28,6 +28,7 @@ export default function Navbar({ user }: NavbarProps) {
   const isMainPath = eq(pathname, "/");
   const isLoginPath = eq(pathname, "/login");
   const isSignupPath = eq(pathname, "/signup");
+  const isPricing = eq(pathname, "/pricing");
 
   const [isScrollingDown, setIsScrollingDown] = useState(false);
 
@@ -67,13 +68,13 @@ export default function Navbar({ user }: NavbarProps) {
           key: "find_job",
           href: "/jobs",
           label: "Find jobs",
-          hide: ["/jobs"].includes(pathname),
+          hide: ["/jobs"].includes(pathname) || isPricing,
         },
         {
           key: "resume_template",
           label: "Resume",
           href: "/resume-template/list",
-          hide: ["/resume-template/list"].includes(pathname),
+          hide: ["/resume-template/list"].includes(pathname) || isPricing,
         },
         {
           key: "my_resume",
@@ -85,7 +86,7 @@ export default function Navbar({ user }: NavbarProps) {
           key: "my_jobs",
           label: "My jobs",
           href: "/my-jobs?tab=apply",
-          hide: ["/my-jobs"].includes(pathname),
+          hide: ["/my-jobs"].includes(pathname) || isPricing,
         },
       ];
 
@@ -134,13 +135,17 @@ export default function Navbar({ user }: NavbarProps) {
         )}
       >
         <Link
-          href={(user && redirectWithLogo?.[user?.role]) || "/"}
+          href={
+            isPricing
+              ? "/pricing"
+              : (user && redirectWithLogo?.[user?.role]) || "/"
+          }
           className={cn(
             "flex items-center hover:opacity-90 bg-white",
             isMainPath && "border rounded-lg shadow-sm pl-1 pr-2 py-1"
           )}
           aria-label="app-logo-link"
-          shallow={!user || user.role === "user"}
+          shallow={!user || user.role === "user" || isPricing}
         >
           <div
             className={cn(
@@ -166,7 +171,9 @@ export default function Navbar({ user }: NavbarProps) {
         >
           <div className="flex bg-white border  ml-[30px] justify-center p-1 rounded-lg mx-2">
             <Button asChild size="sm" variant="ghost">
-              <Link href={"/pricing"}>{"Pricing"}</Link>
+              <Link href={"/pricing"} target="_blank" rel="noreferer">
+                {"Pricing"}
+              </Link>
             </Button>
           </div>
         </Show>
@@ -190,7 +197,7 @@ export default function Navbar({ user }: NavbarProps) {
             </div>
           </Show>
 
-          <Show when={!isUndifined(user)}>
+          <Show when={!isUndifined(user) && !isPricing}>
             <Button
               size="sm"
               variant="outline"
@@ -200,7 +207,7 @@ export default function Navbar({ user }: NavbarProps) {
             </Button>
           </Show>
 
-          <Show when={!user}>
+          <Show when={!user && !isPricing}>
             <Card.Card
               className={cn(
                 "p-1 flex gap-2",

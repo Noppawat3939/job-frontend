@@ -2,7 +2,7 @@ import type { Nullable, ResumeTemplate, Testimonial } from "@/types";
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Alert, Avatar, Card, Input, toast } from "@/components";
+import { Alert, Avatar, Button, Card, Input, toast } from "@/components";
 import Marquee from "react-fast-marquee";
 import DefaultProfile from "@/assets/profile-user.svg";
 import Image from "next/image";
@@ -11,6 +11,8 @@ import HowToCreateStep2 from "@/assets/shared/create-template-step2.svg";
 import HowToCreateStep3 from "@/assets/shared/create-template-step3.svg";
 import { useMutation } from "@tanstack/react-query";
 import { docsService } from "@/services";
+import { toast as toastSonner } from "sonner";
+import Link from "next/link";
 
 type ResumeListProps = {
   testimonials: Testimonial[];
@@ -58,8 +60,11 @@ export default function ResumeList({
       toast({
         title: `Can't not create resume`,
         content: "account has limited",
-        duration: 3000,
-        variant: "destructive",
+        duration: 2000,
+        action: {
+          label: "Pricing",
+          onClick: () => window.open("/pricing", "_blank"),
+        },
       });
     },
   });

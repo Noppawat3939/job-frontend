@@ -43,7 +43,7 @@ export default function ResumeTempletePage() {
 
   const goToMyResume = () => {
     setAlert(false);
-    router.push("/resume-template/list"); //TODO: change to my-resume
+    router.push("/my-resume");
   };
 
   return (
