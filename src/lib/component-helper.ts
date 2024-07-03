@@ -5,7 +5,7 @@ import {
   Users,
 } from "lucide-react";
 import { eq } from ".";
-import { User } from "@/types/user";
+import type { User } from "@/types/user";
 
 export const generateMenusSidebar = (pathname: string, user?: User) => {
   const companyMenus = [

@@ -7,6 +7,7 @@ import {
   FormInput,
   JobDetailCard,
   LayoutWithSidebar,
+  NoContentSection as NoContent,
   Show,
 } from "@/components";
 import { DATE_FORMAT, QUERY_KEY } from "@/constants";
@@ -14,6 +15,7 @@ import {
   formatDate,
   formatPrice,
   generateMenusSidebar,
+  isEmptyArray,
   isNull,
   mappingJobApprove,
   mappingJobType,
@@ -22,7 +24,7 @@ import {
 import { companyService } from "@/services";
 import type { Job, Nullable } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { BriefcaseBusiness, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
@@ -56,10 +58,13 @@ export default function CompanyPage() {
     ref.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const menu = useMemo(() => generateMenusSidebar(pathname), [pathname]);
+  const { companyMenus: menu } = useMemo(
+    () => generateMenusSidebar(pathname),
+    [pathname]
+  );
 
   return (
-    <LayoutWithSidebar menu={menu.companyMenus}>
+    <LayoutWithSidebar menu={menu}>
       <div className="overflow-y-auto max-h-[90vh]">
         <div className="z-10 flex justify-between py-3 px-4 sticky top-0 bg-white">
           <FormInput disabled placeholder="Search keyword" />
@@ -71,33 +76,52 @@ export default function CompanyPage() {
           </Button>
         </div>
         <section className="flex" ref={ref}>
-          <div aria-label="jobs-list" className="flex-1 px-4">
-            <DataTable
-              loading={isLoading}
-              name="companyJobs"
-              data={mappedCompanyJobs ?? []}
-              onRow={(data) => handleSelectJob(Number(data?.key))}
-              columns={[
-                { key: "position", dataIndex: "position", title: "Position" },
-                { key: "job_type", dataIndex: "jobType", title: "Job type" },
-                { key: "style", dataIndex: "style", title: "Work style" },
-                { key: "salary", dataIndex: "salary", title: "Salary" },
-                {
-                  key: "createdAt",
-                  dataIndex: "createdAt",
-                  title: "Created at",
-                },
-                {
-                  key: "status",
-                  dataIndex: "status",
-                  title: "Status",
-                  render: (status) => (
-                    <BadgeJobApprove status={status} text={status} />
-                  ),
-                },
-              ]}
+          <Show
+            when={isEmptyArray(mappedCompanyJobs)}
+            otherwise={
+              <div aria-label="jobs-list" className="flex-1 px-4">
+                <DataTable
+                  loading={isLoading}
+                  name="companyJobs"
+                  data={mappedCompanyJobs ?? []}
+                  onRow={(data) => handleSelectJob(Number(data?.key))}
+                  columns={[
+                    {
+                      key: "position",
+                      dataIndex: "position",
+                      title: "Position",
+                    },
+                    {
+                      key: "job_type",
+                      dataIndex: "jobType",
+                      title: "Job type",
+                    },
+                    { key: "style", dataIndex: "style", title: "Work style" },
+                    { key: "salary", dataIndex: "salary", title: "Salary" },
+                    {
+                      key: "createdAt",
+                      dataIndex: "createdAt",
+                      title: "Created at",
+                    },
+                    {
+                      key: "status",
+                      dataIndex: "status",
+                      title: "Status",
+                      render: (status) => (
+                        <BadgeJobApprove status={status} text={status} />
+                      ),
+                    },
+                  ]}
+                />
+              </div>
+            }
+          >
+            <NoContent
+              className="h-[calc(100dvh-160px)]"
+              title="No job data"
+              icon={BriefcaseBusiness}
             />
-          </div>
+          </Show>
         </section>
         <Show when={!isNull(jobDetails)}>
           <JobDetailCard hideApply hideFavorite {...jobDetails} />
