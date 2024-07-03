@@ -2,7 +2,6 @@
 
 import {
   Alert,
-  ContentLayout,
   Lazyload,
   ResumeForm,
   ResumePreview,
@@ -52,7 +51,7 @@ export default function ResumeTempletePage() {
         <Lazyload>
           <div className="flex overflow-y-auto">
             <ResumeForm onSubmit={createResume} />
-            <div className="flex justify-center items-center fixed w-[50%] right-0 h-[calc(100vh-80px)] bg-slate-50">
+            <div className="bg-card-foreground/90 flex justify-center items-center fixed w-[50%] right-0 h-[calc(100vh-80px)]">
               <ResumePreview />
             </div>
           </div>

@@ -89,7 +89,7 @@ export default function ResumePreview() {
   } as Record<(typeof RESUME_SOCICALS)[number], ReactNode>;
 
   return (
-    <Card.Card className="bg-white border-red-500 h-full min-w-[200px]  p-[20px]">
+    <Card.Card className="h-[calc(100%-0px)] scale-90 bg-white min-w-[500px] w-[calc(100%-150px)] p-[20px]">
       <Card.CardHeader
         style={{ background: theme.background }}
         className={cn(

@@ -31,7 +31,8 @@ import { ClassValue } from "clsx";
 import { getCookie, setCookie } from "cookies-next";
 import dayjs from "dayjs";
 import { Palette } from "lucide-react";
-import { useParams } from "next/navigation";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
@@ -41,6 +42,8 @@ type ResumeFormProps = {
 
 export default function ResumeForm({ onSubmit }: ResumeFormProps) {
   const params = useParams();
+
+  const router = useRouter();
 
   const { setData, data, setTheme, theme, resetTheme } = useResumeStore();
 
@@ -206,6 +209,8 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
     (date?: Nullable<string>) => (date ? dayjs().toDate() : undefined),
     []
   );
+
+  const onBack = () => router.back();
 
   const renderBackgroundForm = () => {
     return (
@@ -635,8 +640,13 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
               {renderWorkExpForm()}
               {renderContactForm()}
               <Card.CardFooter className="flex space-x-4 justify-center">
-                <Button variant="outline" type="button" className="w-[150px]">
-                  {"Back"}
+                <Button
+                  variant="outline"
+                  asChild
+                  type="button"
+                  className="w-[150px]"
+                >
+                  <Link href="/resume-template/list">{"Back"}</Link>
                 </Button>
                 <Button
                   variant="primary"

@@ -7,11 +7,14 @@ import {
   PricingCard,
   Switch,
 } from "@/components";
+import { useChangeTitleWindow } from "@/hooks";
 import { publicService } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function PricingPage() {
+  useChangeTitleWindow("Simple pricing for everyone | Jobify.co");
+
   const { data } = useQuery({
     queryKey: ["subscribe-detail"],
     queryFn: publicService.getSubscribeDetail,
