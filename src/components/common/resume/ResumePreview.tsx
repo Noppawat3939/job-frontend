@@ -205,8 +205,9 @@ export default function ResumePreview() {
                     <li className="text-xs flex" key={`education_project_${i}`}>
                       {regexUrl.test(project) ? (
                         <Fragment>
-                          {project.split(regexUrl).map((text) => (
+                          {project.split(regexUrl).map((text, i) => (
                             <span
+                              key={`item_${i}`}
                               onClick={() =>
                                 regexUrl.test(text) &&
                                 window.open(text, "_blank")

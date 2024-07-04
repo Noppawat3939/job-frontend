@@ -48,10 +48,10 @@ export default function PricingPage() {
               {"Simple pricing for everyone."}
             </h1>
           </span>
-          <p className="animate-slidein500 max-w-5xl text-center text-xl font-medium text-slate-800 font-normal">
-            Choose an <b className="font-medium">affordable plan</b> that's
-            packed with the best features for engaging your audience, creating
-            customer loyalty, and driving sales.
+          <p className="animate-slidein500 max-w-5xl text-center text-xl text-slate-800 font-normal">
+            Choose an affordable plan that&apos;s packed with the best features
+            for engaging your audience, creating customer loyalty, and driving
+            sales.
           </p>
         </section>
         <div className="flex flex-col items-center gap-5">
