@@ -401,7 +401,7 @@ export default function ResumeForm({ onSubmit }: ResumeFormProps) {
                 />
                 <Show when={i === 0}>
                   <Checkbox
-                    label="Currently"
+                    label={"Currently" as unknown as string}
                     checked={data.work?.[i]?.currently}
                     onCheckedChange={(checked) =>
                       onChange("work", checked, "currently", num)
