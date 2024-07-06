@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
->(({ className, label = "", ...props }, ref) => (
+>(({ className, label, ...props }, ref) => (
   <div className={cn("flex items-center", label ? "space-x-1" : "")}>
     <CheckboxPrimitive.Root
       ref={ref}
