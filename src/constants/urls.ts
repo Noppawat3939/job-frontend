@@ -53,4 +53,7 @@ export const URL = {
     CREATE_RESUME: "/user-resume",
     PUBLIC_RESUME: "/user-resume/public/:id",
   },
+  PAYMENT: {
+    CREATE_QR_SOURCE: "/payment/source-qr",
+  },
 } as const;

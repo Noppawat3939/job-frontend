@@ -184,27 +184,24 @@ export default function SignupSection({
       </Card.CardHeader>
       <Card.CardContent>
         <div className="flex flex-col gap-2">
-          <Show when={!hideSignWithGoogle}>
+          <Show when={!hideSignWithGoogle && !withCompany}>
             <Fragment>
               <Button
                 variant="outline"
                 aria-label="signin-with-google"
                 className="w-full font-normal text-gray-600"
-                onClick={withCompany ? undefined : onSignupWithGoogle}
-                disabled={withCompany}
+                onClick={onSignupWithGoogle}
               >
                 <Image
                   src={googleLogo}
                   alt="google-logo"
                   className="w-4 h-4 object-cover mr-2"
                 />
-                {withCompany
-                  ? "signup with Google is coming soon."
-                  : "continue with Google"}
+                continue with Google
               </Button>
               <div className="flex w-full justify-between items-center">
                 <hr className="flex-[.47]" />
-                <p className=" text-gray-400 uppercase text-xs">{"or"}</p>
+                <p className=" text-gray-400 uppercase text-xs">or</p>
                 <hr className="flex-[.47]" />
               </div>
             </Fragment>

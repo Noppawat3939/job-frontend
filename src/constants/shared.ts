@@ -47,6 +47,11 @@ export const JOB_EXP_LEVEL = [
 
 export const CREATE_JOB_FIELDS = [
   "position",
+  "jobDescriptions",
+  "qualifications",
+  "benefits",
+  "transports",
+  "contracts",
   "style",
   "jobType",
   "experienceLevel",
@@ -54,11 +59,6 @@ export const CREATE_JOB_FIELDS = [
   "salaryMin",
   "salaryMax",
   "location",
-  "jobDescriptions",
-  "qualifications",
-  "benefits",
-  "contracts",
-  "transports",
 ] as const;
 
 export const RESUME_SOCICALS = [

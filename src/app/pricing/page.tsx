@@ -7,18 +7,29 @@ import {
   PricingCard,
   Switch,
 } from "@/components";
+import { QUERY_KEY } from "@/constants";
 import { useChangeTitleWindow } from "@/hooks";
 import { publicService } from "@/services";
+import { useSigninDialog, userStore } from "@/store";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function PricingPage() {
+  const router = useRouter();
+
   useChangeTitleWindow("Simple pricing for everyone | Jobify.co");
 
+  const { user } = userStore((s) => ({ user: s.user }));
+  const { onOpenDialog } = useSigninDialog((s) => ({
+    onOpenDialog: s.setOpen,
+  }));
+
   const { data } = useQuery({
-    queryKey: ["subscribe-detail"],
-    queryFn: publicService.getSubscribeDetail,
+    queryKey: [QUERY_KEY.SUBSCRIBE_DETAIL],
+    queryFn: () => publicService.getSubscribeDetail(),
     select: ({ data }) => data || [],
+    staleTime: 0,
   });
 
   const [viewAnnual, setViewAnnual] = useState(false);
@@ -72,6 +83,24 @@ export default function PricingPage() {
                   key={item.code_key}
                   {...item}
                   isViewAnnual={viewAnnual}
+                  onSubscribe={(data) => {
+                    if (!user) {
+                      onOpenDialog();
+
+                      return;
+                    }
+
+                    const slugParams = {
+                      code_key: data.code_key,
+                      period: viewAnnual ? "per_year" : "per_month",
+                    };
+
+                    router.push(
+                      `/pricing/checkout/${encodeURIComponent(
+                        JSON.stringify(slugParams)
+                      )}`
+                    );
+                  }}
                 />
               ))}
           </section>

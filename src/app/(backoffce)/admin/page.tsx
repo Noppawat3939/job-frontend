@@ -424,12 +424,14 @@ export default function AdminPage() {
             <ListFilter className="w-4 h-4 mr-2" />
             {"Clear"}
           </Button>
-          <Button
-            variant={"purple-shadow"}
-            onClick={() => onOpenSignupAdminChange(true)}
-          >
-            {"Add new account"}
-          </Button>
+          <Show when={selectedAccountsTab}>
+            <Button
+              variant={"purple-shadow"}
+              onClick={() => onOpenSignupAdminChange(true)}
+            >
+              {"Add new account"}
+            </Button>
+          </Show>
         </div>
       </div>
     );

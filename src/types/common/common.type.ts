@@ -52,6 +52,10 @@ export type SubscribeDetail = {
   price: {
     per_month: number;
     per_year: number;
+    discount: {
+      percent_per_year: number;
+      discount_end_date: Nullable<string>;
+    };
   };
   features: string[];
 };

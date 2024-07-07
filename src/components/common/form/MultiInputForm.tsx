@@ -1,8 +1,8 @@
+import { useCallback, useState, useTransition } from "react";
+import { Link2, Trash } from "lucide-react";
+import Link from "next/link";
 import { Button, Input, Label, Popover, Show, Textarea } from "@/components";
 import { cn } from "@/lib";
-import { Link2, Plus, Trash } from "lucide-react";
-import Link from "next/link";
-import { useCallback, useState, useTransition } from "react";
 
 type MultiInputFormProps = {
   label?: string;
@@ -90,22 +90,22 @@ export default function MultiInputForm({
             readOnly
             className={cn(
               "text-[12px]",
-              values ? "min-h-[60px]" : "h-[60px] resize-none"
+              values ? "min-h-[80px]" : "h-[60px] resize-none"
             )}
             value={joinedValues}
           />
         </Popover.PopoverTrigger>
-        <Popover.PopoverContent className="w-[480px]">
+        <Popover.PopoverContent className="min-w-[500px]">
           <header className="flex justify-between items-center mb-2">
             {label && <Label>{label}</Label>}
             <Button
               onClick={handleMergeValues}
-              size="icon"
-              variant="outline"
+              variant="secondary"
               role="add-values-btn"
-              className="w-6 h-6"
+              size="sm"
+              className="text-xs py-1"
             >
-              <Plus className="w-3 h-3" />
+              Save
             </Button>
           </header>
           <Input
@@ -129,7 +129,10 @@ export default function MultiInputForm({
                       ]
                     : [{ id: `${name}_0`, value: inputValue }]
                 );
-                startTransition(() => setInputValue(""));
+
+                startTransition(() => {
+                  setInputValue("");
+                });
               }
             }}
           />
