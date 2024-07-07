@@ -8,9 +8,13 @@ type PageProps = {
 };
 
 export default function PricingCheckoutPage({ params }: PageProps) {
+  const decoded = decodeURIComponent(params.slug);
+
   return (
     <Lazyload>
-      <SubscribeCheckout slug={params.slug} />
+      <main className="bg-grid w-full h-full">
+        <SubscribeCheckout slug={decoded} />
+      </main>
     </Lazyload>
   );
 }

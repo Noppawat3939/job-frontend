@@ -75,7 +75,7 @@ export const getTestimonails = async () => {
   return data;
 };
 
-export const getSubscribeDetail = async (params?: { plan: string }) => {
+export const getSubscribeDetail = async (params?: { plan?: string }) => {
   const { data } = await serivce.get<GetSubscribeResponse>(
     PUBLIC.GET_SUBSCRIBE_DATA,
     { ...apikeyHeaders, params }

@@ -91,12 +91,12 @@ export default function PricingPage() {
                     }
 
                     const slugParams = {
-                      code_key: data.code_key,
+                      ...data,
                       period: viewAnnual ? "per_year" : "per_month",
                     };
 
                     router.push(
-                      `/pricing/checkout/${encodeURIComponent(
+                      `/pricing/checkout/${encodeURI(
                         JSON.stringify(slugParams)
                       )}`
                     );
