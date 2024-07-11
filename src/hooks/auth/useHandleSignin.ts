@@ -1,12 +1,11 @@
-import { ServiceErrorResponse } from "./../../types/common/common.type";
-import type { DecodedToken, Role } from "@/types";
+import type { DecodedToken, Role, ServiceErrorResponse } from "@/types";
 import { useTransition } from "react";
 import { isUndifined, redirectWithRole } from "@/lib";
 import { authService } from "@/services";
 import { useMutation } from "@tanstack/react-query";
 import { setCookie } from "cookies-next";
 import { jwtDecode } from "jwt-decode";
-import { AxiosError } from "axios";
+import { type AxiosError, HttpStatusCode } from "axios";
 import { useToast } from "@/components";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +25,19 @@ export default function useHandleSignin() {
   const signin = useMutation({
     mutationFn: authService.signin,
     onSuccess: ({ data: token }) => handleLoginned(token),
+    onError: (e) => {
+      const err = e as AxiosError;
+      const status = err.response?.status;
+      let msg: string;
+
+      if (status !== HttpStatusCode.InternalServerError) {
+        msg = "Email or password is invalid";
+      } else {
+        msg = "Somthing went wrong";
+      }
+
+      toast({ title: msg, variant: "destructive", duration: 1500 });
+    },
   });
 
   const siginWithCompany = useMutation({
