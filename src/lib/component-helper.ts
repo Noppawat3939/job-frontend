@@ -2,6 +2,7 @@ import {
   BriefcaseBusiness,
   FileText,
   User as UserIcon,
+  UserRoundCheck,
   Users,
 } from "lucide-react";
 import { eq } from ".";
@@ -46,6 +47,13 @@ export const generateMenusSidebar = (pathname: string, user?: User) => {
           leftIcon: BriefcaseBusiness,
           path: "/admin?tab=jobs",
           active: eq(pathname, "jobs"),
+        },
+        {
+          label: "Subscriptions",
+          value: "subscriptions",
+          leftIcon: UserRoundCheck,
+          path: "/admin/subscription",
+          active: eq(pathname, "/admin/subscription"),
         },
       ],
     },

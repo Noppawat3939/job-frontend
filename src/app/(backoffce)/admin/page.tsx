@@ -439,13 +439,13 @@ export default function AdminPage() {
 
   const loading = [userQuery.isFetching, jobQuery.isFetching].some(Boolean);
 
-  const menu = useMemo(
+  const { adminMenus: menu } = useMemo(
     () => generateMenusSidebar(tabParam, user),
     [user, tabParam]
   );
 
   return (
-    <LayoutWithSidebar menu={menu.adminMenus}>
+    <LayoutWithSidebar menu={menu}>
       <div className="w-full h-full">
         <div className="flex space-x-2 bg-white sticky top-0 z-10 py-3 px-4">
           {renderFilterItems()}
@@ -463,10 +463,10 @@ export default function AdminPage() {
                   title: string;
                 }[]
               }
-              onRow={(cb) =>
+              onRow={(row) =>
                 selectedAccountsTab
                   ? undefined
-                  : router.push(`/admin/job/${cb?.key}`)
+                  : router.push(`/admin/job/${row?.key}`)
               }
             />
           </Lazyload>

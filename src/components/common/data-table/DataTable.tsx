@@ -1,7 +1,7 @@
 "use client";
 
 import { Spinner, Table } from "@/components";
-import { isNumber, toPx } from "@/lib";
+import { cn, isNumber, toPx } from "@/lib";
 
 type TData = (Record<string, any> & { key: string })[];
 
@@ -23,6 +23,7 @@ export type DataTableProps<T extends TData> = {
   loading?: boolean;
   columns: TColumns<T>;
   onRow?: (data?: TData[number]) => void;
+  lockHeader?: boolean;
 };
 
 export default function DataTable<D extends TData>({
@@ -31,13 +32,30 @@ export default function DataTable<D extends TData>({
   columns,
   loading,
   onRow,
+  lockHeader = false,
 }: DataTableProps<D>) {
   return (
     <Table.Table role={name}>
       <Table.TableHeader>
-        <Table.TableRow className="bg-slate-100 hover:bg-slate-100">
+        <Table.TableRow
+          className={cn(
+            "bg-slate-100 hover:bg-slate-100",
+            lockHeader ? "fixed w-full top-0 flex" : null
+          )}
+        >
           {columns.map((column) => (
-            <Table.TableHead key={column.key} className="text-slate-700">
+            <Table.TableHead
+              key={column.key}
+              style={{
+                width: isNumber(column?.width)
+                  ? toPx(column?.width as unknown as number)
+                  : column?.width,
+              }}
+              className={cn(
+                "text-slate-700",
+                lockHeader ? "flex-1 flex items-center" : undefined
+              )}
+            >
               {column.title}
             </Table.TableHead>
           ))}
