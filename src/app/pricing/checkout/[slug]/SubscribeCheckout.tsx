@@ -1,9 +1,24 @@
-import { Button, ContentLayout, Label, PaymentStep, Show } from "@/components";
+import {
+  Alert,
+  Button,
+  ContentLayout,
+  Label,
+  PaymentStep,
+  Show,
+  toast,
+} from "@/components";
 import { QUERY_KEY } from "@/constants";
 import { paymentService, publicService } from "@/services";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Check, Upload } from "lucide-react";
-import { Fragment, ReactNode, useRef, useState } from "react";
+import {
+  Fragment,
+  type ReactNode,
+  useRef,
+  useState,
+  useCallback,
+  useTransition,
+} from "react";
 import QrPaymentLogo from "@/assets/payment/qr-logo.jpg";
 import Image from "next/image";
 import type { Nullable } from "@/types";
@@ -26,6 +41,18 @@ type Detail = {
 
 type SubscribeCheckoutProps = { slug: string };
 
+const colors = {
+  A: "#ec4899",
+  B: "#0ea5e9",
+  C: "#14b8a6",
+};
+
+const initialPaymentSlip = {
+  uploading: false,
+  slipUrl: "",
+  open: false,
+};
+
 export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
   const decodedSlug: DecodeParams = slug ? JSON.parse(slug) : null;
 
@@ -39,12 +66,16 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
     staleTime: 0,
   });
 
-  const [sourceQR, setSourceQR] = useState<{
-    qrcode: string;
-    expired: string;
-    creating: boolean;
-  }>({ qrcode: "", expired: "", creating: false });
+  const [pending, startTransition] = useTransition();
+
+  const [sourceQR, setSourceQR] = useState({
+    qrcode: "",
+    expired: "",
+    creating: false,
+    refNumber: "",
+  });
   const [step, setStep] = useState(1);
+  const [paymentSlip, setPaymentSlip] = useState(initialPaymentSlip);
 
   const { mutate: createSource, isPending } = useMutation({
     mutationFn: paymentService.createQRSource,
@@ -53,9 +84,25 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
         qrcode: data.qrcode,
         expired: data.expired_in,
         creating: false,
+        refNumber: data.refNo,
       });
     },
   });
+
+  const { mutate: createTransaction, isPending: creatingTransaction } =
+    useMutation({
+      mutationFn: paymentService.createTransaction,
+      onSuccess: () => {
+        setPaymentSlip(initialPaymentSlip);
+        setStep(3);
+      },
+      onError: () =>
+        toast({
+          title: "Someting went wrong",
+          variant: "destructive",
+          duration: 1500,
+        }),
+    });
 
   const period = decodedSlug?.period ?? "per_month";
 
@@ -104,11 +151,17 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
     },
   ].filter((item) => !item.hide) as Detail[];
 
-  const colors = {
-    A: "#ec4899",
-    B: "#0ea5e9",
-    C: "#14b8a6",
-  };
+  const handleUploadSlip = useCallback((file: File) => {
+    setPaymentSlip((prev) => ({ ...prev, uploading: true }));
+
+    setTimeout(() => {
+      setPaymentSlip({
+        slipUrl: URL.createObjectURL(file),
+        uploading: false,
+        open: true,
+      });
+    }, 1000);
+  }, []);
 
   return (
     <ContentLayout className="max-w-[1100px] max-xl:max-w-[700px] overflow-hidden">
@@ -212,7 +265,7 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
           />
         </section>
       </div>
-      <section className="flex flex-col items-center gap-2">
+      <section className="flex flex-col items-center gap-2 py-4">
         <Show when={step === 1}>
           <Fragment>
             <h1>Select payment mothod</h1>
@@ -245,18 +298,54 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
           </Fragment>
         </Show>
 
+        <Alert
+          title="Slip Uploaded"
+          open={paymentSlip.open}
+          okText={"Save"}
+          okButtonProps={{ loading: creatingTransaction }}
+          cancelButtonProps={{ disabled: creatingTransaction }}
+          onOk={() =>
+            createTransaction({
+              refNumber: sourceQR.refNumber,
+              slipImage: paymentSlip.slipUrl,
+            })
+          }
+          cancelText="Re upload"
+          closeable={false}
+          onCancel={() => {
+            setPaymentSlip(initialPaymentSlip);
+          }}
+          onOpenChange={() => setPaymentSlip(initialPaymentSlip)}
+        >
+          <center>
+            <picture>
+              <img
+                src={paymentSlip.slipUrl}
+                alt="slip-img"
+                loading="lazy"
+                className="w-[200px]"
+              />
+            </picture>
+          </center>
+        </Alert>
+
         <Show when={step === 2 && !sourceQR.creating}>
           <div className="flex flex-col space-y-4 items-center">
-            <p className="text-xl text-slate-700">{`Please paid and upload slip in ${dayjs(
+            <p className="text-sm text-red-500">{`Please paid and upload slip in ${dayjs(
               sourceQR.expired
             ).format("HH:mm")}`}</p>
             <Button
               variant="primary"
               className="w-[200px]"
-              onClick={() => inputRef.current?.click()}
+              loading={paymentSlip.uploading || pending}
+              onClick={() => {
+                if (paymentSlip.slipUrl) setPaymentSlip(initialPaymentSlip);
+
+                startTransition(() => inputRef.current?.click());
+              }}
             >
               <Upload className="w-4 h-4 mr-1" />
-              Upload slip
+              {paymentSlip.slipUrl ? "Upload again" : "Upload slip"}
             </Button>
           </div>
         </Show>
@@ -265,12 +354,10 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
         ref={inputRef}
         onChange={(e) => {
           const file = e.target.files?.[0];
-
+          console.log(file);
           if (!file) return null;
 
-          const formData = new FormData();
-          formData.append("image", file);
-          //TODO: upload to DB
+          handleUploadSlip(file);
         }}
         className="hidden"
         type="file"

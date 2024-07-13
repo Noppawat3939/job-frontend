@@ -1,7 +1,7 @@
 import { URL } from "@/constants";
 import serivce from "../api";
 import { getTokenWithHeaders } from "@/lib";
-import type { ServiceResponse } from "@/types";
+import type { PaymentTransaction, ServiceResponse } from "@/types";
 import { CreateTransactionSchema } from "@/schemas";
 
 const { PAYMENT } = URL;
@@ -10,8 +10,11 @@ type CreateQRSourceResponse = ServiceResponse<{
   data: {
     qrcode: string;
     expired_in: string;
+    refNo: string;
   };
 }>;
+
+type CreateTransactionResponse = ServiceResponse<{ data: PaymentTransaction }>;
 
 export const createQRSource = async (body: {
   code_key: string;
@@ -27,7 +30,7 @@ export const createQRSource = async (body: {
 };
 
 export const createTransaction = async (body: CreateTransactionSchema) => {
-  const { data } = await serivce.post(
+  const { data } = await serivce.post<CreateTransactionResponse>(
     PAYMENT.CREATE_TRANSACTION,
     body,
     getTokenWithHeaders()

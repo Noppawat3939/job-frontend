@@ -238,3 +238,7 @@ export const phoneNumberSchema = {
 export const refNumberSchema = {
   create: z.string({ required_error: "Ref no. is required" }),
 };
+
+export const paymentSlipImageSchema = {
+  create: z.string().optional(),
+};
