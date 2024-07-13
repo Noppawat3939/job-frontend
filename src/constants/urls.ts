@@ -55,5 +55,7 @@ export const URL = {
   },
   PAYMENT: {
     CREATE_QR_SOURCE: "/payment/source-qr",
+    GET_TRANSACTIONS: "/payment/transaction/list",
+    CREATE_TRANSACTION: "/payment/transaction",
   },
 } as const;

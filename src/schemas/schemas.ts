@@ -234,3 +234,7 @@ export const addressSchema = {
 export const phoneNumberSchema = {
   common: z.string().optional(),
 };
+
+export const refNumberSchema = {
+  create: z.string({ required_error: "Ref no. is required" }),
+};

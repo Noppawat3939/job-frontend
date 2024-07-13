@@ -1,7 +1,8 @@
 import { URL } from "@/constants";
 import serivce from "../api";
 import { getTokenWithHeaders } from "@/lib";
-import { ServiceResponse } from "@/types";
+import type { ServiceResponse } from "@/types";
+import { CreateTransactionSchema } from "@/schemas";
 
 const { PAYMENT } = URL;
 
@@ -21,6 +22,24 @@ export const createQRSource = async (body: {
     body,
     getTokenWithHeaders()
   );
+
+  return data;
+};
+
+export const createTransaction = async (body: CreateTransactionSchema) => {
+  const { data } = await serivce.post(
+    PAYMENT.CREATE_TRANSACTION,
+    body,
+    getTokenWithHeaders()
+  );
+  return data;
+};
+
+export const getTransactions = async (params?: { status?: string }) => {
+  const { data } = await serivce.get(PAYMENT.GET_TRANSACTIONS, {
+    ...getTokenWithHeaders(),
+    params,
+  });
 
   return data;
 };
