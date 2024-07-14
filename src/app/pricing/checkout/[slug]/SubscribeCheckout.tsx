@@ -21,10 +21,11 @@ import {
 } from "react";
 import QrPaymentLogo from "@/assets/payment/qr-logo.jpg";
 import Image from "next/image";
-import type { Nullable } from "@/types";
+import type { Nullable, ServiceErrorResponse } from "@/types";
 import dayjs from "dayjs";
 import { cn } from "@/lib";
 import Link from "next/link";
+import { AxiosError } from "axios";
 
 type DecodeParams = Nullable<{
   code_key: string;
@@ -51,6 +52,12 @@ const initialPaymentSlip = {
   uploading: false,
   slipUrl: "",
   open: false,
+};
+const initialSourceQR = {
+  qrcode: "",
+  expired: "",
+  creating: false,
+  refNumber: "",
 };
 
 export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
@@ -86,6 +93,17 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
         creating: false,
         refNumber: data.refNo,
       });
+    },
+    onError: (e) => {
+      const err = e as AxiosError;
+      const errRes = err.response as ServiceErrorResponse;
+      toast({
+        title: errRes.data.message,
+        duration: 2000,
+        variant: "destructive",
+      });
+      setStep(1);
+      setSourceQR(initialSourceQR);
     },
   });
 
@@ -162,6 +180,12 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
       });
     }, 1000);
   }, []);
+
+  const handleSelectImage = () => {
+    if (paymentSlip.slipUrl) setPaymentSlip(initialPaymentSlip);
+
+    startTransition(() => inputRef.current?.click());
+  };
 
   return (
     <ContentLayout className="max-w-[1100px] max-xl:max-w-[700px] overflow-hidden">
@@ -338,11 +362,7 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
               variant="primary"
               className="w-[200px]"
               loading={paymentSlip.uploading || pending}
-              onClick={() => {
-                if (paymentSlip.slipUrl) setPaymentSlip(initialPaymentSlip);
-
-                startTransition(() => inputRef.current?.click());
-              }}
+              onClick={handleSelectImage}
             >
               <Upload className="w-4 h-4 mr-1" />
               {paymentSlip.slipUrl ? "Upload again" : "Upload slip"}
@@ -354,7 +374,7 @@ export default function SubscribeCheckout({ slug }: SubscribeCheckoutProps) {
         ref={inputRef}
         onChange={(e) => {
           const file = e.target.files?.[0];
-          console.log(file);
+
           if (!file) return null;
 
           handleUploadSlip(file);

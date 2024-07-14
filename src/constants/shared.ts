@@ -29,7 +29,8 @@ export const APPLICATION_STATUS = [
   "cancelled",
 ] as const;
 
-export const DATE_FORMAT = "DD MMM YY";
+export const DATE_FORMAT = "YYYY MMM DD";
+export const DATE_TIME_FORMAT = "YYYY/MMM/DD, HH:mm";
 
 export const JOB_TYPE = [
   "full_time",
@@ -67,3 +68,9 @@ export const RESUME_SOCICALS = [
   "youtube",
   "github",
 ] as const;
+
+export const SUBSCRIBE_STATUS = {
+  PENDING: "pending",
+  SUBSCRIBED: "subscribed",
+  UN_SUBSCRIBE: "unsubscribe",
+} as const;

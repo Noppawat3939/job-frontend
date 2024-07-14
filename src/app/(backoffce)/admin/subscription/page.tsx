@@ -1,14 +1,11 @@
 "use client";
 
-import {
-  Alert,
-  DataTable,
-  Dialog,
-  LayoutWithSidebar,
-  toast,
-} from "@/components";
-import { generateMenusSidebar } from "@/lib";
+import { Alert, DataTable, LayoutWithSidebar, toast } from "@/components";
+import { DATE_TIME_FORMAT, SUBSCRIBE_STATUS } from "@/constants";
+import { eq, formatDate, generateMenusSidebar } from "@/lib";
+import { subscriptionService } from "@/services";
 import { userStore } from "@/store";
+import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -17,6 +14,12 @@ export default function SubscriptionListPage() {
   const pathname = usePathname();
 
   const [previewSlip, setPreviewSlip] = useState({ open: false, image: "" });
+
+  const { data } = useQuery({
+    queryKey: ["subscriptions"],
+    queryFn: () => subscriptionService.getSubscribeList({ status: "pending" }),
+    select: (res) => res.data,
+  });
 
   const { adminMenus: menu } = useMemo(
     () => generateMenusSidebar(pathname, user),
@@ -28,17 +31,30 @@ export default function SubscriptionListPage() {
       <div className="w-full">
         <DataTable
           name="subscriptions"
-          lockHeader
-          data={Array.from({ length: 1 }).fill({
-            email: "test@gmail.com",
-            ref: "REF123213",
-            status: "pending",
-            stamptUser: "Jame",
-            createdAt: "2024/01/31",
-          })}
+          //@ts-ignore
+          data={
+            data?.map((item) => ({
+              key: item.subscription.id,
+              email: item.user.email,
+              status: item.transaction.status,
+              refNumber: item.transaction.refNumber,
+              subscribePlan: item.subscription.type,
+              subscribedAt: eq(
+                item.subscription.status,
+                SUBSCRIBE_STATUS.SUBSCRIBED
+              )
+                ? formatDate(item.subscription.updatedAt, DATE_TIME_FORMAT)
+                : "",
+              paidAt: formatDate(item.transaction.createdAt, DATE_TIME_FORMAT),
+            })) || []
+          }
           columns={[
-            { key: "email", dataIndex: "email", title: "Email", width: "20%" },
-            { key: "ref", dataIndex: "ref", title: "Ref No.", width: "15%" },
+            {
+              key: "email",
+              dataIndex: "email",
+              title: "Email",
+              width: "25%",
+            },
             {
               key: "status",
               dataIndex: "status",
@@ -46,19 +62,39 @@ export default function SubscriptionListPage() {
               width: "15%",
             },
             {
-              key: "stamptUser",
-              dataIndex: "stamptUser",
-              title: "Stampt by",
-              width: "25%",
+              key: "refNumber",
+              dataIndex: "refNumber",
+              title: "Ref No.",
+              width: "15%",
             },
             {
-              key: "createdAt",
-              dataIndex: "createdAt",
-              title: "Created at",
-              width: "20%",
+              key: "subscribePlan",
+              dataIndex: "subscribePlan",
+              title: "Subscribe Plan",
+              width: "15%",
+            },
+            {
+              key: "subscribedAt",
+              dataIndex: "subscribedAt",
+              title: "Subscribed at",
+              width: "15%",
+            },
+            {
+              key: "paidAt",
+              dataIndex: "paidAt",
+              title: "Paid at",
+              width: "15%",
             },
           ]}
-          onRow={(row) => setPreviewSlip({ open: true, image: row?.image })}
+          onRow={(row) => {
+            const slip = data?.find(
+              (item) => item.subscription.id === Number(row?.key)
+            )?.transaction.slipImage;
+
+            if (slip) {
+              setPreviewSlip({ open: true, image: slip });
+            }
+          }}
         />
       </div>
       <Alert
@@ -78,7 +114,16 @@ export default function SubscriptionListPage() {
         cancelText="Reject"
         cancelButtonProps={{ variant: "destructive" }}
       >
-        content
+        <center>
+          <picture>
+            <img
+              src={previewSlip.image}
+              alt="slip-image"
+              className="w-[240px]"
+              loading="lazy"
+            />
+          </picture>
+        </center>
       </Alert>
     </LayoutWithSidebar>
   );

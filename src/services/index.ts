@@ -7,3 +7,4 @@ export * as jobService from "./job";
 export * as companyService from "./company";
 export * as docsService from "./document";
 export * as paymentService from "./payment";
+export * as subscriptionService from "./subscription";

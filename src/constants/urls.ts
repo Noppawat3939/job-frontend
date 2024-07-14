@@ -58,4 +58,7 @@ export const URL = {
     GET_TRANSACTIONS: "/payment/transaction/list",
     CREATE_TRANSACTION: "/payment/transaction",
   },
+  SUBSCRIPTION: {
+    GET_ALL: "/subscription",
+  },
 } as const;

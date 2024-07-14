@@ -2,9 +2,9 @@ export type PaymentTransaction = {
   id: number;
   refNumber: string;
   status: string;
-  transactionCompletedAt?: any;
+  transactionCompletedAt?: string | Date;
   stamptUserId: number;
-  slipImage?: any;
+  slipImage?: string;
   createdAt: string;
   updatedAt: string;
 };
