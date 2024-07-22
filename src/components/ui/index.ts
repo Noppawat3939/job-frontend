@@ -10,6 +10,7 @@ export * as Radio from "./radio-group";
 export * as Scroll from "./scroll-area";
 export * as Otp from "./input-otp";
 export * as Accordion from "./accordion";
+export * as Dropdown from "./dropdown-menu";
 
 export * from "./use-toast";
 

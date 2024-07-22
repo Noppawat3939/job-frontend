@@ -20,5 +20,6 @@ export const QUERY_KEY = {
   GET_TESTIMONIALS: "testimonials",
   GET_RESUME_TEMPLATES: "resume-templates",
   GET_USER_RESUMES: "user-resumes",
+  SUBSCRIPTIONS: "subscriptions",
   SUBSCRIBE_DETAIL: "subscribe-detail",
 } as const;

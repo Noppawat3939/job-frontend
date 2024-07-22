@@ -1,6 +1,6 @@
 import { Badge } from "@/components";
 import { BadgeProps } from "@/components/ui/badge";
-import { cn, mappingApproveStyleClass } from "@/lib";
+import { cn, mappingApprovtyleClass } from "@/lib";
 import { JobStatus } from "@/types";
 import { ClassValue } from "clsx";
 
@@ -28,9 +28,7 @@ export default function BadgeJobApprove({
       className={cn(
         "w-[110px] flex justify-center items-center gap-2",
         className,
-        mappingApproveStyleClass[
-          status as keyof typeof mappingApproveStyleClass
-        ]
+        mappingApprovtyleClass[status as keyof typeof mappingApprovtyleClass]
       )}
     >
       <span

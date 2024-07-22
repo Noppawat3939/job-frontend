@@ -4,7 +4,9 @@ import type {
   JobExperienceLevel,
   JobStatus,
   JobType,
+  PaymentTransaction,
   Role,
+  SubscriptionStatus,
   WorkingStyle,
 } from "@/types";
 import { HTMLAttributes } from "react";
@@ -20,7 +22,7 @@ import {
   BarChart4,
 } from "lucide-react";
 import { ClassValue } from "clsx";
-import { UserStatus } from "@/types/user";
+import type { UserStatus } from "@/types/user";
 
 export const mappingWorkStyle = {
   on_site: "onsite",
@@ -70,7 +72,7 @@ export const mappingWorkingStyleClass = {
   hybrid: "bg-orange-100 text-orange-600 hover:bg-orange-200",
 } as Record<string, HTMLAttributes<HTMLElement>["className"]>;
 
-export const mappingApproveStyleClass = {
+export const mappingApprovtyleClass = {
   approved: "text-teal-500 border-teal-300",
   approve: "text-teal-500 border-teal-300",
   "un-approve": "text-gray-600",
@@ -94,6 +96,18 @@ export const mappingApplicationStatusClass = {
   rejected: "text-red-500 bg-red-50 hover:bg-red-50",
   cancelled: "text-gray-500",
 } as Record<ApplicationStatus, HTMLAttributes<HTMLElement>["className"]>;
+
+export const mappingSubscribeStatusClass = {
+  pending: "text-orange-300 border-orange-300",
+  subscribed: "text-teal-500 border-teal-400",
+  unsubscribe: "text-gray-400/80",
+} as Record<SubscriptionStatus, string>;
+
+export const mappingTransactionStatusClass = {
+  pending: "text-orange-300 border-orange-300",
+  completed: "text-teal-500 border-teal-400",
+  cancelled: "text-red-500 border-red-400",
+} as Record<PaymentTransaction["status"], string>;
 
 export const mappingJobType = {
   full_time: "Fulltime",

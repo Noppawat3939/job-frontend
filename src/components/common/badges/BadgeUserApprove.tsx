@@ -1,5 +1,5 @@
 import { Badge } from "@/components";
-import { cn, mappingApproveStyleClass } from "@/lib";
+import { cn, mappingApprovtyleClass } from "@/lib";
 import type { UserStatus } from "@/types/user";
 import { type ClassValue } from "clsx";
 
@@ -24,7 +24,7 @@ export default function BadgeUserApprove({
       variant="outline"
       className={cn(
         "flex min-w-[100px] items-center justify-center gap-2 hover:bg-white cursor-pointer",
-        mappingApproveStyleClass[status]
+        mappingApprovtyleClass[status]
       )}
     >
       <span

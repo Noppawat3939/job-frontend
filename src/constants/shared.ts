@@ -30,7 +30,7 @@ export const APPLICATION_STATUS = [
 ] as const;
 
 export const DATE_FORMAT = "YYYY MMM DD";
-export const DATE_TIME_FORMAT = "YYYY/MMM/DD, HH:mm";
+export const DATE_TIME_FORMAT = "YYYY-MMM-DD, HH:mm";
 
 export const JOB_TYPE = [
   "full_time",

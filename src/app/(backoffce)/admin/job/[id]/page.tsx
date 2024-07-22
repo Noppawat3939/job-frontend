@@ -4,11 +4,11 @@ import type { JobStatus, RolePageParam } from "@/types";
 import { jobService } from "@/services";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  JobDetailSection,
   Alert,
   BadgeJobApprove,
   Button,
   ContentLayout,
-  JobDetailSectionProps,
   JobHightlightSection,
   Show,
   Spinner,
@@ -220,7 +220,7 @@ export default function AdminJobPage({ params }: AdminJobPageProps) {
 
           <div className="flex flex-col space-y-10 max-w-2xl">
             {memorizedDetailsJob.map(({ key, ...rest }) => (
-              <JobDetailSectionProps key={key} {...rest} />
+              <JobDetailSection key={key} {...rest} />
             ))}
           </div>
         </ContentLayout>

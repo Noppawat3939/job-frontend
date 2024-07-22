@@ -60,5 +60,7 @@ export const URL = {
   },
   SUBSCRIPTION: {
     GET_ALL: "/subscription",
+    UPDATE_COMPLETE: "/subscription/confirm-verify",
+    UPDATE_REJECT: "/subscription/reject",
   },
 } as const;

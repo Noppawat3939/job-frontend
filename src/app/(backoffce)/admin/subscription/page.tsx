@@ -1,25 +1,96 @@
 "use client";
 
-import { Alert, DataTable, LayoutWithSidebar, toast } from "@/components";
-import { DATE_TIME_FORMAT, SUBSCRIBE_STATUS } from "@/constants";
-import { eq, formatDate, generateMenusSidebar } from "@/lib";
+import {
+  Alert,
+  Badge,
+  Button,
+  DataTable,
+  Dropdown,
+  LayoutWithSidebar,
+  SelectItem,
+  toast,
+} from "@/components";
+import { DATE_TIME_FORMAT, QUERY_KEY, SUBSCRIBE_STATUS } from "@/constants";
+import {
+  cn,
+  eq,
+  formatDate,
+  generateMenusSidebar,
+  isNull,
+  mappingSubscribeStatusClass,
+  mappingTransactionStatusClass,
+} from "@/lib";
 import { subscriptionService } from "@/services";
 import { userStore } from "@/store";
-import { useQuery } from "@tanstack/react-query";
+import { Nullable, SubscriptionStatus, Subscriptions } from "@/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ListFilter } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
+
+interface IFSubscription {
+  email: string;
+  key: number;
+  paidAt: string;
+  refNumber: string;
+  status: SubscriptionStatus;
+  subscribePlan: string;
+  subscribedAt: string;
+}
 
 export default function SubscriptionListPage() {
   const { user } = userStore();
   const pathname = usePathname();
 
   const [previewSlip, setPreviewSlip] = useState({ open: false, image: "" });
+  const [subscriptionData, setSubscriptionData] =
+    useState<Nullable<IFSubscription>>(null);
+  const [filterParams, setFilterParams] = useState<{
+    status: Nullable<SubscriptionStatus>;
+  }>({ status: null });
 
-  const { data } = useQuery({
-    queryKey: ["subscriptions"],
-    queryFn: () => subscriptionService.getSubscribeList({ status: "pending" }),
+  const { data, refetch: refetchData } = useQuery({
+    queryKey: [QUERY_KEY.SUBSCRIPTIONS, filterParams.status],
+    queryFn: () =>
+      subscriptionService.getSubscribeList({
+        status: filterParams.status
+          ? [filterParams.status]
+          : [SUBSCRIBE_STATUS.PENDING, SUBSCRIBE_STATUS.SUBSCRIBED],
+      }),
     select: (res) => res.data,
   });
+
+  const confirmMutation = useMutation({
+    mutationFn: subscriptionService.confrimVerifySubscription,
+    onError: () =>
+      toast({
+        title: "Can't confirm subscription",
+        variant: "destructive",
+        duration: 1500,
+      }),
+    onSuccess: () => onMutationSuccess(),
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: subscriptionService.confirmRejectSubscription,
+    onError: () =>
+      toast({
+        title: "Can't reject subscription",
+        variant: "destructive",
+        duration: 1500,
+      }),
+    onSuccess: () => onMutationSuccess(),
+  });
+
+  const onMutationSuccess = () => {
+    toast({
+      title: "Updated status is successfully",
+      variant: "success",
+      duration: 1000,
+    });
+    setPreviewSlip({ open: false, image: "" });
+    refetchData();
+  };
 
   const { adminMenus: menu } = useMemo(
     () => generateMenusSidebar(pathname, user),
@@ -28,6 +99,41 @@ export default function SubscriptionListPage() {
 
   return (
     <LayoutWithSidebar menu={menu}>
+      <div className="flex justify-between px-4 py-2">
+        <SelectItem
+          label="Subscription status"
+          verticel
+          className="w-[200px]"
+          onChange={(selected) => {
+            const mapping = {
+              pending: SUBSCRIBE_STATUS.PENDING,
+              subscribed: SUBSCRIBE_STATUS.SUBSCRIBED,
+              unsubscribe: SUBSCRIBE_STATUS.UN_SUBSCRIBE,
+            };
+            setFilterParams({
+              status: mapping[selected as keyof typeof mapping],
+            });
+          }}
+          placeholder="Select status"
+          items={[
+            { label: "Pending", value: "pending" },
+            { label: "Subscribed", value: "subscribed" },
+            { label: "Un Subscribe", value: "unsubscribe" },
+          ]}
+        />
+
+        <Button
+          variant={"outline"}
+          disabled={isNull(filterParams.status)}
+          onClick={() => {
+            setFilterParams({ status: null });
+            refetchData();
+          }}
+        >
+          <ListFilter className="w-4 h-4 mr-2" />
+          {"Clear"}
+        </Button>
+      </div>
       <div className="w-full">
         <DataTable
           name="subscriptions"
@@ -36,7 +142,8 @@ export default function SubscriptionListPage() {
             data?.map((item) => ({
               key: item.subscription.id,
               email: item.user.email,
-              status: item.transaction.status,
+              status: item.subscription.status,
+              paymentStatus: item.transaction.status,
               refNumber: item.transaction.refNumber,
               subscribePlan: item.subscription.type,
               subscribedAt: eq(
@@ -53,19 +160,47 @@ export default function SubscriptionListPage() {
               key: "email",
               dataIndex: "email",
               title: "Email",
-              width: "25%",
+              width: "20%",
             },
             {
               key: "status",
               dataIndex: "status",
               title: "Status",
-              width: "15%",
+              width: "10%",
+              render: (status) => (
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    mappingSubscribeStatusClass[status as SubscriptionStatus]
+                  )}
+                >
+                  {status}
+                </Badge>
+              ),
+            },
+            {
+              key: "paymentStatus",
+              dataIndex: "paymentStatus",
+              title: "Payment",
+              width: "10%",
+              render: (status) => (
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    mappingTransactionStatusClass[
+                      status as keyof typeof mappingTransactionStatusClass
+                    ]
+                  )}
+                >
+                  {status}
+                </Badge>
+              ),
             },
             {
               key: "refNumber",
               dataIndex: "refNumber",
               title: "Ref No.",
-              width: "15%",
+              width: "10%",
             },
             {
               key: "subscribePlan",
@@ -87,6 +222,7 @@ export default function SubscriptionListPage() {
             },
           ]}
           onRow={(row) => {
+            setSubscriptionData(row as unknown as IFSubscription);
             const slip = data?.find(
               (item) => item.subscription.id === Number(row?.key)
             )?.transaction.slipImage;
@@ -102,17 +238,36 @@ export default function SubscriptionListPage() {
         open={previewSlip.open}
         onOpenChange={(open) => setPreviewSlip((prev) => ({ ...prev, open }))}
         okText="Confirm Verify"
-        onOk={() => {
-          toast({
-            title: "Updated status is successfully",
-            variant: "success",
-            duration: 1000,
-          });
-          setPreviewSlip({ open: false, image: "" });
+        onOk={() =>
+          subscriptionData &&
+          eq(subscriptionData.status, "pending") &&
+          confirmMutation.mutate({
+            id: String(subscriptionData.key),
+            refNumber: subscriptionData.refNumber,
+          })
+        }
+        onCancel={() =>
+          subscriptionData?.refNumber &&
+          eq(subscriptionData.status, "pending") &&
+          rejectMutation.mutate({ refNumber: subscriptionData?.refNumber })
+        }
+        okButtonProps={{
+          variant: "secondary",
+          className: cn(
+            subscriptionData && !eq(subscriptionData.status, "pending")
+              ? "hidden"
+              : undefined
+          ),
         }}
-        okButtonProps={{ variant: "secondary" }}
         cancelText="Reject"
-        cancelButtonProps={{ variant: "destructive" }}
+        cancelButtonProps={{
+          variant: "destructive-outline",
+          className: cn(
+            subscriptionData && !eq(subscriptionData.status, "pending")
+              ? "hidden"
+              : undefined
+          ),
+        }}
       >
         <center>
           <picture>
